@@ -1,10 +1,11 @@
 import React from 'react';
 import projectFileReader from './Components/projectFileReader';
-import './App.css';
+import './styles/App.css';
+import './styles/main.css';
 
 function App() {
   return (
-    <projectFileReader/>
+    <projectFileReader className='Container'/>
   );
 }
 
