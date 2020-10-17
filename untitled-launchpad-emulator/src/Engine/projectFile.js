@@ -1,7 +1,7 @@
 import {file} from "jszip";
 import {Howl} from 'howler';
 import KeyLED from "./keyLED"
-import AutoPlay from "./autoplay"
+import AutoPlay from "./autoPlay"
 
 class ProjectFile
 {
