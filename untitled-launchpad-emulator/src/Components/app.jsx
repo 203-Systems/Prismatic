@@ -11,10 +11,13 @@ class App extends Component {
   updateProjectFile = newProjectFile => {
     this.setState({projectFile: newProjectFile});
   }
+
+
   
   render() { 
     return (
       <React.Fragment>
+        {/* <Navbar/> */}
         <ProjectFileReader updateProjectFile={this.updateProjectFile}/>
       </React.Fragment>
     );

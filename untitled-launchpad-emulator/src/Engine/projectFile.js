@@ -1,4 +1,3 @@
-import {file} from "jszip";
 import {Howl} from 'howler';
 import KeyLED from "./keyLED"
 import AutoPlay from "./autoPlay"

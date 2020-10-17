@@ -1,6 +1,6 @@
 class AutoPlay
 {
-  autoplay = undefined
+  autoplay = undefined;
   constructor(text)
   {
     this.autoplay = text;
