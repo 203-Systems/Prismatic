@@ -5,7 +5,7 @@ import './styles/main.css';
 
 function App() {
   return (
-    <projectFileReader/>
+    <projectFileReader className='Container'/>
   );
 }
 
