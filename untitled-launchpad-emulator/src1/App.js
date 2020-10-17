@@ -9,6 +9,7 @@ import './styles/main.css';
 function App() {
   return (
     <ProjectFileReader className='Container'/>
+    <Button/>
   );
 }
 

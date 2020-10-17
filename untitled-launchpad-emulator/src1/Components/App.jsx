@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import LaunchpadPro from '../Devices/launchpadPro'
-import Navbar from './navbar'
-import ProjectFileReader from './projectFileReader'
+import Navbar from './Navbar'
+import ProjectFileReader from './ProjectFileReader'
+import Button from './Button'
 
 class App extends Component {
   state = {  
@@ -19,6 +19,7 @@ class App extends Component {
       <React.Fragment>
         {/* <Navbar/> */}
         <ProjectFileReader updateProjectFile={this.updateProjectFile}/>
+        <Button/>
       </React.Fragment>
     );
   }
