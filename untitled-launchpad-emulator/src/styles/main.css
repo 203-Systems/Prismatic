@@ -1,0 +1,23 @@
+:root {
+    --dark-gray: #272727;
+    --medium-gray: #313131;
+    --light-gray: #808080;
+}
+
+body {
+    background-image: url('images/background.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+    
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
