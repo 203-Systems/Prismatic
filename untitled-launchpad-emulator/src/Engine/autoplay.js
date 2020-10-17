@@ -1,4 +1,4 @@
-class Autoplay
+class AutoPlay
 {
   autoplay = undefined
   constructor(text)
@@ -45,4 +45,4 @@ class Autoplay
   }
 }
 
-export default Autoplay;
+export default AutoPlay;

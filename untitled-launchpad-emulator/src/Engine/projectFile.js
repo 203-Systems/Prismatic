@@ -1,6 +1,7 @@
 import {file} from "jszip";
 import {Howl} from 'howler';
 import KeyLED from "./keyLED"
+import AutoPlay from "./autoPlay"
 
 class ProjectFile
 {
@@ -144,7 +145,7 @@ class ProjectFile
     }
 
     //Load AutoPlay
-    this.autoplay = new Autoplay(autoplayFile);
+    this.autoplay = new AutoPlay(autoplayFile);
   }
 }
 
