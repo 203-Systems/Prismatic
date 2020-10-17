@@ -10,7 +10,7 @@ class KeyLED
   {
     for(var line of this.text)
     {
-      let command = this.text.split(" ");
+      let command = line.split(" ");
       switch(command[0])
       {
         case 'o': //set color

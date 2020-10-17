@@ -1,4 +1,5 @@
-import { file } from "jszip";
+import {file} from "jszip";
+import {Howl} from 'howler';
 import KeyLED from "./keyLED"
 
 class ProjectFile
@@ -37,7 +38,7 @@ class ProjectFile
         if(file.name.toLowerCase().includes("sounds/")) //Audio
         {
           console.log("Sound file: " + file.name);
-          soundFiles[file.name] = file;
+          soundFiles[file.name.split("/").pop()] = file;
         }
         else
         {
@@ -106,7 +107,7 @@ class ProjectFile
             () => new Array(this.info.buttonY).fill(null).map(
             () => new Array())));
 
-    // Load keyLED
+    // Load KeyLED
     for(var [name, text] of Object.entries(keyLEDFiles))
     {
       let fileInfo = name.split("/").pop().split(" ");
@@ -124,6 +125,25 @@ class ProjectFile
         console.warn("Unknown keyLED file name: " + name);
       }
     }
+
+    //Load KeySound
+    for(var line of keySoundFile)
+    {
+      let command = line.split(" ");
+
+      if(command.length < 2) //For empty lines
+        continue;
+
+      console.log(command);
+      let sound = await soundFiles[command[3]].async("blob");
+      sound = window.URL.createObjectURL(sound);
+      let format = command[3].split(".").pop()
+
+      this.keySound[parseInt(command[0]) - 1][parseInt(command[1]) - 1][parseInt(command[2]) - 1].push(
+        new Howl({src: [sound], format: [format]}));
+    }
+
+    //Load AutoPlay
   }
 }
 
