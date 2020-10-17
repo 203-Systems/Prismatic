@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import LaunchpadPro from '../Devices/launchpadPro'
+import Navbar from './navbar'
 import ProjectFileReader from './projectFileReader'
 
 class App extends Component {
