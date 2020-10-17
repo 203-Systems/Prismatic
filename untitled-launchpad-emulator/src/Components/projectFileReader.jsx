@@ -12,7 +12,7 @@ class ProjectFileReader extends Component {
   }
 
   onFileChange = event => { 
-    var projectFile = new ProjectFile(event.target.files[0]);
+    this.props.updateProjectFile(new ProjectFile(event.target.files[0]));
   };
 }
 
