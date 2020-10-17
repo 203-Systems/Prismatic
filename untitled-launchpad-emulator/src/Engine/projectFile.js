@@ -144,6 +144,7 @@ class ProjectFile
     }
 
     //Load AutoPlay
+    this.autoplay = new Autoplay(autoplayFile);
   }
 }
 
