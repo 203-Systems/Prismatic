@@ -1,3 +1,6 @@
+import { file } from "jszip";
+import KeyLED from "./keyLED"
+
 class ProjectFile
 {
   info = {};
@@ -25,7 +28,7 @@ class ProjectFile
     let keySoundFile = undefined;
     let autoplayFile = undefined;
     let soundFiles = {};
-    let keyLEDFiles = [];
+    let keyLEDFiles = {};
 
     //Load info and categorize files
     for(let file of files){
@@ -38,10 +41,10 @@ class ProjectFile
         }
         else
         {
+          let text = await file.async("text");
+          text = text.split(/\r?\n/);
           if(file.name.toLowerCase().endsWith("info")) //Text
           {
-            let text = await file.async("text");
-            text = text.split(/\r?\n/);
             console.log("Info file: " + file.name);
             projectRoot = file.name.slice(0, -4); 
             console.log(" project root: " + projectRoot);
@@ -49,8 +52,8 @@ class ProjectFile
             this.info["buttonX"] = parseInt(this.info["buttonX"]);
             this.info["buttonY"] = parseInt(this.info["buttonY"]);
             this.info["chain"] = parseInt(this.info["chain"]);
-            this.info["squareButton"] != "true"
-            this.info["landscape"] != "true"
+            this.info["squareButton"] = this.info["squareButton"] === "true";
+            this.info["landscape"] = this.info["landscape"] === "true";
             console.log(" title: " + this.info["title"])
             console.log(" producerName: " + this.info["producerName"])
             console.log(" buttonX: " + this.info["buttonX"])
@@ -82,7 +85,7 @@ class ProjectFile
           else if(file.name.toLowerCase().includes("keyled/"))
           {
             console.log("KeyLED file: " + file.name);
-            keyLEDFiles.push(file);
+            keyLEDFiles[file.name] = text;
           }
           else
           {
@@ -104,11 +107,22 @@ class ProjectFile
             () => new Array())));
 
     // Load keyLED
-    for(file of keyLEDFile)
+    for(var [name, text] of Object.entries(keyLEDFiles))
     {
-      let fileInfo = file.name.split(" ");
-      this.keyLED[fileInfo[0] - 1][fileInfo[1] - 1][]
-      
+      let fileInfo = name.split("/").pop().split(" ");
+      console.log(fileInfo)
+      if(fileInfo.length == 5)
+      {
+        this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[1]) - 1][parseInt(fileInfo[2]) - 1][fileInfo[4].charCodeAt(0) - 97] = new KeyLED(text)
+      }
+      else if(fileInfo.length == 4)
+      {
+      this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[1]) - 1][parseInt(fileInfo[2]) - 1] = [new KeyLED(text)]
+      }
+      else
+      {
+        console.warn("Unknown keyLED file name: " + name);
+      }
     }
   }
 }

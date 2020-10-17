@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ProjectFile from "../projectFile";
+import ProjectFile from "../Engine/projectFile";
 
 class ProjectFileReader extends Component {
   render() {
