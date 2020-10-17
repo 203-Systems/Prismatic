@@ -12,14 +12,22 @@ class App extends Component {
     this.setState({projectFile: newProjectFile});
   }
 
+  on = (x, y) => 
+  {
+    console.log("Note On - " + x.toString() + ' ' + y.toString());
+  }
 
+  off = (x, y) => 
+  {
+    console.log("Note Off - " + x.toString() + ' ' + y.toString());
+  }
   
   render() { 
     return (
       <React.Fragment>
         {/* <Navbar/> */}
         <ProjectFileReader updateProjectFile={this.updateProjectFile}/>
-        <Button/>
+        <Button color={"#000000"} overlay={"#808080"} x={0} y={0} on={this.on} off={this.off}/>
       </React.Fragment>
     );
   }
