@@ -112,11 +112,11 @@ class ProjectFile
     {
       let fileInfo = name.split("/").pop().split(" ");
       console.log(fileInfo)
-      if(fileInfo.length == 5)
+      if(fileInfo.length === 5)
       {
         this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[1]) - 1][parseInt(fileInfo[2]) - 1][fileInfo[4].charCodeAt(0) - 97] = new KeyLED(text)
       }
-      else if(fileInfo.length == 4)
+      else if(fileInfo.length === 4)
       {
       this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[1]) - 1][parseInt(fileInfo[2]) - 1] = [new KeyLED(text)]
       }

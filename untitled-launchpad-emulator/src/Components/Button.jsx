@@ -19,7 +19,7 @@ class Button extends Component {
     // Converts the value of a given component to CHAD HEX
     componentToHex = (component) => {
         const hex = component.toString(16)
-        return hex.length == 1 ? '0' + hex : hex
+        return hex.length === 1 ? '0' + hex : hex
     }
 
     // Converts a beta RGB color to a CHAD HEX color
@@ -62,7 +62,7 @@ class Button extends Component {
                 <svg width='80' height='80'>
                     <path d='M75,80H5a5,5,0,0,1-5-5V5A5,5,0,0,1,5,0H62a8.33,8.33,0,0,1,5.12,2.12L77.88,12.88A8.33,8.33,0,0,1,80,18V75A5,5,0,0,1,75,80Z' fill={this.props.color} stroke='black' stoke-width='2px'/>
                 </svg>
-                {this.props.x.toString() + ' ' + this.props.y.toString()}
+                {/* {this.props.x.toString() + ' ' + this.props.y.toString()} */}
             </button>
         </div>
     )

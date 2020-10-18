@@ -1,6 +1,7 @@
 class KeyLED
 {
   keyLED = undefined
+  canvas = undefined
   constructor(text)
   {
     this.keyLED = text;
@@ -8,20 +9,47 @@ class KeyLED
 
   play = async() =>
   {
-    for(var line of this.text)
+    for(var line of this.keyLED)
     {
       let command = line.split(" ");
-      
+      console.log(command);
       if(command.length < 2)
         continue;
 
       switch(command[0])
       {
         case 'o': //set color
-          // this.canvas.setColor(parseInt(parameter[2]), parseInt(parameter[1]), parseInt(parameter[4]));
-          break;
+          if(command.length === 5) //PaletteMode
+          {
+            if(command[1] !== "mc")
+            {
+              this.canvas.setColorPalette(parseInt(command[1]), parseInt(command[2]), parseInt(command[4]));
+            }
+            else
+            {
+              this.canvas.setMCColorPalette(parseInt(command[2]), parseInt(command[4]));
+            }
+          }else if(command.length === 4)
+          {
+            if(command[1] !== "mc")
+            {
+              this.canvas.setColorHEX(parseInt(command[1]), parseInt(command[2]), "#" + command[3]);
+            }
+            else
+            {
+              this.canvas.setMCColorHEX(parseInt(command[2]), "#" + command[3]);
+            }
+          }
+            break;
         case 'f': //color off
-          // this.canvas.setColor(parseInt(parameter[2]), parseInt(parameter[1]), 0);
+        if(command[1] !== "mc")
+          {
+            this.canvas.setMCColorHEX(parseInt(command[1]), parseInt(command[2]), "#000000");
+          }
+          else
+          {
+            this.canvas.setMCColorPalette(parseInt(command[2]), "#000000");
+          }
           break;
         case 'd': //wait
           await this.wait(parseInt(command[1]));

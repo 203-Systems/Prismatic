@@ -6,6 +6,7 @@ import Button from './Button'
 class App extends Component {
   state = {  
     projectFile: undefined,
+    color: "#000000",
   };
 
   updateProjectFile = newProjectFile => {
@@ -15,6 +16,8 @@ class App extends Component {
   on = (x, y) => 
   {
     console.log("Note On - " + x.toString() + ' ' + y.toString());
+    this.state.projectFile.keySound[0][0][0][0].play();
+    this.state.projectFile.keyLED[0][0][0][0].play();
   }
 
   off = (x, y) => 
