@@ -44,11 +44,11 @@ class KeyLED
         case 'f': //color off
         if(command[1] !== "mc")
           {
-            canvas.setColorHEX(parseInt(command[2]), parseInt(command[1]), "#000000");
+            canvas.setColorPalette(parseInt(command[2]), parseInt(command[1]), 0);
           }
           else
           {
-            canvas.setMCColorPalette(parseInt(command[2]), "#000000");
+            canvas.setMCColorPalette(parseInt(command[2]), 0);
           }
           break;
         case 'd': //wait

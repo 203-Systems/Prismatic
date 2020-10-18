@@ -4,9 +4,14 @@ import Button from './Button'
 import palette from '../palette'
 
 class Canvas extends Component {
+  constructor(props) {
+    super(props);
+    setInterval(() => {this.setState({colormap: this.state.colormap})}, 1000/60);
+  }
+
   state = {  
     colormap: new Array(this.props.deviceConfig.width).fill(null).map(
-      () => new Array(this.props.deviceConfig.height).fill("#000000")),
+      () => new Array(this.props.deviceConfig.height).fill(palette[0])),
   };
 
   keypressHistory = undefined;
@@ -15,7 +20,7 @@ class Canvas extends Component {
               () => new Array(this.props.deviceConfig.width).fill(null).map(
               () => new Array(this.props.deviceConfig.height).fill(0)));
   currentChain = 0;
-  overlay = "#808080";
+  // overlay = "#808080";
 
   shouldUpdate = (nextProps) => !Object.is(this.props.deviceConfig, nextProps.deviceConfig);
 
@@ -68,7 +73,13 @@ class Canvas extends Component {
   playAutoplay = () =>
   {
     if(this.props.projectFile !== undefined && this.props.projectFile.autoplay !== undefined)
-      this.props.projectFile.autoplay.play(this)
+    {
+      this.props.projectFile.autoplay.play(this) 
+    }
+    else
+    {
+      alert("No project loaded!")
+    }
   }
 
   chainChange = (chain) =>
@@ -81,56 +92,56 @@ class Canvas extends Component {
   {
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.deviceConfig.canvas_origin, "+");
     this.state.colormap[x][y] = palette[p]
-    this.setState({colormap: this.state.colormap})
+    // this.setState({colormap: this.state.colormap})
   }
 
   setMCColorPalette = (mc, p) =>
   {
     let [x, y] = this.props.deviceConfig.mcTable[mc];
     this.state.colormap[x][y] = palette[p]
-    this.setState({colormap: this.state.colormap})
+    // this.setState({colormap: this.state.colormap})
   }
 
   setColorHEX = (x, y, hex) =>
   {
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.deviceConfig.canvas_origin, "+");
     this.state.colormap[x][y] = hex
-    this.setState({colormap: this.state.colormap})
+    // this.setState({colormap: this.state.colormap})
   }
 
   setMCColorHEX = (mc, hex) =>
   {
     let [x, y] = this.props.deviceConfig.mcTable[mc];
     this.state.colormap[x][y] = hex
-    this.setState({colormap: this.state.colormap})
+    // this.setState({colormap: this.state.colormap})
   }
 
-  // Overlays a color
-  colorOverlay = (hex, overlay) => {
-    let [r, g, b] = this.toRGB(hex)
-    let [r0, g0, b0] = this.toRGB(overlay)
-    r = Math.round(r * (255 - r0) / 255 + r0);
-    g = Math.round(g * (255 - g0) / 255 + g0);
-    b = Math.round(b * (255 - b0) / 255 + b0);
-    return this.toHEX(r, g, b)
-  }
+  // // Overlays a color
+  // colorOverlay = (hex, overlay) => {
+  //   let [r, g, b] = this.toRGB(hex)
+  //   let [r0, g0, b0] = this.toRGB(overlay)
+  //   r = Math.round(r * (255 - r0) / 255 + r0);
+  //   g = Math.round(g * (255 - g0) / 255 + g0);
+  //   b = Math.round(b * (255 - b0) / 255 + b0);
+  //   return this.toHEX(r, g, b)
+  // }
 
-  // Converts a CHAD HEX color to a beta RGB color
-  toRGB = (hex) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return [parseInt(result[1], 16),
-            parseInt(result[2], 16),
-            parseInt(result[3], 16)]
-  }
+  // // Converts a CHAD HEX color to a beta RGB color
+  // toRGB = (hex) => {
+  //   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  //   return [parseInt(result[1], 16),
+  //           parseInt(result[2], 16),
+  //           parseInt(result[3], 16)]
+  // }
 
-  // Converts a beta RGB color to a CHAD HEX color
-  toHEX = (r, g, b) => '#' + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b)
+  // // Converts a beta RGB color to a CHAD HEX color
+  // toHEX = (r, g, b) => '#' + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b)
 
-  // Converts the value of a given component to CHAD HEX
-  componentToHex = (component) => {
-    const hex = component.toString(16)
-    return hex.length === 1 ? '0' + hex : hex
-  }
+  // // Converts the value of a given component to CHAD HEX
+  // componentToHex = (component) => {
+  //   const hex = component.toString(16)
+  //   return hex.length === 1 ? '0' + hex : hex
+  // }
 
   arrayCalculation = (array1, array2, operation) =>
   {
@@ -164,14 +175,14 @@ class Canvas extends Component {
               {this.props.deviceConfig.layout[y].map((value, x) => {
                 switch (value) {
                   case "◻":
-                    return <Button x={x} y={y} color={this.colorOverlay(this.state.colormap[x][y], this.overlay)} on={this.keyOn} off={this.keyOff}/>;
+                    return <Button x={x} y={y} color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
                   case "⬤":
-                    return <Button x={x} y={y} color={this.colorOverlay(this.state.colormap[x][y], this.overlay)} on={this.keyOn} off={this.keyOff}/>;
+                    return <Button x={x} y={y} color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
                   case "◪":
                   case "⬕":
                   case "⬔":
                   case "◩":
-                    return <Button x={x} y={y} color={this.colorOverlay(this.state.colormap[x][y], this.overlay)} on={this.keyOn} Zoff={this.keyOff}/>;
+                    return <Button x={x} y={y} color={this.state.colormap[x][y]} on={this.keyOn} Zoff={this.keyOff}/>;
                   default:
                     return <spacer className = "Spacer"></spacer>;
                 }
