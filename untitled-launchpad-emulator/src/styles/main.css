@@ -27,22 +27,28 @@ body {
 }
 
 .container {
-
-
+  margin: auto;
   display: grid;
   grid-template-rows: 1fr 8fr 1fr;
-  grid-column: 1fr 8fr 1fr;
+  grid-column: 1fr;
 }
 
 .container .button-container {
-  box-sizing: content-box;
+  background-image: url('images/launchpad.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+
+  margin: auto;
   grid-column: 1/2;
-  grid-row: 1/2;
+  grid-row: 2/3;
 
   background-color: transparent;
-  padding: 10rem;
+  padding-right:10px;
+  padding-bottom: 10px;
 }
 
 .container .button-container .button-row {
-  justify-content: center;
+  padding-right: 10px;
+  box-sizing: content-box;
 }

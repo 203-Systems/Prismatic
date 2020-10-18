@@ -111,14 +111,13 @@ class ProjectFile
     for(var [name, text] of Object.entries(keyLEDFiles))
     {
       let fileInfo = name.split("/").pop().split(" ");
-      console.log(fileInfo)
       if(fileInfo.length === 5)
       {
-        this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[1]) - 1][parseInt(fileInfo[2]) - 1][fileInfo[4].charCodeAt(0) - 97] = new KeyLED(text)
+        this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][fileInfo[4].charCodeAt(0) - 97] = new KeyLED(text, parseInt(fileInfo[3]))
       }
       else if(fileInfo.length === 4)
       {
-      this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[1]) - 1][parseInt(fileInfo[2]) - 1] = [new KeyLED(text)]
+      this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1] = [new KeyLED(text, parseInt(fileInfo[3]))]
       }
       else
       {
@@ -139,7 +138,7 @@ class ProjectFile
       sound = window.URL.createObjectURL(sound);
       let format = command[3].split(".").pop()
 
-      this.keySound[parseInt(command[0]) - 1][parseInt(command[1]) - 1][parseInt(command[2]) - 1].push(
+      this.keySound[parseInt(command[0]) - 1][parseInt(command[2]) - 1][parseInt(command[1]) - 1].push(
         new Howl({src: [sound], format: [format]}));
     }
 

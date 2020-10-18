@@ -6,10 +6,11 @@ class AutoPlay
     this.autoplay = text;
   }
 
-  play = async() =>
+  play = async(canvas) =>
   {
-    for(var line of this.text)
+    for(var line of this.autoplay)
     {
+      console.log(line)
       let command = line.split(" ");
       
       if(command.length < 2)
@@ -19,10 +20,10 @@ class AutoPlay
       {
         case 't':
           case 'o':
-            // this.canvas.noteOn(parseInt(parameter[2]), parseInt(parameter[1]));
+            canvas.keyOn(parseInt(command[2]), parseInt(command[1]));
             break;
           case 'f':
-            // this.canvas.noteOff(parseInt(parameter[2]), parseInt(parameter[1]));
+            canvas.keyOff(parseInt(command[2]), parseInt(command[1]));
             break;
           case 'd':
             // console.time("Autoplay wait");
@@ -32,7 +33,7 @@ class AutoPlay
             break;
           case 'c':
           case 'chain':
-            // this.canvas.currentPage = parameter[1] - 1;
+            canvas.chainChange(parseInt(command[1]) - 1);
             break;
           default:
       }
