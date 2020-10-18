@@ -38,9 +38,9 @@ class App extends Component {
           <Canvas projectFile={this.state.projectFile} deviceConfig={this.state.deviceConfig}/>
         </div>
         <div>
-          <Selector className='test' name='test'/>
-          <Selector className='test' name='test'/>
-          <Selector className='test' name='test'/>
+          <Selector className='test' name='test' options={options}/>
+          <Selector className='test' name='test' options={options}/>
+          <Selector className='test' name='test' options={options}/>
         </div>
         </div>
       </React.Fragment>
