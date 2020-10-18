@@ -71,3 +71,7 @@ body {
   background-size: 100% 100%;
   
 }
+
+.container .button-container .button-row Button {
+  background-color: transparent;
+}

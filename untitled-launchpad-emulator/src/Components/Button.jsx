@@ -20,10 +20,12 @@ class Button extends Component {
     shouldUpdate = (nextProps) => this.props.color !== nextProps.color
 
     render = () => (
-        <div className='button'>
+        <div className='button' >
             <button onMouseDown={this.on} onTouchStart={this.on} className={this.props.class} style={
                 {
-                backgroundCOlor: this.props.color
+                backgroundColor: this.props.color,
+                width: '96px',
+                height: '89px'
                 }
             }>
                 <svg width='80' height='80'>
