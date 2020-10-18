@@ -62,7 +62,7 @@ class ProjectFile
             console.log(" chain: " + this.info["chain"])
             console.log(" squareButton: " + this.info["squareButton"])
             console.log(" landscape: " + this.info["landscape"])
-            if(this.info["buttonX"] != 8 || this.info["buttonY"] != 8)
+            if(this.info["buttonX"] !== 8 || this.info["buttonY"] !== 8)
             {
               alert("Only 8x8 Unipad project are supported");
               return;
