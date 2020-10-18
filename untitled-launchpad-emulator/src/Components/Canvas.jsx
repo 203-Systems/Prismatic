@@ -14,8 +14,6 @@ class Canvas extends Component {
       () => new Array(this.props.deviceConfig.height).fill(palette[0])),
   };
 
-  keypressHistory = undefined;
-
   keypressHistory = new Array(8).fill(null).map(
               () => new Array(this.props.deviceConfig.width).fill(null).map(
               () => new Array(this.props.deviceConfig.height).fill(0)));
@@ -23,11 +21,6 @@ class Canvas extends Component {
   // overlay = "#808080";
 
   shouldUpdate = (nextProps) => !Object.is(this.props.deviceConfig, nextProps.deviceConfig);
-
-  // async generateColorMap() {
-  //   let newColormap = 
-  //   await this.promisedSetState({colormap: newColormap});
-  // }
 
   promisedSetState = (newState) => new Promise(resolve => this.setState(newState, resolve));
 
@@ -42,6 +35,7 @@ class Canvas extends Component {
       {
         let soundIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
         // console.log('Play sound ${this.currentChain} ${offseted_x}')
+        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex].stop();
         this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex].play();
       }
       //LED
@@ -74,6 +68,9 @@ class Canvas extends Component {
   {
     if(this.props.projectFile !== undefined && this.props.projectFile.autoplay !== undefined)
     {
+      this.keypressHistory = new Array(8).fill(null).map(
+        () => new Array(this.props.deviceConfig.width).fill(null).map(
+        () => new Array(this.props.deviceConfig.height).fill(0)));
       this.props.projectFile.autoplay.play(this) 
     }
     else

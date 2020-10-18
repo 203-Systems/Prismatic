@@ -1,60 +1,64 @@
 class KeyLED
 {
   keyLED = undefined
-  canvas = undefined
-  constructor(text)
+  repeat = 1;
+  constructor(text, repeat)
   {
     this.keyLED = text;
+    this.repeat = repeat;
   }
 
   play = async(canvas) =>
   {
-    for(var line of this.keyLED)
+    for(var i = 0; i < this.repeat; i++)
     {
-      let command = line.split(" ");
-      // console.log(command);
-      if(command.length < 2)
-        continue;
-
-      switch(command[0])
+      for(var line of this.keyLED)
       {
-        case 'o': //set color
-          if(command.length === 5) //PaletteMode
-          {
-            if(command[1] !== "mc")
+        let command = line.split(" ");
+        // console.log(command);
+        if(command.length < 2)
+          continue;
+
+        switch(command[0])
+        {
+          case 'o': //set color
+            if(command.length === 5) //PaletteMode
             {
-              canvas.setColorPalette(parseInt(command[2]), parseInt(command[1]), parseInt(command[4]));
+              if(command[1] !== "mc")
+              {
+                canvas.setColorPalette(parseInt(command[2]), parseInt(command[1]), parseInt(command[4]));
+              }
+              else
+              {
+                canvas.setMCColorPalette(parseInt(command[2]), parseInt(command[4]));
+              }
+            }else if(command.length === 4)
+            {
+              if(command[1] !== "mc")
+              {
+                canvas.setColorHEX(parseInt(command[2]), parseInt(command[1]), "#" + command[3]);
+              }
+              else
+              {
+                canvas.setMCColorHEX(parseInt(command[2]), "#" + command[3]);
+              }
+            }
+              break;
+          case 'f': //color off
+          if(command[1] !== "mc")
+            {
+              canvas.setColorPalette(parseInt(command[2]), parseInt(command[1]), 0);
             }
             else
             {
-              canvas.setMCColorPalette(parseInt(command[2]), parseInt(command[4]));
+              canvas.setMCColorPalette(parseInt(command[2]), 0);
             }
-          }else if(command.length === 4)
-          {
-            if(command[1] !== "mc")
-            {
-              canvas.setColorHEX(parseInt(command[2]), parseInt(command[1]), "#" + command[3]);
-            }
-            else
-            {
-              canvas.setMCColorHEX(parseInt(command[2]), "#" + command[3]);
-            }
-          }
             break;
-        case 'f': //color off
-        if(command[1] !== "mc")
-          {
-            canvas.setColorPalette(parseInt(command[2]), parseInt(command[1]), 0);
-          }
-          else
-          {
-            canvas.setMCColorPalette(parseInt(command[2]), 0);
-          }
-          break;
-        case 'd': //wait
-          await this.wait(parseInt(command[1]));
-          break;
-        default:
+          case 'd': //wait
+            await this.wait(parseInt(command[1]));
+            break;
+          default:
+        }
       }
     }
   }
