@@ -24,11 +24,13 @@ class App extends Component {
   render() { 
     return (
       <React.Fragment>
+        <div className='container'>
         {/* <Navbar/> */}
         <ProjectFileReader updateProjectFile={this.updateProjectFile} canvasRef={this.canvasRef}/>
         {/* <Button color={"#000000"} overlay={"#808080"} x={0} y={0} on={this.on} off={this.off}/> */}
         <div className='button-container'>
           <Canvas projectFile={this.state.projectFile} deviceConfig={this.state.deviceConfig} ref={this.canvasRef}/>
+        </div>
         </div>
       </React.Fragment>
     );

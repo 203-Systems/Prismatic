@@ -157,7 +157,7 @@ class Canvas extends Component {
       <div>
         {this.props.deviceConfig.layout.map((value, y) => {
           return (
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex" }} className='buttom-row'>
               {this.props.deviceConfig.layout[y].map((value, x) => {
                 switch (value) {
                   case "◻":
@@ -169,8 +169,8 @@ class Canvas extends Component {
                   case "⬔":
                   case "◩":
                     return <Button x={x} y={y} color={this.colorOverlay(this.state.colormap[x][y], this.overlay)} on={this.keyOn} Zoff={this.keyOff}/>;
-                  default:
-                    return <spacer className = "Spacer"></spacer>;
+                  // default:
+                  //   return <spacer className = "Spacer"></spacer>;
                 }
               })}
             </div>

@@ -14,10 +14,35 @@ body {
     margin: 0;
     border: 0;
     box-sizing: border-box;
-    
+
+    width: 100vw;
+    height: 100vh;
+
+
     font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+
+
+  display: grid;
+  grid-template-rows: 1fr 8fr 1fr;
+  grid-column: 1fr 8fr 1fr;
+}
+
+.container .button-container {
+  box-sizing: content-box;
+  grid-column: 1/2;
+  grid-row: 1/2;
+
+  background-color: transparent;
+  padding: 10rem;
+}
+
+.container .button-container .button-row {
+  justify-content: center;
 }
