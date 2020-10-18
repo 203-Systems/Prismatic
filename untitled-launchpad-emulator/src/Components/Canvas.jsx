@@ -142,11 +142,10 @@ class Canvas extends Component {
   {
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.layoutConfig.canvas_origin, "+");
     this.state.colormap[offseted_x][offseted_y] = palette[p]
-    // this.setState({colormap: this.state.colormap})
     if(this.props.outputDevice != undefined)
     {
       let [output_offseted_x, output_offseted_y] = this.arrayCalculation([x, y], this.props.inputConfig.canvas_origin, "+");
-      this.props.outputDevice.send([0x90, this.props.outputConfig.keymap[output_offseted_y][output_offseted_x], p])
+      this.sendMidi("NoteOn", this.props.outputConfig.channel, this.props.outputConfig.keymap[output_offseted_y][output_offseted_x], p)
     }
   }
 
@@ -156,7 +155,11 @@ class Canvas extends Component {
     {
       let [x, y] = this.props.layoutConfig.mcTable[mc];
       this.state.colormap[x][y] = palette[p]
-      // this.setState({colormap: this.state.colormap})
+      if(this.props.outputDevice != undefined && this.props.outputConfig.mcTable[mc] != undefined)
+      {
+        let [device_x, device_y] = this.props.outputConfig.mcTable[mc];
+        this.sendMidi("NoteOn", this.props.outputConfig.channel, this.props.outputConfig.keymap[device_y][device_x], p)
+      }
     }
   }
 
@@ -164,7 +167,6 @@ class Canvas extends Component {
   {
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.layoutConfig.canvas_origin, "+");
     this.state.colormap[offseted_x][offseted_y] = hex
-    // this.setState({colormap: this.state.colormap})
   }
 
   setMCColorHEX = (mc, hex) =>
@@ -173,7 +175,35 @@ class Canvas extends Component {
     {
       let [x, y] = this.props.layoutConfig.mcTable[mc];
       this.state.colormap[x][y] = hex
-      // this.setState({colormap: this.state.colormap})
+    }
+  }
+
+  sendMidi(mode, channel, note, value)
+  {
+    if(typeof(note) === "string")
+    {
+      let modeKey = note.charAt(0);
+      note = parseInt(note.substr(1))
+      switch(modeKey)
+      {
+        case "C":
+          mode = "CC"
+          break;
+        default:
+          return;
+      }
+    } 
+    switch(mode)
+    {
+      case "NoteOn":
+        this.props.outputDevice.send([0x90 + channel - 1, note, value])
+          break;
+      case "NoteOff":
+        this.props.outputDevice.send([0x80 + channel - 1, note, value])
+        break;
+      case "CC":
+        this.props.outputDevice.send([0xB0 + channel - 1, note, value])
+        break;
     }
   }
 
