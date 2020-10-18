@@ -29,9 +29,20 @@ body {
 .container {
   margin: auto;
   display: grid;
-  grid-template-rows: 1fr 8fr 1fr;
+  grid-template-rows: 1fr 8fr 1fr 1fr;
   grid-column: 1fr;
 }
+
+.container label {
+  grid-row: 3/4;
+  justify-self: center;
+  padding-top: 25px;
+  font-weight: 900;
+  font-size: 2rem;
+  color: #272727;
+}
+
+
 
 .container .button-container {
   background-image: url('images/launchpad.png');
@@ -57,9 +68,12 @@ body {
   justify-items: center;
 }
 
-.container .button-container .button-row #spacer {
-  width: 82px;
-  height: auto;
+.container .button-container button {
+  justify-content: center;
+  justify-self: center;
+  justify-items: center;
+  background-color: var(--light-gray);
+  width: 96px;
 }
 
 .container #projectFilePicker {
@@ -69,9 +83,12 @@ body {
   background-image: url('images/button.png');
   background-position: center;
   background-size: 100% 100%;
+  grid-row: 4/5;
+  grid-column: 1/2;
+  align-self: top;
   
 }
 
-.container .button-container .button-row Button {
-  background-color: transparent;
+.container .button-container .button-row .button {
+  border-radius: 100rem;
 }
