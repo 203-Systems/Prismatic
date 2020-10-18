@@ -44,11 +44,13 @@ body {
   grid-row: 2/3;
 
   background-color: transparent;
-  padding-right:10px;
-  padding-bottom: 10px;
+  padding-left: 2px;
+  padding-top: 2px;
+  padding-right:12px;
+  padding-bottom: 12px ;
 }
 
-.container .button-container .button-row {
-  padding-right: 10px;
+.container .button-container .button-row .Spacer {
+  padding-left: 82px;
   box-sizing: content-box;
 }

@@ -7,3 +7,5 @@ class Spacer extends Component {
         </div>
     }
 }
+
+export default Spacer
