@@ -6,11 +6,6 @@ import Canvas from './Canvas'
 import deviceConfigs from '../deviceConfigs';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.canvasRef = React.createRef();
-  }
-
   state = {  
     projectFile: undefined,
     color: "#000000",
@@ -25,9 +20,9 @@ class App extends Component {
     return (
       <React.Fragment>
         {/* <Navbar/> */}
-        <ProjectFileReader updateProjectFile={this.updateProjectFile} canvasRef={this.canvasRef}/>
+        <ProjectFileReader updateProjectFile={this.updateProjectFile}/>
         {/* <Button color={"#000000"} overlay={"#808080"} x={0} y={0} on={this.on} off={this.off}/> */}
-        <Canvas projectFile={this.state.projectFile} deviceConfig={this.state.deviceConfig} ref={this.canvasRef}/>
+        <Canvas projectFile={this.state.projectFile} deviceConfig={this.state.deviceConfig}/>
       </React.Fragment>
     );
   }

@@ -9,13 +9,6 @@ class Canvas extends Component {
       () => new Array(this.props.deviceConfig.height).fill("#000000")),
   };
 
-  constructor(props) {
-    super(props);
-    // this.generateColorMap();
-    React.forwardRef(props, this);
-    console.log(this.state.colormap);
-  }
-
   keypressHistory = undefined;
 
   keypressHistory = new Array(8).fill(null).map(
@@ -40,16 +33,17 @@ class Canvas extends Component {
     if(this.props.projectFile !== undefined)
     {
       //Sound
-      if(this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[offseted_x] !== undefined && this.props.projectFile.keySound[offseted_x][offseted_y] !== undefined)
+      if(this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0)
       {
         let soundIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
+        // console.log('Play sound ${this.currentChain} ${offseted_x}')
         this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex].play();
       }
       //LED
-      if(this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[offseted_x] !== undefined && this.props.projectFile.keyLED[offseted_x][offseted_y] !== undefined)
+      if(this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[this.currentChain] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0)
       {
         let ledIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play();
+        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play(this);
       }
       //Chain Change
       this.checkChain(x, y);
@@ -71,6 +65,12 @@ class Canvas extends Component {
     console.log("Note Off - " + x.toString() + ' ' + y.toString());
   }
 
+  playAutoplay = () =>
+  {
+    if(this.props.projectFile !== undefined && this.props.projectFile.autoplay !== undefined)
+      this.props.projectFile.autoplay.play(this)
+  }
+
   chainChange = (chain) =>
   {
     console.log("Chain Changed to " + (chain + 1));
@@ -80,25 +80,29 @@ class Canvas extends Component {
   setColorPalette = (x, y, p) =>
   {
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.deviceConfig.canvas_origin, "+");
-    this.setState({colormap: this.state.colormap[offseted_x][offseted_y] = palette[p]})
+    this.state.colormap[x][y] = palette[p]
+    this.setState({colormap: this.state.colormap})
   }
 
   setMCColorPalette = (mc, p) =>
   {
     let [x, y] = this.props.deviceConfig.mcTable[mc];
-    this.setState({colormap: this.state.colormap[x][y] = palette[p]})
+    this.state.colormap[x][y] = palette[p]
+    this.setState({colormap: this.state.colormap})
   }
 
   setColorHEX = (x, y, hex) =>
   {
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.deviceConfig.canvas_origin, "+");
-    this.setState({colormap: this.state.colormap[offseted_x][offseted_y] = hex})
+    this.state.colormap[x][y] = hex
+    this.setState({colormap: this.state.colormap})
   }
 
   setMCColorHEX = (mc, hex) =>
   {
     let [x, y] = this.props.deviceConfig.mcTable[mc];
-    this.setState({colormap: this.state.colormap[x][y] = hex})
+    this.state.colormap[x][y] = hex
+    this.setState({colormap: this.state.colormap})
   }
 
   // Overlays a color
@@ -176,6 +180,7 @@ class Canvas extends Component {
             </div>
           );
         })}
+      <button onClick={this.playAutoplay}>Auto Play</button>
       </div>
     );
   }
