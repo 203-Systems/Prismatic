@@ -109,16 +109,15 @@ class Canvas extends Component {
   colorOverlay = (hex, overlay) => {
     let [r, g, b] = this.toRGB(hex)
     let [r0, g0, b0] = this.toRGB(overlay)
-    r = r * (255 - r0) / 255 + r0;
-    g = g * (255 - g0) / 255 + g0;
-    b = b * (255 - b0) / 255 + b0;
+    r = Math.round(r * (255 - r0) / 255 + r0);
+    g = Math.round(g * (255 - g0) / 255 + g0);
+    b = Math.round(b * (255 - b0) / 255 + b0);
     return this.toHEX(r, g, b)
   }
 
   // Converts a CHAD HEX color to a beta RGB color
   toRGB = (hex) => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    if (result === null) return [0, 0, 0];
     return [parseInt(result[1], 16),
             parseInt(result[2], 16),
             parseInt(result[3], 16)]
