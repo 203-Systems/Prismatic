@@ -27,7 +27,9 @@ class App extends Component {
         {/* <Navbar/> */}
         <ProjectFileReader updateProjectFile={this.updateProjectFile} canvasRef={this.canvasRef}/>
         {/* <Button color={"#000000"} overlay={"#808080"} x={0} y={0} on={this.on} off={this.off}/> */}
-        <Canvas projectFile={this.state.projectFile} deviceConfig={this.state.deviceConfig} ref={this.canvasRef}/>
+        <div className='button-container'>
+          <Canvas projectFile={this.state.projectFile} deviceConfig={this.state.deviceConfig} ref={this.canvasRef}/>
+        </div>
       </React.Fragment>
     );
   }
