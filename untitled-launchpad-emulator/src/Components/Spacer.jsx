@@ -9,7 +9,7 @@ class Spacer extends Component {
 
     render = () => (
         <div>
-            <Spacer className ='Spacer'/>
+            <Spacer/>
         </div>
     )
 }

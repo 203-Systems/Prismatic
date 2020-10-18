@@ -98,10 +98,11 @@ class Canvas extends Component {
         let ledIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play(this);
       }
+      //Update History
+      if(this.keypressHistory[this.currentChain][x] != undefined && this.keypressHistory[this.currentChain][x][y] != undefined)
+        this.keypressHistory[this.currentChain][x][y] += 1;
       //Chain Change
       this.checkChain(x, y, config);
-      //Update History
-      this.keypressHistory[this.currentChain][x][y] += 1;
     }
   }
 
@@ -141,7 +142,7 @@ class Canvas extends Component {
   {
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.layoutConfig.canvas_origin, "+");
     this.state.colormap[offseted_x][offseted_y] = palette[p]
-    this.setState({colormap: this.state.colormap})
+    // this.setState({colormap: this.state.colormap})
     if(this.props.outputDevice != undefined)
     {
       let [output_offseted_x, output_offseted_y] = this.arrayCalculation([x, y], this.props.inputConfig.canvas_origin, "+");
@@ -151,9 +152,12 @@ class Canvas extends Component {
 
   setMCColorPalette = (mc, p) =>
   {
-    let [x, y] = this.props.layoutConfig.mcTable[mc];
-    this.state.colormap[x][y] = palette[p]
-    // this.setState({colormap: this.state.colormap})
+    if(this.props.layoutConfig.mcTable[mc] != null)
+    {
+      let [x, y] = this.props.layoutConfig.mcTable[mc];
+      this.state.colormap[x][y] = palette[p]
+      // this.setState({colormap: this.state.colormap})
+    }
   }
 
   setColorHEX = (x, y, hex) =>
@@ -165,9 +169,12 @@ class Canvas extends Component {
 
   setMCColorHEX = (mc, hex) =>
   {
-    let [x, y] = this.props.layoutConfig.mcTable[mc];
-    this.state.colormap[x][y] = hex
-    // this.setState({colormap: this.state.colormap})
+    if(this.props.layoutConfig.mcTable[mc] != null)
+    {
+      let [x, y] = this.props.layoutConfig.mcTable[mc];
+      this.state.colormap[x][y] = hex
+      // this.setState({colormap: this.state.colormap})
+    }
   }
 
   // // Overlays a color
@@ -239,17 +246,17 @@ class Canvas extends Component {
               {this.props.layoutConfig.layout[y].map((value, x) => {
                 switch (value) {
                   case "◻":
-                    return <Button x={x} y={y} color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
+                    return <Button x={x} y={y} class="LEDButtonSquare"color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
                   case "⬤":
-                    return <Button x={x} y={y} color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
+                    return <Button x={x} y={y} class="LEDButtonSquare" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
                   case "◪":
                   case "⬕":
                   case "⬔":
                   case "◩":
-                    return <Button x={x} y={y} color={this.state.colormap[x][y]} on={this.keyOn} Zoff={this.keyOff}/>;
+                    return <Button x={x} y={y} class="LEDButtonSquare" color={this.state.colormap[x][y]} on={this.keyOn} Zoff={this.keyOff}/>;
                   default:
                     return <div id='spacer' style={{
-                      width: '96px'
+                      width: '112px'
                     }}></div>;
                 }
               })}

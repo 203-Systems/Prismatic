@@ -25,12 +25,12 @@ class Button extends Component {
                 {
                 backgroundColor: this.props.color,
                 width: '96px',
-                height: '89px'
+                height: '90px'
                 }
             }>
-                <svg width='80' height='80'>
+                {/* <svg width='80' height='80'>
                     <path d='M75,80H5a5,5,0,0,1-5-5V5A5,5,0,0,1,5,0H62a8.33,8.33,0,0,1,5.12,2.12L77.88,12.88A8.33,8.33,0,0,1,80,18V75A5,5,0,0,1,75,80Z' fill={this.props.color} stroke='black' stoke-width='2px'/>
-                </svg>
+                </svg> */}
                 {/* {this.props.x.toString() + ' ' + this.props.y.toString()} */}
             </button>
         </div>

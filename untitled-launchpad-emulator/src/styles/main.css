@@ -29,7 +29,7 @@ body {
 .container {
   margin: auto;
   display: grid;
-  grid-template-rows: 1fr 8fr 1fr 1fr;
+  grid-template-rows: 0.75fr 8fr 0.3fr 1fr;
   grid-column: 1fr;
 }
 
@@ -91,4 +91,17 @@ body {
 
 .container .button-container .button-row .button {
   border-radius: 100rem;
+}
+
+.LEDButtonSquare{
+  height:80px;
+  width:80px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-left: 8px;
+  margin-right: 8px;
+  border: 2px solid black;
+  border-radius: 5px;
+  outline: 0 !important;
+  touch-action: manipulation;
 }

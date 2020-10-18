@@ -22,6 +22,7 @@ class KeyLED
         switch(command[0])
         {
           case 'o': //set color
+          case 'on': //set color
             if(command.length === 5) //PaletteMode
             {
               if(command[1] !== "mc")
@@ -45,6 +46,7 @@ class KeyLED
             }
               break;
           case 'f': //color off
+          case 'off': //color off
           if(command[1] !== "mc")
             {
               canvas.setColorPalette(parseInt(command[2] - 1), parseInt(command[1] - 1), 0);

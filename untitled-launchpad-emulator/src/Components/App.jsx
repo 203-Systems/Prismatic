@@ -26,7 +26,7 @@ class App extends Component {
   state = {  
     projectFile: undefined,
     color: "#000000",
-    layoutConfig: deviceConfigs[1], //Default Launchpad Pro
+    layoutConfig: deviceConfigs[0], //Default Launchpad Pro
     inputDevice: undefined,
     inputConfig: undefined,
     outputDevice: undefined,
@@ -83,11 +83,11 @@ class App extends Component {
                 inputDevice={this.state.inputDevice} inputConfig={this.state.inputConfig}
                 outputDevice={this.state.outputDevice} outputConfig={this.state.outputConfig}/>
         </div>
-        <div>
+        {/* <div>
           <Selector className='test' name='test' options={options}/>
           <Selector className='test' name='test' options={options}/>
           <Selector className='test' name='test' options={options}/>
-        </div>
+        </div> */}
         </div>
       </React.Fragment>
     );
