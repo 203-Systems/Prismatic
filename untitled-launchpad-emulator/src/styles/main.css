@@ -14,10 +14,81 @@ body {
     margin: 0;
     border: 0;
     box-sizing: border-box;
-    
+
+    width: 100vw;
+    height: 100vh;
+
+
     font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  margin: auto;
+  display: grid;
+  grid-template-rows: 1fr 8fr 1fr 1fr;
+  grid-column: 1fr;
+}
+
+.container label {
+  grid-row: 3/4;
+  justify-self: center;
+  padding-top: 25px;
+  font-weight: 900;
+  font-size: 2rem;
+  color: #272727;
+}
+
+
+
+.container .button-container {
+  background-image: url('images/launchpad.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+
+  margin: auto;
+  grid-column: 1/2;
+  grid-row: 2/3;
+
+  background-color: transparent;
+  padding-left: 2px;
+  padding-top: 2px;
+  padding-right:12px;
+  padding-bottom: 11px ;
+  display: flex;
+}
+
+.container .button-container .button-row {
+  justify-content: center;
+  justify-self: center;
+  justify-items: center;
+}
+
+.container .button-container button {
+  justify-content: center;
+  justify-self: center;
+  justify-items: center;
+  background-color: var(--light-gray);
+  width: 96px;
+}
+
+.container #projectFilePicker {
+  padding: 20px;
+  margin: auto; 
+  color: whitesmoke;
+  background-image: url('images/button.png');
+  background-position: center;
+  background-size: 100% 100%;
+  grid-row: 4/5;
+  grid-column: 1/2;
+  align-self: top;
+  
+}
+
+.container .button-container .button-row .button {
+  border-radius: 100rem;
 }

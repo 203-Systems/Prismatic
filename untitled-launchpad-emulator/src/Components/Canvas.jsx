@@ -2,6 +2,7 @@ import React, { Component } from "react";
 // import ProjectFileReader from './Components/projectFileReader';
 import Button from './Button'
 import palette from '../palette'
+import Spacer from './Spacer'
 
 class Canvas extends Component {
   constructor(props) {
@@ -234,7 +235,7 @@ class Canvas extends Component {
       <div>
         {this.props.layoutConfig.layout.map((value, y) => {
           return (
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex" }} className='buttom-row'>
               {this.props.layoutConfig.layout[y].map((value, x) => {
                 switch (value) {
                   case "◻":
@@ -247,7 +248,9 @@ class Canvas extends Component {
                   case "◩":
                     return <Button x={x} y={y} color={this.state.colormap[x][y]} on={this.keyOn} Zoff={this.keyOff}/>;
                   default:
-                    return <spacer className = "Spacer"></spacer>;
+                    return <div id='spacer' style={{
+                      width: '96px'
+                    }}></div>;
                 }
               })}
             </div>

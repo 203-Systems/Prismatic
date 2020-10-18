@@ -4,7 +4,18 @@ import ProjectFileReader from './ProjectFileReader'
 import Button from './Button'
 import Canvas from './Canvas'
 import deviceConfigs from '../deviceConfigs';
+import Selector from './Selector';
 
+
+const options = [
+  {
+    name: 'h',
+    value: 'h'
+  }
+]
+
+
+  
 class App extends Component {
   constructor(props)
   {
@@ -63,12 +74,21 @@ class App extends Component {
   render() { 
     return (
       <React.Fragment>
+        <div className='container'>
         {/* <Navbar/> */}
         <ProjectFileReader updateProjectFile={this.updateProjectFile}/>
         {/* <Button color={"#000000"} overlay={"#808080"} x={0} y={0} on={this.on} off={this.off}/> */}
-        <Canvas projectFile={this.state.projectFile} layoutConfig={this.state.layoutConfig} 
+        <div className='button-container'>
+          <Canvas projectFile={this.state.projectFile} layoutConfig={this.state.layoutConfig} 
                 inputDevice={this.state.inputDevice} inputConfig={this.state.inputConfig}
                 outputDevice={this.state.outputDevice} outputConfig={this.state.outputConfig}/>
+        </div>
+        <div>
+          <Selector className='test' name='test' options={options}/>
+          <Selector className='test' name='test' options={options}/>
+          <Selector className='test' name='test' options={options}/>
+        </div>
+        </div>
       </React.Fragment>
     );
   }
