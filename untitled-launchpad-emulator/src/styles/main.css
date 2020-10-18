@@ -47,10 +47,27 @@ body {
   padding-left: 2px;
   padding-top: 2px;
   padding-right:12px;
-  padding-bottom: 12px ;
+  padding-bottom: 11px ;
+  display: flex;
 }
 
-.container .button-container .button-row .Spacer {
-  padding-left: 82px;
-  box-sizing: content-box;
+.container .button-container .button-row {
+  justify-content: center;
+  justify-self: center;
+  justify-items: center;
+}
+
+.container .button-container .button-row #spacer {
+  width: 82px;
+  height: auto;
+}
+
+.container #projectFilePicker {
+  padding: 20px;
+  margin: auto; 
+  color: whitesmoke;
+  background-image: url('images/button.png');
+  background-position: center;
+  background-size: 100% 100%;
+  
 }
