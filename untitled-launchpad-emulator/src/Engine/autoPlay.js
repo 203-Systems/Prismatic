@@ -6,8 +6,9 @@ class AutoPlay
     this.autoplay = text;
   }
 
-  play = async(canvas) =>
+  play = async(canvas, canvas_origin) =>
   {
+    console.log(canvas_origin);
     for(var line of this.autoplay)
     {
       console.log(line)
@@ -19,23 +20,23 @@ class AutoPlay
       switch(command[0])
       {
         case 't':
-          case 'o':
-            canvas.keyOn(parseInt(command[2]), parseInt(command[1]));
-            break;
-          case 'f':
-            canvas.keyOff(parseInt(command[2]), parseInt(command[1]));
-            break;
-          case 'd':
-            // console.time("Autoplay wait");
-            await this.wait(parseInt(command[1]));
-            // console.timeEnd("Autoplay wait");
-            // await this.better_wait(parseInt(parameter[1]));
-            break;
-          case 'c':
-          case 'chain':
-            canvas.chainChange(parseInt(command[1]) - 1);
-            break;
-          default:
+        case 'o':
+          canvas.keyOn(parseInt(command[2]) - 1 + canvas_origin[0], parseInt(command[1]) - 1 + canvas_origin[1]);
+          break;
+        case 'f':
+          canvas.keyOff(parseInt(command[2]) - 1 + canvas_origin[0], parseInt(command[1]) - 1 + canvas_origin[1]);
+          break;
+        case 'd':
+          // console.time("Autoplay wait");
+          await this.wait(parseInt(command[1]));
+          // console.timeEnd("Autoplay wait");
+          // await this.better_wait(parseInt(parameter[1]));
+          break;
+        case 'c':
+        case 'chain':
+          canvas.chainChange(parseInt(command[1]) - 1);
+          break;
+        default:
       }
     }
   }

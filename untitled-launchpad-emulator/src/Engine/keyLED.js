@@ -26,32 +26,32 @@ class KeyLED
             {
               if(command[1] !== "mc")
               {
-                canvas.setColorPalette(parseInt(command[2]), parseInt(command[1]), parseInt(command[4]));
+                canvas.setColorPalette(parseInt(command[2] - 1), parseInt(command[1] - 1), parseInt(command[4]));
               }
               else
               {
-                canvas.setMCColorPalette(parseInt(command[2]), parseInt(command[4]));
+                canvas.setMCColorPalette(parseInt(command[2] - 1), parseInt(command[4]));
               }
             }else if(command.length === 4)
             {
               if(command[1] !== "mc")
               {
-                canvas.setColorHEX(parseInt(command[2]), parseInt(command[1]), "#" + command[3]);
+                canvas.setColorHEX(parseInt(command[2] - 1), parseInt(command[1] - 1), "#" + command[3]);
               }
               else
               {
-                canvas.setMCColorHEX(parseInt(command[2]), "#" + command[3]);
+                canvas.setMCColorHEX(parseInt(command[2] - 1), "#" + command[3]);
               }
             }
               break;
           case 'f': //color off
           if(command[1] !== "mc")
             {
-              canvas.setColorPalette(parseInt(command[2]), parseInt(command[1]), 0);
+              canvas.setColorPalette(parseInt(command[2] - 1), parseInt(command[1] - 1), 0);
             }
             else
             {
-              canvas.setMCColorPalette(parseInt(command[2]), 0);
+              canvas.setMCColorPalette(parseInt(command[2] - 1), 0);
             }
             break;
           case 'd': //wait
