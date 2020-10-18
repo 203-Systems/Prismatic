@@ -133,7 +133,7 @@ class ProjectFile
       if(command.length < 2) //For empty lines
         continue;
 
-      console.log(command);
+      // console.log(command);
       let sound = await soundFiles[command[3]].async("blob");
       sound = window.URL.createObjectURL(sound);
       let format = command[3].split(".").pop()
