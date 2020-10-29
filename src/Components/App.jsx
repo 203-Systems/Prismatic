@@ -43,7 +43,7 @@ class App extends Component {
     for (var input of midiAccess.inputs.values())
     {
       console.log(input.name);
-      if(input.name.includes("Launchpad MK2"))
+      if(input.name.includes("Matrix"))
       {
         console.log(input.name + " Input Assigned")
         this.setState({inputDevice: input});
@@ -57,7 +57,7 @@ class App extends Component {
     for (var output of midiAccess.outputs.values())
     {
       console.log(output.name);
-      if(input.name.includes("Launchpad MK2"))
+      if(input.name.includes("Matrix"))
       {
         console.log(output.name + " Input Assigned")
         this.setState({outputDevice: output});
