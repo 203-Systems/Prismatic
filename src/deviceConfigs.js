@@ -1,8 +1,6 @@
-const deviceConfigs = [
-  //Launchpad Pro
+const deviceConfigs = {
+  "Launchpad Pro":
   {
-    name: "Launchpad Pro",
-
     channel: 1,
     
     layout: [
@@ -42,11 +40,34 @@ const deviceConfigs = [
       [9,1], [9,2], [9,3], [9,4], [9,5], [9,6], [9,7], [9,8],
       [8,9], [7,9], [6,9], [5,9], [4,9], [3,9], [2,9], [1,9],
       [0,8], [0,7], [0,6], [0,5], [0,4], [0,3], [0,2], [0,1]],
-  },
-  //Launchpad MK2
-  {
-    name: "Launchpad MK2",
 
+    hexSysexGen: function()
+    {
+      if(arguments.length != 2 && arguments.length != 3)
+        return [] //Error
+      switch(arguments.length)
+      {
+        case 2: //MC
+          var mc = arguments[0]
+          if(this.mcTable[mc] == null)
+            return []
+          var x,y = this.mcTable[mc]
+          var hex = arguments[1]
+        case 3: //XY
+          var x = arguments[0] + 1
+          var y = arguments[1] + 1
+          var hex = arguments[2]
+        default:
+          var xy = x * 10 + y
+          var r = (hex >> 16) >> 2 //6 bit color
+          var g = (hex & 0xFF00 >> 8) >> 2
+          var b = (hex & 0xFF) >> 2
+          return [240, 0, 32, 41, 2, 24, 11, xy, r, g, b, 247]
+      }
+    }
+  },
+  "Launchpad MK2":
+  {
     channel: 1,
     
     layout: [
@@ -79,10 +100,35 @@ const deviceConfigs = [
     chainKey: [[8,1], [8,2], [8,3], [8,4], [8,5], [8,6], [8,7], [8,8]],
 
     mcTable: [
-      [0,0], [1,0], [2,0], [3,0], [4,0], [5,0], [6,0], [7,0],,
+      [0,0], [1,0], [2,0], [3,0], [4,0], [5,0], [6,0], [7,0],
       [8,1], [8,2], [8,3], [8,4], [8,5], [8,6], [8,7], [8,8],
       null, null, null, null, null, null, null, null,
       null, null, null, null, null, null, null, null,],
+
+    hexSysexGen: function()
+    {
+      if(arguments.length != 2 && arguments.length != 3)
+        return [] //Error
+      switch(arguments.length)
+      {
+        case 2: //MC
+          var mc = arguments[0]
+          if(this.mcTable[mc] == null)
+            return []
+          var x,y = this.mcTable[mc]
+          var hex = arguments[1]
+        case 3: //XY
+          var x = arguments[0] + 1
+          var y = arguments[1] + 1
+          var hex = arguments[2]
+        default:
+          var xy = x * 10 + y
+          var r = (hex >> 16) >> 2 //6 bit color
+          var g = (hex & 0xFF00 >> 8) >> 2
+          var b = (hex & 0xFF) >> 2
+          return [240, 0, 32, 41, 2, 24, 11, xy, r, g, b, 247]
+      }
+    }
   },
   //Launchpad X
   // {
@@ -122,10 +168,8 @@ const deviceConfigs = [
   //     null, null, null, null, null, null, null, null,
   //     null, null, null, null, null, null, null, null,],
   // },
-  //203 Matrix
+  "203 Matrix":
   {
-    name: "Matrix",
-
     channel: 2,
     
     layout: [
@@ -161,7 +205,31 @@ const deviceConfigs = [
       null, null, null, null, null, null, null, null,
       null, null, null, null, null, null, null, null,
       null, null, null, null, null, null, null, null,],
+
+    hexSysexGen: function()
+      {
+        if(arguments.length != 3)
+          return [] //Error
+        switch(arguments.length)
+        {
+          // case 2: //MC
+          //   var mc = arguments[0]
+          //   if(this.mcTable[mc] == null)
+          //     return []
+          //   var x,y = this.mcTable[mc]
+          //   var hex = arguments[1]
+          case 3: //XY
+            var x = arguments[0]
+            var y = arguments[1]
+            var hex = arguments[2]
+          default:
+            var r = (hex >> 16) >> 1 //7 bit color
+            var g = (hex & 0xFF00 >> 8) >> 1
+            var b = (hex & 0xFF) >> 1
+            return [240, 0, 2, 3, 1, 0, 18, 32, 0, 3, r, g, b, 247]
+        }
+      }
   },
-]
+}
 
 export default deviceConfigs;

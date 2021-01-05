@@ -5,7 +5,8 @@
 }
 
 body {
-    background-image: url('images/background.png');
+    /* background-image: url('images/background.png'); */
+    background-color: grey;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
@@ -45,7 +46,7 @@ body {
 
 
 .container .button-container {
-  background-image: url('images/launchpad.png');
+  /* background-image: url('images/launchpad.png'); */
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100% 100%;
@@ -54,12 +55,13 @@ body {
   grid-column: 1/2;
   grid-row: 2/3;
 
-  background-color: transparent;
-  padding-left: 2px;
-  padding-top: 2px;
-  padding-right:12px;
-  padding-bottom: 11px ;
+  background-color: var(--dark-gray);
+  padding-left: 10px;
+  padding-top: 20px;
+  padding-right:22px;
+  padding-bottom: 22px ;
   display: flex;
+  border-radius: 30px;
 }
 
 .container .button-container .button-row {
@@ -73,14 +75,14 @@ body {
   justify-self: center;
   justify-items: center;
   background-color: var(--light-gray);
-  width: 96px;
+  width: 100px;
 }
 
 .container #projectFilePicker {
   padding: 20px;
   margin: auto; 
-  color: whitesmoke;
-  background-image: url('images/button.png');
+  background-color: gray;
+  /* background-image: url('images/button.png'); */
   background-position: center;
   background-size: 100% 100%;
   grid-row: 4/5;
@@ -102,6 +104,19 @@ body {
   margin-right: 8px;
   border: 2px solid black;
   border-radius: 5px;
+  outline: 0 !important;
+  touch-action: manipulation;
+}
+
+.LEDButtonCircle{
+  height:60px;
+  width:60px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-left: 8px;
+  margin-right: 8px;
+  border: 2px solid black;
+  border-radius: 60px;
   outline: 0 !important;
   touch-action: manipulation;
 }

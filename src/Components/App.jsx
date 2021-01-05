@@ -26,7 +26,7 @@ class App extends Component {
   state = {  
     projectFile: undefined,
     color: "#000000",
-    layoutConfig: deviceConfigs[0], //Default Launchpad Pro
+    layoutConfig: deviceConfigs["Launchpad Pro"], //Default Launchpad Pro
     inputDevice: undefined,
     inputConfig: undefined,
     outputDevice: undefined,
@@ -47,7 +47,7 @@ class App extends Component {
       {
         console.log(input.name + " Input Assigned")
         this.setState({inputDevice: input});
-        this.setState({inputConfig: deviceConfigs[1]});
+        this.setState({inputConfig: deviceConfigs["Launchpad Pro"]});
         // input.onmidimessage = this.midiInputHandler;
         // console.log()
       }
@@ -61,7 +61,7 @@ class App extends Component {
       {
         console.log(output.name + " Input Assigned")
         this.setState({outputDevice: output});
-        this.setState({outputConfig: deviceConfigs[1]});
+        this.setState({outputConfig: deviceConfigs["Launchpad Pro"]});
       }
     }
   }
@@ -75,19 +75,12 @@ class App extends Component {
     return (
       <React.Fragment>
         <div className='container'>
-        {/* <Navbar/> */}
         <ProjectFileReader updateProjectFile={this.updateProjectFile}/>
-        {/* <Button color={"#000000"} overlay={"#808080"} x={0} y={0} on={this.on} off={this.off}/> */}
-        <div className='button-container'>
+          <div className='button-container'>
           <Canvas projectFile={this.state.projectFile} layoutConfig={this.state.layoutConfig} 
                 inputDevice={this.state.inputDevice} inputConfig={this.state.inputConfig}
                 outputDevice={this.state.outputDevice} outputConfig={this.state.outputConfig}/>
         </div>
-        {/* <div>
-          <Selector className='test' name='test' options={options}/>
-          <Selector className='test' name='test' options={options}/>
-          <Selector className='test' name='test' options={options}/>
-        </div> */}
         </div>
       </React.Fragment>
     );

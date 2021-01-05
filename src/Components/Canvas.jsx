@@ -167,6 +167,7 @@ class Canvas extends Component {
   {
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.layoutConfig.canvas_origin, "+");
     this.state.colormap[offseted_x][offseted_y] = hex
+    this.sendSysex(this.props.outputConfig.hexSysexGen(x, y, hex))
   }
 
   setMCColorHEX = (mc, hex) =>
@@ -175,6 +176,10 @@ class Canvas extends Component {
     {
       let [x, y] = this.props.layoutConfig.mcTable[mc];
       this.state.colormap[x][y] = hex
+    }
+    if(this.props.outputConfig.mcTable[mc] != null)
+    {
+      this.sendSysex(this.props.outputConfig.hexSysexGen(mc, hex))
     }
   }
 
@@ -205,6 +210,11 @@ class Canvas extends Component {
         this.props.outputDevice.send([0xB0 + channel - 1, note, value])
         break;
     }
+  }
+
+  sendSysex(message)
+  {
+    this.props.outputDevice.send(message)
   }
 
   // // Overlays a color
@@ -278,7 +288,7 @@ class Canvas extends Component {
                   case "◻":
                     return <Button x={x} y={y} class="LEDButtonSquare"color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
                   case "⬤":
-                    return <Button x={x} y={y} class="LEDButtonSquare" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
+                    return <Button x={x} y={y} class="LEDButtonCircle" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
                   case "◪":
                   case "⬕":
                   case "⬔":
@@ -293,7 +303,7 @@ class Canvas extends Component {
             </div>
           );
         })}
-      <button onClick={this.playAutoplay}>Auto Play</button>
+      {/* <button onClick={this.playAutoplay}>Auto Play</button> */}
       </div>
     );
   }
