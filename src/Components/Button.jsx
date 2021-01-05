@@ -24,8 +24,6 @@ class Button extends Component {
             <button onMouseDown={this.on} onTouchStart={this.on} className={this.props.class} style={
                 {
                 backgroundColor: this.props.color,
-                width: '96px',
-                height: '90px'
                 }
             }>
                 {/* <svg width='80' height='80'>

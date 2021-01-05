@@ -76,7 +76,7 @@ class App extends Component {
       <React.Fragment>
         <div className='container'>
         <ProjectFileReader updateProjectFile={this.updateProjectFile}/>
-          <div className='button-container'>
+        <div className='button-container' style={{padding: this.state.layoutConfig.padding, "border-radius": this.state.layoutConfig.radius}}>
           <Canvas projectFile={this.state.projectFile} layoutConfig={this.state.layoutConfig} 
                 inputDevice={this.state.inputDevice} inputConfig={this.state.inputConfig}
                 outputDevice={this.state.outputDevice} outputConfig={this.state.outputConfig}/>

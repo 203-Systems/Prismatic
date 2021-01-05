@@ -92,15 +92,18 @@ class Canvas extends Component {
         this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex].stop();
         this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex].play();
       }
+
       //LED
       if(this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[this.currentChain] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0)
       {
         let ledIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play(this);
       }
+
       //Update History
       if(this.keypressHistory[this.currentChain][x] != undefined && this.keypressHistory[this.currentChain][x][y] != undefined)
         this.keypressHistory[this.currentChain][x][y] += 1;
+
       //Chain Change
       this.checkChain(x, y, config);
     }
@@ -282,7 +285,7 @@ class Canvas extends Component {
       <div>
         {this.props.layoutConfig.layout.map((value, y) => {
           return (
-            <div style={{ display: "flex" }} className='buttom-row'>
+            <div className='button-row'>
               {this.props.layoutConfig.layout[y].map((value, x) => {
                 switch (value) {
                   case "◻":
@@ -296,7 +299,7 @@ class Canvas extends Component {
                     return <Button x={x} y={y} class="LEDButtonSquare" color={this.state.colormap[x][y]} on={this.keyOn} Zoff={this.keyOff}/>;
                   default:
                     return <div id='spacer' style={{
-                      width: '112px'
+                      width: '96px'
                     }}></div>;
                 }
               })}

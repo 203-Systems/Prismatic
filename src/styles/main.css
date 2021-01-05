@@ -4,28 +4,6 @@
     --light-gray: #808080;
 }
 
-body {
-    /* background-image: url('images/background.png'); */
-    background-color: grey;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-    background-size: cover;
-
-    margin: 0;
-    border: 0;
-    box-sizing: border-box;
-
-    width: 100vw;
-    height: 100vh;
-
-
-    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
 
 .container {
   margin: auto;
@@ -56,18 +34,16 @@ body {
   grid-row: 2/3;
 
   background-color: var(--dark-gray);
-  padding-left: 10px;
-  padding-top: 20px;
-  padding-right:22px;
-  padding-bottom: 22px ;
+  padding: 25px;
   display: flex;
   border-radius: 30px;
 }
 
-.container .button-container .button-row {
+.button-row {
   justify-content: center;
   justify-self: center;
   justify-items: center;
+  display: flex;
 }
 
 .container .button-container button {
@@ -75,7 +51,6 @@ body {
   justify-self: center;
   justify-items: center;
   background-color: var(--light-gray);
-  width: 100px;
 }
 
 .container #projectFilePicker {
@@ -89,10 +64,6 @@ body {
   grid-column: 1/2;
   align-self: top;
   
-}
-
-.container .button-container .button-row .button {
-  border-radius: 100rem;
 }
 
 .LEDButtonSquare{
@@ -109,14 +80,12 @@ body {
 }
 
 .LEDButtonCircle{
-  height:60px;
-  width:60px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  margin-left: 8px;
-  margin-right: 8px;
+  height:66px;
+  width:66px;
+  padding: 7px;
+  margin: 15px;
   border: 2px solid black;
   border-radius: 60px;
-  outline: 0 !important;
+  outline: 0 !important;  
   touch-action: manipulation;
 }
