@@ -291,7 +291,7 @@ class Canvas extends Component {
                   case "◻":
                     return <Button x={x} y={y} class="LEDButtonSquare"color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
                   case "⬤":
-                    return <Button x={x} y={y} class="LEDButtonCircle" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
+                    return <Button x={x} y={y} class="LEDButtonCircle75" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
                   case "◪":
                   case "⬕":
                   case "⬔":

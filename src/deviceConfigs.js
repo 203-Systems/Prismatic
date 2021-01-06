@@ -2,6 +2,7 @@ const deviceConfigs = {
   "Launchpad Pro":
   {
     channel: 1,
+    midiNameRegex: "^Launchpad Pro",
     
     layout: [
       ["　", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "　"],
@@ -73,6 +74,7 @@ const deviceConfigs = {
   "Launchpad MK2":
   {
     channel: 1,
+    midiNameRegex: "^Launchpad MK2",
     
     layout: [
       ["⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "　"],
@@ -179,6 +181,7 @@ const deviceConfigs = {
   "203 Matrix":
   {
     channel: 2,
+    midiNameRegex: "^Matrix",
     
     layout: [
       ["◻", "◻", "◻", "◻", "◻", "◻", "◻", "◻"],

@@ -4,38 +4,12 @@
     --light-gray: #808080;
 }
 
-
-.container {
-  margin: auto;
-  display: grid;
-  grid-template-rows: 0.75fr 8fr 0.3fr 1fr;
-  grid-column: 1fr;
-}
-
-.container label {
-  grid-row: 3/4;
-  justify-self: center;
-  padding-top: 25px;
-  font-weight: 900;
-  font-size: 2rem;
-  color: #272727;
-}
-
-
-
-.container .button-container {
-  /* background-image: url('images/launchpad.png'); */
-  background-repeat: no-repeat;
+.canvas {
   background-position: center;
-  background-size: 100% 100%;
-
-  margin: auto;
-  grid-column: 1/2;
-  grid-row: 2/3;
 
   background-color: var(--dark-gray);
   padding: 25px;
-  display: flex;
+  display: inline-flex;
   border-radius: 30px;
 }
 
@@ -44,26 +18,6 @@
   justify-self: center;
   justify-items: center;
   display: flex;
-}
-
-.container .button-container button {
-  justify-content: center;
-  justify-self: center;
-  justify-items: center;
-  background-color: var(--light-gray);
-}
-
-.container #projectFilePicker {
-  padding: 20px;
-  margin: auto; 
-  background-color: gray;
-  /* background-image: url('images/button.png'); */
-  background-position: center;
-  background-size: 100% 100%;
-  grid-row: 4/5;
-  grid-column: 1/2;
-  align-self: top;
-  
 }
 
 .LEDButtonSquare{
@@ -79,7 +33,7 @@
   touch-action: manipulation;
 }
 
-.LEDButtonCircle{
+.LEDButtonCircle75{
   height:66px;
   width:66px;
   padding: 7px;

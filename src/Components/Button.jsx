@@ -20,7 +20,7 @@ class Button extends Component {
     shouldUpdate = (nextProps) => this.props.color !== nextProps.color
 
     render = () => (
-        <div className='button' >
+        <div>
             <button onMouseDown={this.on} onTouchStart={this.on} className={this.props.class} style={
                 {
                 backgroundColor: this.props.color,
