@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/prismatic/static/css/main.2d00950d.chunk.css",
+    "main.js": "/prismatic/static/js/main.f1d65992.chunk.js",
+    "main.js.map": "/prismatic/static/js/main.f1d65992.chunk.js.map",
+    "runtime-main.js": "/prismatic/static/js/runtime-main.fd3310cc.js",
+    "runtime-main.js.map": "/prismatic/static/js/runtime-main.fd3310cc.js.map",
+    "static/js/2.38bf1ccc.chunk.js": "/prismatic/static/js/2.38bf1ccc.chunk.js",
+    "static/js/2.38bf1ccc.chunk.js.map": "/prismatic/static/js/2.38bf1ccc.chunk.js.map",
+    "index.html": "/prismatic/index.html",
+    "static/css/main.2d00950d.chunk.css.map": "/prismatic/static/css/main.2d00950d.chunk.css.map",
+    "static/js/2.38bf1ccc.chunk.js.LICENSE.txt": "/prismatic/static/js/2.38bf1ccc.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.fd3310cc.js",
+    "static/js/2.38bf1ccc.chunk.js",
+    "static/css/main.2d00950d.chunk.css",
+    "static/js/main.f1d65992.chunk.js"
+  ]
+}
