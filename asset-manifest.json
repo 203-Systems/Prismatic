@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/UntitledLaunchpadEmulator/static/css/main.2d00950d.chunk.css",
-    "main.js": "/UntitledLaunchpadEmulator/static/js/main.974f3e4e.chunk.js",
-    "main.js.map": "/UntitledLaunchpadEmulator/static/js/main.974f3e4e.chunk.js.map",
-    "runtime-main.js": "/UntitledLaunchpadEmulator/static/js/runtime-main.f6f3fae2.js",
-    "runtime-main.js.map": "/UntitledLaunchpadEmulator/static/js/runtime-main.f6f3fae2.js.map",
-    "static/js/2.38bf1ccc.chunk.js": "/UntitledLaunchpadEmulator/static/js/2.38bf1ccc.chunk.js",
-    "static/js/2.38bf1ccc.chunk.js.map": "/UntitledLaunchpadEmulator/static/js/2.38bf1ccc.chunk.js.map",
-    "index.html": "/UntitledLaunchpadEmulator/index.html",
-    "static/css/main.2d00950d.chunk.css.map": "/UntitledLaunchpadEmulator/static/css/main.2d00950d.chunk.css.map",
-    "static/js/2.38bf1ccc.chunk.js.LICENSE.txt": "/UntitledLaunchpadEmulator/static/js/2.38bf1ccc.chunk.js.LICENSE.txt"
+    "main.css": "/static/css/main.2d00950d.chunk.css",
+    "main.js": "/static/js/main.59b85645.chunk.js",
+    "main.js.map": "/static/js/main.59b85645.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.5e038ad1.js",
+    "runtime-main.js.map": "/static/js/runtime-main.5e038ad1.js.map",
+    "static/js/2.38bf1ccc.chunk.js": "/static/js/2.38bf1ccc.chunk.js",
+    "static/js/2.38bf1ccc.chunk.js.map": "/static/js/2.38bf1ccc.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.2d00950d.chunk.css.map": "/static/css/main.2d00950d.chunk.css.map",
+    "static/js/2.38bf1ccc.chunk.js.LICENSE.txt": "/static/js/2.38bf1ccc.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.f6f3fae2.js",
+    "static/js/runtime-main.5e038ad1.js",
     "static/js/2.38bf1ccc.chunk.js",
     "static/css/main.2d00950d.chunk.css",
-    "static/js/main.974f3e4e.chunk.js"
+    "static/js/main.59b85645.chunk.js"
   ]
 }
