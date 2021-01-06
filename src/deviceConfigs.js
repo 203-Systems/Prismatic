@@ -178,7 +178,7 @@ const deviceConfigs = {
   //     null, null, null, null, null, null, null, null,
   //     null, null, null, null, null, null, null, null,],
   // },
-  "203 Matrix":
+  "Matrix":
   {
     channel: 2,
     midiNameRegex: "^Matrix",

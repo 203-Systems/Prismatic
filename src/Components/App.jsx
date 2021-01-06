@@ -3,8 +3,9 @@ import Navbar from "./Navbar";
 import ProjectFileReader from "./ProjectFileReader";
 import Button from "./Button";
 import Canvas from "./Canvas";
+import config from "../config";
 import deviceConfigs from "../deviceConfigs";
-import Selector from "./Selector";
+import Select from 'react-select';
 
 const options = [
   {
@@ -17,15 +18,25 @@ class App extends Component {
   constructor(props) {
     super(props);
     navigator.requestMIDIAccess().then(this.onMIDISuccess, this.onMIDIFailure);
+    // console.log(this.prepDeviceConfig())
   }
 
   state = {
     projectFile: undefined,
     color: "#000000",
-    layoutConfig: deviceConfigs["Launchpad Pro"], //Default Launchpad Pro
+
+    midiInput: [],
+    midiOutput: [],
+
+    layoutConfigName: config.defaultLayout,
+    layoutConfig: deviceConfigs[config.defaultLayout],
+
     inputDevice: undefined,
+    inputConfigName: undefined,
     inputConfig: undefined,
+
     outputDevice: undefined,
+    outputConfigName: undefined,
     outputConfig: undefined,
   };
 
@@ -35,63 +46,158 @@ class App extends Component {
 
   onMIDISuccess = (midiAccess) => {
     console.log("Got access your MIDI devices.");
-    console.log("Input -");
+
+    var midiInput = [];
+    console.log("Input");
     for (var input of midiAccess.inputs.values()) {
       console.log(input.name);
-      if (input.name.includes("Matrix")) {
-        console.log(input.name + " Input Assigned");
-        this.setState({ inputDevice: input });
-        this.setState({ inputConfig: deviceConfigs["Launchpad Pro"] });
-        // input.onmidimessage = this.midiInputHandler;
-        // console.log()
-      }
+      midiInput.push({label: input.name, value: input})
     }
+    console.log(midiInput)
+    this.setState({midiInput: midiInput})
 
-    console.log("Output -");
+    var midiOutput = [];
+    console.log();
+    console.log("Output");
     for (var output of midiAccess.outputs.values()) {
       console.log(output.name);
-      if (input.name.includes("Matrix")) {
-        console.log(output.name + " Input Assigned");
-        this.setState({ outputDevice: output });
-        this.setState({ outputConfig: deviceConfigs["Launchpad Pro"] });
-      }
+      midiOutput.push({label: output.name, value: output})
     }
+    this.setState({midiOutput: midiOutput})
   };
 
+  onMIDIFailure() {
+    console.log("Could not access your MIDI devices.");
+    alert("Could not access your MIDI devices. Try use another web browser or hardware platform")
+  }
+
+  
+  
   autoConfigPicker(deviceName, mode) {//mode 0 for input, mode 1 for output
     Object.keys(deviceConfigs).forEach(([key, value]) => {
       if (deviceName.match(value) !== null) {
-        // TODO
+        config = deviceConfigs[key]
+        switch(mode)
+        {
+          case 0:
+            this.setState({inputConfig: config});
+            return;
+          case 1:
+            this.setState({outputConfig: config});
+            return;
+        }
       }
     });
     alert(`Unable to find matching ${mode ? "output" : "input"} config for device ${deviceName}`);
   }
 
-  onMIDIFailure() {
-    console.log("Could not access your MIDI devices.");
-  }
-
   render() {
     return (
       <React.Fragment>
-        <div
-          className="canvas"
-          style={{
-            padding: this.state.layoutConfig.padding,
-            "border-radius": this.state.layoutConfig.radius,
-          }}
-        >
-          <Canvas
-            projectFile={this.state.projectFile}
-            layoutConfig={this.state.layoutConfig}
-            inputDevice={this.state.inputDevice}
-            inputConfig={this.state.inputConfig}
-            outputDevice={this.state.outputDevice}
-            outputConfig={this.state.outputConfig}
+        <div className="main"> 
+          <div className="toolbar"> {/* Not yet made */}
+          <ProjectFileReader updateProjectFile={this.updateProjectFile}></ProjectFileReader>
+          <Select
+            options={this.prepDeviceConfig()}
+            autosize={true}
+            value={this.state.layoutConfig}
+            placeholder="Layout Config"
+            onChange={this.configChange}
           />
+
+          <Select
+            options={this.state.midiInput}
+            autosize={true}
+            value={this.state.inputDevice}
+            placeholder="Input Device"
+            onChange={this.inputChange}
+          />
+          <Select
+            options={this.prepDeviceConfig()}
+            autosize={true}
+            value={this.state.inputConfig}
+            placeholder="Input Device Config"
+            onChange={this.setInputConfig.bind(this)}
+          />
+
+          <Select
+            options={this.state.midiOutput}
+            autosize={true}
+            value={this.state.outputDevice}
+            placeholder="Output Device"
+            onChange={this.outputChange}
+          />
+          <Select
+            options={this.prepDeviceConfig()}
+            autosize={true}
+            value={this.state.outputConfig}
+            placeholder="Output Device Config"
+            onChange={this.setOutputConfig.bind(this)}
+          />
+          {/* <button>>Autoplay</button> */}
+          </div>
+          <div
+            className="canvas"
+            style={{
+              padding: this.state.layoutConfig.padding,
+              borderRadius: this.state.layoutConfig.radius,
+            }}
+          >
+            <Canvas
+              projectFile={this.state.projectFile}
+              layoutConfig={this.state.layoutConfig}
+              inputDevice={this.state.inputDevice}
+              inputConfig={this.state.inputConfig}
+              outputDevice={this.state.outputDevice}
+              outputConfig={this.state.outputConfig}
+            />
+          </div>
         </div>
       </React.Fragment>
     );
+  }
+
+  setLayoutConfig(config)
+  {
+    console.log(config)
+    this.setState({layoutConfig: config});
+  }
+
+  setInputConfig(config)
+  {
+    console.log(config)
+    this.setState({inputConfig: config});
+  }
+
+  setOutputConfig(config)
+  {
+    console.log(config)
+    this.setState({outputConfig: config});
+  }
+
+  setInputDevice(device)
+  {
+    this.setState({inputDevice: device});
+    this.autoConfigPicker(device.name, 0);
+  }
+
+  setOutputDevice(device)
+  {
+    this.setState({outputDevice: device});
+    this.autoConfigPicker(device.name, 1);
+  }
+
+  prepDeviceConfig()
+  { 
+    var result=[];
+    for (var key in deviceConfigs)
+    {
+      result.push({
+        label: key,
+        value: deviceConfigs[key],
+      })
+    }
+    return result;
   }
 }
 

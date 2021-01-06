@@ -27,7 +27,7 @@ class Canvas extends Component {
     if (prevProps.layoutConfig !== this.props.layoutConfig) {
       this.initlalizeCanvas();
     }
-    if (prevProps.inputDevice !== this.props.inputDevice || prevProps.inputConfig !== this.props.inputConfig ) {
+    if (prevProps.inputDevice !== this.props.inputDevice /* || prevProps.inputConfig !== this.props.inputConfig */ ) {
       this.setupMidiInput(this.props.inputDevice, prevProps.inputDevice);
     }
     // if (prevProps.outputDevice !== this.props.outputDevice || prevProps.outputConfig !== this.props.outputConfig ) {
@@ -48,14 +48,15 @@ class Canvas extends Component {
   setupMidiInput(newInput, oldInput)
   {
     console.log([newInput, oldInput])
-    if(oldInput != undefined)
+    if(oldInput !== undefined)
       oldInput.onmidimessage = null;
-    newInput.onmidimessage = this.midiInputHandler;
+    // if(newInput !== undefined)
+      newInput.onmidimessage = this.midiInputHandler;
   } 
 
   midiInputHandler = (midiMessage) =>
   {
-    // console.log(midiMessage.data);
+    console.log(midiMessage.data);
     let [y,x] = this.indexOf2dArray(midiMessage.data[1], this.props.inputConfig.keymap);
     if(x !== -1 && y !== -1)
     {
@@ -298,7 +299,7 @@ class Canvas extends Component {
                   case "◩":
                     return <Button x={x} y={y} class="LEDButtonSquare" color={this.state.colormap[x][y]} on={this.keyOn} Zoff={this.keyOff}/>;
                   default:
-                    return <div id='spacer' style={{
+                    return <div key={"Spacer " + x.toString() + "-" + y.toString()} style={{
                       width: '96px'
                     }}></div>;
                 }

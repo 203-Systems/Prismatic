@@ -1,15 +1,31 @@
+*{margin: 0; padding: 0; border: 0; outline: 0;}
+
 :root {
     --dark-gray: #272727;
     --medium-gray: #313131;
     --light-gray: #808080;
 }
 
-.canvas {
-  background-position: center;
+.main{
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 0.15fr 1fr;
+  margin: 0px !important;
+}
 
+.toolbar
+{
+  gap: 20px;
+  align-items: top;
+  background-color: grey;
+  padding: 15px;
+}
+
+.canvas {
   background-color: var(--dark-gray);
+  margin: auto;
   padding: 25px;
-  display: inline-flex;
+  display: grid;
   border-radius: 30px;
 }
 
