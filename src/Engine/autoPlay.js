@@ -1,22 +1,40 @@
 class AutoPlay
 {
   autoplay = undefined;
+  status = "STOPPED"
+  progress = 0
+  currentChain = 0
   constructor(text)
   {
     this.autoplay = text;
   }
 
-  play = async(canvas, canvas_origin) =>
+  play = async(canvas, canvas_origin, callback) =>
   {
+    console.log(canvas)
     console.log(canvas_origin);
-    for(var line of this.autoplay)
+    if(this.progress === 0)
     {
-      console.log(line)
-      let command = line.split(" ");
+      canvas.initlalizeCanvas();
+      this.currentChain = parseInt(0);
+    }
+    this.status = "PLAYING"
+    for(this.progress; this.progress < this.autoplay.length; this.progress ++)
+    {
+      let wait_complete = true;
+      console.log(this.autoplay[this.progress])
+      let command = this.autoplay[this.progress].split(" ");
+
+      if(callback !== undefined)
+        callback([this.progress, this.autoplay.length])
       
       if(command.length < 2)
         continue;
-
+      
+      if(canvas.currentChain != this.currentChain)
+      {
+        canvas.chainChange(this.currentChain);
+      }
       switch(command[0])
       {
         case 't':
@@ -28,17 +46,40 @@ class AutoPlay
           break;
         case 'd':
           // console.time("Autoplay wait");
-          await this.wait(parseInt(command[1]));
+          wait_complete = false;
+          this.wait(parseInt(command[1])).then(() => {wait_complete = true});
           // console.timeEnd("Autoplay wait");
           // await this.better_wait(parseInt(parameter[1]));
           break;
         case 'c':
         case 'chain':
           canvas.chainChange(parseInt(command[1]) - 1);
+          this.currentChain = parseInt(command[1]) - 1;
           break;
         default:
       }
+
+      do
+      {
+        if (this.status === "STOPPED" || this.status === "PAUSED")
+        {
+          this.progress ++;
+          return;
+        }
+        await this.wait(1000/120)
+      }while(!wait_complete)
     }
+    this.status = "STOPPED"
+    this.progress = 0
+  }
+
+  pause() {
+    this.status = "PAUSED"
+  }
+
+  stop() {
+    this.status = "STOPPED"
+    this.progress = 0
   }
 
   wait(ms)

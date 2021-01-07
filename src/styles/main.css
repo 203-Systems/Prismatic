@@ -22,6 +22,11 @@
   padding: 15px;
 }
 
+.toolbarItem
+{
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
 .canvas {
   background-color: var(--dark-gray);
   margin: auto;

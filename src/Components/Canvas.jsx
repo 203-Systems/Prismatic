@@ -124,20 +124,6 @@ class Canvas extends Component {
     console.log("Note Off - " + x.toString() + ' ' + y.toString());
   }
 
-  playAutoplay = () =>
-  {
-    if(this.props.projectFile !== undefined && this.props.projectFile.autoplay !== undefined)
-    {
-      this.initlalizeCanvas();
-
-      this.props.projectFile.autoplay.play(this, this.props.layoutConfig.canvas_origin) 
-    }
-    else
-    {
-      alert("No project loaded!")
-    }
-  }
-
   chainChange = (chain) =>
   {
     console.log("Chain Changed to " + (chain + 1));

@@ -7,13 +7,7 @@ import Canvas from "./Canvas";
 import config from "../config";
 import deviceConfigs from "../deviceConfigs";
 import Select from 'react-select';
-
-const options = [
-  {
-    name: "h",
-    value: "h",
-  },
-];
+// import download from "downloadjs";
 
 class App extends Component {
   constructor(props) {
@@ -32,14 +26,12 @@ class App extends Component {
     if(urlParams.get('unipack'))
     {
       var unipack_url = urlParams.get('unipack');
-      alert("Downloading Unipack from " + unipack_url)
+      this.downloadProjectFile(unipack_url)
     }
   }
 
   state = {
     projectFile: undefined,
-    projectName: "No project loaded",
-    projectAuthor: "",
 
     midiInput: [],
     midiOutput: [],
@@ -54,13 +46,24 @@ class App extends Component {
     outputDevice: undefined,
     outputConfigName: undefined,
     outputConfig: undefined,
+
+    autoplayProgress: undefined,
   };
 
-  updateProjectFile = (projectPack) => {
+  canvas = React.createRef();
+
+  downloadProjectFile = (url) => { //Scrapped for now because Browser doesn't allow cross origon fetching. Need intergration witb third party sites CDNs
+  // alert("Downloading Unipack from " + url)  
+  // let projectPack = download(url)
+    // console.log(projectPack)
+  }
+
+  loadProjectFile = (projectPack) => {
+    // console.log(projectPack)
     new ProjectFile(projectPack)
     .then((projectFile) => {this.setState({ projectFile: projectFile})})
-    // .catch((message) => {alert(message)});
-  };
+    .catch((message) => {alert(message)});
+  }
 
   onMIDISuccess = (midiAccess) => {
     console.log("Got access your MIDI devices.");
@@ -184,12 +187,13 @@ class App extends Component {
         <div className="main"> 
           <div className="toolbar"> {/* Not yet made */}
           <text>203 | Prismatic (Tech Preview Demo)</text>
-          <div/>
-          <text>{this.state.projectFile !== undefined ? `Current Project: ${this.state.projectFile.info["title"]} by ${this.state.projectFile.info["producerName"]}` : "No project loaded"}</text>
-          <ProjectFileReader updateProjectFile={this.updateProjectFile}></ProjectFileReader>
-          <div/>
+          <div  className="toolbarItem"/>
+          <text className="toolbarItem">{this.state.projectFile !== undefined ? `Current Project: ${this.state.projectFile.info["title"]} by ${this.state.projectFile.info["producerName"]}` : "No project loaded"}</text>
+          <ProjectFileReader loadProjectFile={this.loadProjectFile}></ProjectFileReader>
+          <div  className="toolbarItem"/>
           <text>UI Layout</text>
           <Select
+            className="toolbarItem"
             options={this.prepDeviceConfig()}
             autosize={true}
             value={this.state.layoutConfigName !== undefined ? {label: this.state.layoutConfigName, value: this.state.layoutConfig} : undefined}
@@ -198,6 +202,7 @@ class App extends Component {
           />
           <text>Midi Input Device</text>
           <Select
+            className="toolbarItem"
             options={this.state.midiInput}
             autosize={true}
             value={this.state.inputDevice !== undefined ? {label: this.state.inputDevice.name, value: this.state.inputDevice} : undefined}
@@ -206,6 +211,7 @@ class App extends Component {
           />
           <text>Midi Input Device Config</text>
           <Select
+            className="toolbarItem"
             options={this.prepDeviceConfig()}
             autosize={true}
             value={this.state.inputConfigName !== undefined ? {label: this.state.inputConfigName, value: this.state.inputConfig} : undefined}
@@ -214,6 +220,7 @@ class App extends Component {
           />
           <text>Midi Output Device</text>
           <Select
+            className="toolbarItem"
             options={this.state.midiOutput}
             autosize={true}
             value={this.state.outputDevice !== undefined ? {label: this.state.outputDevice.name, value: this.state.outputDevice} : undefined}
@@ -222,13 +229,19 @@ class App extends Component {
           />
           <text>Midi Output Device Config</text>
           <Select
+            className="toolbarItem"
             options={this.prepDeviceConfig()}
             autosize={true}
             value={this.state.outputConfigName !== undefined ? {label: this.state.outputConfigName, value: this.state.outputConfig} : undefined}
             placeholder="Output Device Config"
             onChange={this.setOutputConfig.bind(this)}
           />
-          {/* <button>>Autoplay</button> */}
+          <div/>
+          <text>{"Autoplay" + (this.state.autoplayProgress === undefined ? "" : this.state.autoplayProgress)}</text>
+          <div/>
+          <button style={{width: "50px", marginRight: "10px", display: !(this.state.projectFile !== undefined && this.state.projectFile.autoplay.status === "PLAYING") ?  "inline" : "none"}} onClick={this.playAutoplay}>Play</button>
+          <button style={{width: "50px", marginRight: "10px", display: this.state.projectFile !== undefined && this.state.projectFile.autoplay.status === "PAUSED" ?  "inline" : "none"}} onClick={this.stopAutoplay}>Stop</button>
+          <button style={{width: "50px", marginRight: "10px", display: this.state.projectFile !== undefined && this.state.projectFile.autoplay.status === "PLAYING" ?  "inline" : "none"}} onClick={this.pauseAutoplay}>Pause</button>
           </div>
           <div
             className="canvas"
@@ -238,6 +251,7 @@ class App extends Component {
             }}
           >
             <Canvas
+              ref={this.canvas}
               projectFile={this.state.projectFile}
               layoutConfig={this.state.layoutConfig}
               inputDevice={this.state.inputDevice}
@@ -296,6 +310,47 @@ class App extends Component {
       })
     }
     return result;
+  }
+
+  playAutoplay = () =>
+  {
+    if(this.state.projectFile !== undefined && this.state.projectFile.autoplay !== undefined)
+    {
+      this.state.projectFile.autoplay.play(this.canvas.current, this.state.layoutConfig.canvas_origin, 
+        function([current, total]){
+          this.setState({autoplayProgress: ` - ${(current / total * 100).toFixed(2)}% completed (${current}/${total})`});
+        }.bind(this));
+    }
+    else
+    {
+      alert("No project loaded!")
+    }
+  }
+
+  stopAutoplay = () =>
+  {
+    if(this.state.projectFile !== undefined && this.state.projectFile.autoplay !== undefined)
+    {
+      this.state.projectFile.autoplay.stop();
+      this.setState({autoplayProgress: undefined});
+    }
+    else
+    {
+      alert("No project loaded!")
+    }
+  }
+
+  pauseAutoplay = () =>
+  {
+    if(this.state.projectFile !== undefined && this.state.projectFile.autoplay !== undefined)
+    {
+      this.state.projectFile.autoplay.pause();
+      this.setState({autoplayProgress: this.state.autoplayProgress + " - Paused"});
+    }
+    else
+    {
+      alert("No project loaded!")
+    }
   }
 }
 
