@@ -63,7 +63,8 @@ class ProjectFile {
                 return;
               }
               if (this.info["chain"] > 8) {
-                reject("Only Unipad project that has within 8 chains are supported");
+                // reject("Only Unipad project that has within 8 chains are supported");
+                alert(`This Unipad Project has ${this.info["chain"]} chains. Projects that has more than 8 chains are limited supported`)
                 return;
               }
             }
@@ -102,9 +103,12 @@ class ProjectFile {
         let fileInfo = name.split("/").pop().split(" ");
         if (fileInfo.length === 5) {
           this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][fileInfo[4].charCodeAt(0) - 97] = new KeyLED(text, parseInt(fileInfo[3]))
+          // console.log(name)
+          // console.log([parseInt(fileInfo[0]) - 1, parseInt(fileInfo[2]) - 1, parseInt(fileInfo[1]) - 1, fileInfo[4].charCodeAt(0) - 97])
+          // console.log(this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][fileInfo[4].charCodeAt(0) - 97])
         }
         else if (fileInfo.length === 4) {
-          this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1] = [new KeyLED(text, parseInt(fileInfo[3]))]
+          this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][0] = new KeyLED(text, parseInt(fileInfo[3]))
         }
         else {
           console.warn("Unknown keyLED file name: " + name);

@@ -15,15 +15,18 @@ class Canvas extends Component {
       () => new Array(this.props.layoutConfig.height).fill(palette[0])),
   };
 
-  keypressHistory = new Array(8).fill(null).map(
-              () => new Array(this.props.layoutConfig.width).fill(null).map(
-              () => new Array(this.props.layoutConfig.height).fill(0)));
+  keypressHistory = undefined;
   currentChain = 0;
   // overlay = "#808080";
 
   // shouldUpdate = (nextProps) => !Object.is(this.props.layoutConfig, nextProps.layoutConfig);
 
   shouldComponentUpdate(nextProps) {
+    if (nextProps.projectFile !== this.props.projectFile) {
+      console.log("Project File Loaded")
+      this.initlalizeCanvas(undefined, nextProps.projectFile);
+    }
+
     if (nextProps.layoutConfig !== this.props.layoutConfig) {
       this.initlalizeCanvas(nextProps.layoutConfig);
     }
@@ -35,14 +38,17 @@ class Canvas extends Component {
     return true;
   }
 
-  initlalizeCanvas(config = this.props.layoutConfig)
+  initlalizeCanvas(config = this.props.layoutConfig, projectFile = this.props.projectFile)
   {
     this.state.colormap = new Array(config.width).fill(null).map(
       () => new Array(config.height).fill(palette[0])) //I write directly into state because that takes so long it will be complete by the time render is over and throw an error already. Since shouldComponentUpdate will enforce update I will give it a pass
     // this.setState({colormap: this.state.colormap})
-    this.keypressHistory = new Array(8).fill(null).map(
+    if(projectFile !== undefined)
+    {
+    this.keypressHistory = new Array(projectFile.info.chain).fill(null).map(
       () => new Array(config.width).fill(null).map(
       () => new Array(config.height).fill(0)));
+    }
     this.currentChain = 0;
   }
 
@@ -58,19 +64,20 @@ class Canvas extends Component {
   midiInputHandler = (midiMessage) =>
   {
     console.log(midiMessage.data);
-    let [y,x] = this.indexOf2dArray(midiMessage.data[1], this.props.inputConfig.keymap);
+    let [x, y] = this.indexOf2dArray(midiMessage.data[1], this.props.inputConfig.keymap);
+    console.log([x,y])
     if(x !== NaN && y !== NaN)
     {
       // let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.inputConfig.canvas_origin, "-");
-      switch(midiMessage.data[0])
+      switch(midiMessage.data[0] >> 4)
       {
-        case 144:
-          if(midiMessage.data[2] != 0)
+        case 9: //Note On
+          if(midiMessage.data[2] != 0) //Fall back to note of
           {
             this.keyOn(x, y, this.props.inputConfig);
             break;
           }
-        case 128:
+        case 8: //Note Off
           this.keyOff(x, y, this.props.inputConfig);
           break;
       }
@@ -82,7 +89,7 @@ class Canvas extends Component {
     console.log("Note On - " + x.toString() + ' ' + y.toString());
 
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], config.canvas_origin, "-");
-    console.log([x, y, offseted_x, offseted_y])
+    // console.log([x, y, offseted_x, offseted_y])
 
     if(this.props.projectFile !== undefined)
     {
@@ -99,6 +106,7 @@ class Canvas extends Component {
       if(this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[this.currentChain] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0)
       {
         let ledIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
+        console.log([this.currentChain, offseted_x, offseted_y, ledIndex])
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play(this);
       }
 
@@ -114,6 +122,8 @@ class Canvas extends Component {
   checkChain = (x, y, config) =>
   {
     for(var i = 0; i < config.chainKey.length; i++) {
+      if(i === this.props.projectFile.info.chain)
+        return
       if(config.chainKey[i][0] === x && config.chainKey[i][1] === y)
         this.chainChange(i);
     }
@@ -136,7 +146,7 @@ class Canvas extends Component {
     this.state.colormap[offseted_x][offseted_y] = palette[p]
     if(this.props.outputDevice != undefined)
     {
-      let [output_offseted_x, output_offseted_y] = this.arrayCalculation([x, y], this.props.inputConfig.canvas_origin, "+");
+      let [output_offseted_x, output_offseted_y] = this.arrayCalculation([x, y], this.props.outputConfig.canvas_origin, "+");
       this.sendMidi("NoteOn", this.props.outputConfig.channel, this.props.outputConfig.keymap[output_offseted_y][output_offseted_x], p)
     }
   }
@@ -260,9 +270,9 @@ class Canvas extends Component {
   }
 
   indexOf2dArray(id, matrix) {
-    for (var i=0, len=matrix.length; i<len; i++) {
-      for (var j=0, len2=matrix[i].length; j<len2; j++) {
-        if (matrix[i][j] === id) { return [i, j]; }
+    for (var y=0, len=matrix.length; y<len; y++) {
+      for (var x=0, len2=matrix[y].length; x<len2; x++) {
+        if (matrix[y][x] === id) { return [x, y]; }
       }
     }
     return [NaN, NaN];

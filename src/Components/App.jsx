@@ -61,7 +61,7 @@ class App extends Component {
   loadProjectFile = (projectPack) => {
     // console.log(projectPack)
     new ProjectFile(projectPack)
-    .then((projectFile) => {this.setState({ projectFile: projectFile})})
+    .then((projectFile) => {this.setState({projectFile: projectFile}); console.log(projectFile)})
     .catch((message) => {alert(message)});
   }
 
@@ -86,7 +86,7 @@ class App extends Component {
     }
     this.setState({midiOutput: midiOutput})
 
-    midiAccess.onstatechange = this.onMidiStateChange
+    // midiAccess.onstatechange = this.onMidiStateChange
   };
 
   onMidiStateChange(e)
@@ -194,7 +194,7 @@ class App extends Component {
           <text>UI Layout</text>
           <Select
             className="toolbarItem"
-            options={this.prepDeviceConfig()}
+            options={this.prepDeviceConfig("layout")}
             autosize={true}
             value={this.state.layoutConfigName !== undefined ? {label: this.state.layoutConfigName, value: this.state.layoutConfig} : undefined}
             placeholder="Layout Config"
@@ -212,7 +212,7 @@ class App extends Component {
           <text>Midi Input Device Config</text>
           <Select
             className="toolbarItem"
-            options={this.prepDeviceConfig()}
+            options={this.prepDeviceConfig("control")}
             autosize={true}
             value={this.state.inputConfigName !== undefined ? {label: this.state.inputConfigName, value: this.state.inputConfig} : undefined}
             placeholder="Input Device Config"
@@ -230,7 +230,7 @@ class App extends Component {
           <text>Midi Output Device Config</text>
           <Select
             className="toolbarItem"
-            options={this.prepDeviceConfig()}
+            options={this.prepDeviceConfig("control")}
             autosize={true}
             value={this.state.outputConfigName !== undefined ? {label: this.state.outputConfigName, value: this.state.outputConfig} : undefined}
             placeholder="Output Device Config"
@@ -299,15 +299,25 @@ class App extends Component {
     this.autoConfigPicker(device.value.name, 1);
   }
 
-  prepDeviceConfig()
+  prepDeviceConfig(mode)
   { 
     var result=[];
     for (var key in deviceConfigs)
     {
-      result.push({
-        label: key,
-        value: deviceConfigs[key],
-      })
+      if(mode === "layout" && deviceConfigs[key].layout !== undefined)
+      {
+        result.push({
+          label: key,
+          value: deviceConfigs[key],
+        })
+      }
+      else if(mode === "control" && deviceConfigs[key].keymap !== undefined)
+      {
+        result.push({
+          label: key,
+          value: deviceConfigs[key],
+        })
+      }
     }
     return result;
   }
