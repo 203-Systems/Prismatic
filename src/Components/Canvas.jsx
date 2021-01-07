@@ -23,34 +23,35 @@ class Canvas extends Component {
 
   // shouldUpdate = (nextProps) => !Object.is(this.props.layoutConfig, nextProps.layoutConfig);
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.layoutConfig !== this.props.layoutConfig) {
-      this.initlalizeCanvas();
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.layoutConfig !== this.props.layoutConfig) {
+      this.initlalizeCanvas(nextProps.layoutConfig);
     }
-    if (prevProps.inputDevice !== this.props.inputDevice /* || prevProps.inputConfig !== this.props.inputConfig */ ) {
-      this.setupMidiInput(this.props.inputDevice, prevProps.inputDevice);
+
+    if (nextProps.inputDevice !== this.props.inputDevice /* || prevProps.inputConfig !== this.props.inputConfig */ ) {
+      this.setupMidiInput(nextProps.inputDevice, this.props.inputDevice);
     }
-    // if (prevProps.outputDevice !== this.props.outputDevice || prevProps.outputConfig !== this.props.outputConfig ) {
-    //   this.setupMidioutput(this.props.outputDevice, prevProps.outputDevice);
-    // }
+
+    return true;
   }
 
-  initlalizeCanvas()
+  initlalizeCanvas(config = this.props.layoutConfig)
   {
-    this.setState({colormap: new Array(this.props.layoutConfig.width).fill(null).map(
-      () => new Array(this.props.layoutConfig.height).fill(palette[0]))});
+    this.state.colormap = new Array(config.width).fill(null).map(
+      () => new Array(config.height).fill(palette[0])) //I write directly into state because that takes so long it will be complete by the time render is over and throw an error already. Since shouldComponentUpdate will enforce update I will give it a pass
+    // this.setState({colormap: this.state.colormap})
     this.keypressHistory = new Array(8).fill(null).map(
-      () => new Array(this.props.layoutConfig.width).fill(null).map(
-      () => new Array(this.props.layoutConfig.height).fill(0)));
+      () => new Array(config.width).fill(null).map(
+      () => new Array(config.height).fill(0)));
     this.currentChain = 0;
   }
 
   setupMidiInput(newInput, oldInput)
   {
-    console.log([newInput, oldInput])
+    // console.log([newInput, oldInput])
     if(oldInput !== undefined)
       oldInput.onmidimessage = null;
-    // if(newInput !== undefined)
+    if(newInput !== undefined)
       newInput.onmidimessage = this.midiInputHandler;
   } 
 
@@ -58,7 +59,7 @@ class Canvas extends Component {
   {
     console.log(midiMessage.data);
     let [y,x] = this.indexOf2dArray(midiMessage.data[1], this.props.inputConfig.keymap);
-    if(x !== -1 && y !== -1)
+    if(x !== NaN && y !== NaN)
     {
       // let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.inputConfig.canvas_origin, "-");
       switch(midiMessage.data[0])
@@ -86,7 +87,7 @@ class Canvas extends Component {
     if(this.props.projectFile !== undefined)
     {
       //Sound
-      if(this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0)
+      if(this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0)
       {
         let soundIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
         // console.log('Play sound ${this.currentChain} ${offseted_x}')
@@ -95,7 +96,7 @@ class Canvas extends Component {
       }
 
       //LED
-      if(this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[this.currentChain] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0)
+      if(this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[this.currentChain] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0)
       {
         let ledIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play(this);
@@ -128,6 +129,7 @@ class Canvas extends Component {
     if(this.props.projectFile !== undefined && this.props.projectFile.autoplay !== undefined)
     {
       this.initlalizeCanvas();
+
       this.props.projectFile.autoplay.play(this, this.props.layoutConfig.canvas_origin) 
     }
     else
@@ -277,7 +279,7 @@ class Canvas extends Component {
         if (matrix[i][j] === id) { return [i, j]; }
       }
     }
-    return [-1, -1];
+    return [NaN, NaN];
   }
   
 
@@ -292,7 +294,9 @@ class Canvas extends Component {
                   case "◻":
                     return <Button x={x} y={y} class="LEDButtonSquare"color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
                   case "⬤":
-                    return <Button x={x} y={y} class="LEDButtonCircle75" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff}/>;
+                    return <Button x={x} y={y} class="LEDButtonCircle75" 
+                    color={this.state.colormap[x][y]} 
+                    on={this.keyOn} off={this.keyOff}/>;
                   case "◪":
                   case "⬕":
                   case "⬔":

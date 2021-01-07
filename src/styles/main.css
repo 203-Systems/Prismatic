@@ -15,6 +15,7 @@
 
 .toolbar
 {
+  display: list-item;
   gap: 20px;
   align-items: top;
   background-color: grey;
