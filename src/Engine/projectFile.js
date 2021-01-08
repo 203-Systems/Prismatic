@@ -4,6 +4,7 @@ import AutoPlay from "./autoPlay"
 
 class ProjectFile {
   info = {};
+  soundFiles = {};
   keySound = undefined;
   autoplay = undefined;
   keyLED = undefined;
@@ -26,7 +27,6 @@ class ProjectFile {
       let projectRoot = undefined;
       let keySoundFile = undefined;
       let autoplayFile = undefined;
-      let soundFiles = {};
       let keyLEDFiles = {};
 
       //Load info and categorize files
@@ -36,7 +36,11 @@ class ProjectFile {
           if (file.name.toLowerCase().includes("sounds/")) //Audio
           {
             console.log("Sound file: " + file.name);
-            soundFiles[file.name.split("/").pop()] = file;
+            this.soundFiles[file.name.split("/").pop()] = await file.async("blob").then(function (sound) {
+              sound = window.URL.createObjectURL(sound);
+              let format = file.name.split(".").pop()
+              return new Howl({ src: [sound], format: [format] });
+            });
           }
           else {
             let text = await file.async("text").then((text) => { return text = text.split(/\r?\n/); });
@@ -123,12 +127,7 @@ class ProjectFile {
           continue;
 
         // console.log(command);
-        this.keySound[parseInt(command[0]) - 1][parseInt(command[2]) - 1][parseInt(command[1]) - 1].push(
-          await soundFiles[command[3]].async("blob").then(function (sound) {
-            sound = window.URL.createObjectURL(sound);
-            let format = command[3].split(".").pop()
-            return new Howl({ src: [sound], format: [format] });
-          }));
+        this.keySound[parseInt(command[0]) - 1][parseInt(command[2]) - 1][parseInt(command[1]) - 1].push([this.soundFiles[command[3]], command.slice(3)]);
       }
 
       //Load AutoPlay

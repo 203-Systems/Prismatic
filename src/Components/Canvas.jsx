@@ -86,6 +86,7 @@ class Canvas extends Component {
 
   keyOn = (x, y, config = this.props.layoutConfig) => 
   {
+    let targetChain = undefined;
     console.log("Note On - " + x.toString() + ' ' + y.toString());
 
     let [offseted_x, offseted_y] = this.arrayCalculation([x, y], config.canvas_origin, "-");
@@ -97,25 +98,50 @@ class Canvas extends Component {
       if(this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0)
       {
         let soundIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
+        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].loop = false;
+        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].stop();
         // console.log('Play sound ${this.currentChain} ${offseted_x}')
-        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex].stop();
-        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex].play();
+        if(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1] !== undefined)
+        {
+          if(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] !== undefined
+            && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] > 1) // Loop
+          {
+            this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].loop = this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0]
+            this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].onend = 
+            function()
+            {
+              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].loop --;
+            }
+          }
+
+          if(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1] !== undefined) //Wormhole
+          {
+            targetChain = this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1];
+          }
+        }
+        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].play();
       }
 
       //LED
       if(this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[this.currentChain] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0)
       {
         let ledIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
-        console.log([this.currentChain, offseted_x, offseted_y, ledIndex])
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play(this);
       }
 
       //Update History
       if(this.keypressHistory[this.currentChain][x] != undefined && this.keypressHistory[this.currentChain][x][y] != undefined)
-        this.keypressHistory[this.currentChain][x][y] += 1;
+        this.keypressHistory[this.currentChain][x][y] ++;
 
       //Chain Change
+      if(targetChain === undefined)
+      {
       this.checkChain(x, y, config);
+      }
+      else
+      {
+        this.chainChange(targetChain)
+      }
     }
   }
 
