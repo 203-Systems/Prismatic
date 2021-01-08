@@ -47,9 +47,9 @@ class AutoPlay
         case 'd':
           // console.time("Autoplay wait");
           wait_complete = false;
-          // this.wait(parseInt(command[1])).then(() => {wait_complete = true});
+          this.wait(parseInt(command[1])).then(() => {wait_complete = true});
           // console.timeEnd("Autoplay wait");
-          await this.wait(parseInt(command[1]));
+          // await this.wait(parseInt(command[1]));
           break;
         case 'c':
         case 'chain':
@@ -59,15 +59,15 @@ class AutoPlay
         default:
       }
 
-      // do
-      // {
-      //   if (this.status === "STOPPED" || this.status === "PAUSED")
-      //   {
-      //     this.progress ++;
-      //     return;
-      //   }
-      //   await this.wait(1000/60)
-      // }while(!wait_complete)
+      do
+      {
+        if (this.status === "STOPPED" || this.status === "PAUSED")
+        {
+          this.progress ++;
+          return;
+        }
+        await this.wait(5)
+      }while(!wait_complete)
     }
     this.status = "STOPPED"
     this.progress = 0
