@@ -39,7 +39,7 @@ class ProjectFile {
             this.soundFiles[file.name.split("/").pop()] = await file.async("blob").then(function (sound) {
               sound = window.URL.createObjectURL(sound);
               let format = file.name.split(".").pop()
-              return new Howl({ src: [sound], format: [format] });
+              return new Howl({ src: [sound], format: [format]});
             });
           }
           else {

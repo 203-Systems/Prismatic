@@ -2,7 +2,6 @@ import React, { Component } from "react";
 // import ProjectFileReader from './Components/projectFileReader';
 import Button from './Button'
 import palette from '../palette'
-import Spacer from './Spacer'
 
 class Canvas extends Component {
   constructor(props) {
