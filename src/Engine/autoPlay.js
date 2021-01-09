@@ -1,42 +1,39 @@
-class AutoPlay
-{
+class AutoPlay {
   autoplay = undefined;
   status = "STOPPED"
   progress = 0
   currentChain = 0
-  constructor(text)
-  {
+  constructor(text) {
     this.autoplay = text;
   }
 
-  play = async(canvas, canvas_origin, callback) =>
-  {
+  play = async (canvas, canvas_origin, callback) => {
+    console.time("Autoplay")
     console.log(canvas)
     console.log(canvas_origin);
-    if(this.progress === 0)
-    {
+    if (this.progress === 0) {
       canvas.initlalizeCanvas();
       this.currentChain = parseInt(0);
     }
     this.status = "PLAYING"
-    for(this.progress; this.progress < this.autoplay.length; this.progress ++)
-    {
+    for (this.progress; this.progress < this.autoplay.length; this.progress++) {
+      console.timeEnd("Autoplay");
+      console.time("Autoplay")
       let wait_complete = true;
       console.log(this.autoplay[this.progress])
       let command = this.autoplay[this.progress].split(" ");
 
       if(callback !== undefined)
         callback([this.progress, this.autoplay.length])
-      
-      if(command.length < 2)
+
+      if (command.length < 2)
         continue;
-      
-      if(canvas.currentChain != this.currentChain)
-      {
+
+      if (canvas.currentChain != this.currentChain) {
         canvas.chainChange(this.currentChain);
       }
-      switch(command[0])
-      {
+
+      switch (command[0]) {
         case 't':
         case 'o':
           canvas.keyOn(parseInt(command[2]) - 1 + canvas_origin[0], parseInt(command[1]) - 1 + canvas_origin[1]);
@@ -47,9 +44,15 @@ class AutoPlay
         case 'd':
           // console.time("Autoplay wait");
           wait_complete = false;
-          this.wait(parseInt(command[1])).then(() => {wait_complete = true});
-          // console.timeEnd("Autoplay wait");
+          this.wait(parseInt(command[1])).then(() => { wait_complete = true });
           // await this.wait(parseInt(command[1]));
+          do {
+            if (this.status === "STOPPED" || this.status === "PAUSED") {
+              this.progress++;
+              return;
+            }
+            await this.wait(5)
+          } while (!wait_complete)
           break;
         case 'c':
         case 'chain':
@@ -58,16 +61,6 @@ class AutoPlay
           break;
         default:
       }
-
-      do
-      {
-        if (this.status === "STOPPED" || this.status === "PAUSED")
-        {
-          this.progress ++;
-          return;
-        }
-        await this.wait(5)
-      }while(!wait_complete)
     }
     this.status = "STOPPED"
     this.progress = 0
@@ -82,8 +75,7 @@ class AutoPlay
     this.progress = 0
   }
 
-  wait(ms)
-  {
+  wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 }

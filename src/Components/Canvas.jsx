@@ -15,17 +15,18 @@ class Canvas extends Component {
       () => new Array(this.props.layoutConfig.height).fill(palette[0])),
   };
 
-  keypressHistory = undefined;
+  keypressHistory = new Array(this.props.layoutConfig.width).fill(null).map(
+    () => new Array(this.props.layoutConfig.height).fill(0));
   currentChain = 0;
   // overlay = "#808080";
 
   // shouldUpdate = (nextProps) => !Object.is(this.props.layoutConfig, nextProps.layoutConfig);
 
   shouldComponentUpdate(nextProps) {
-    if (nextProps.projectFile !== this.props.projectFile) {
-      console.log("Project File Loaded")
-      this.initlalizeCanvas(undefined, nextProps.projectFile);
-    }
+    // if (nextProps.projectFile !== this.props.projectFile) {
+    //   console.log("Project File Loaded")
+    //   this.initlalizeCanvas(undefined, nextProps.projectFile);
+    // }
 
     if (nextProps.layoutConfig !== this.props.layoutConfig) {
       this.initlalizeCanvas(nextProps.layoutConfig);
@@ -40,16 +41,21 @@ class Canvas extends Component {
 
   initlalizeCanvas(config = this.props.layoutConfig, projectFile = this.props.projectFile)
   {
+    this.clearCanvas(config);
+    this.clearKeypressHistory(config);
+    this.currentChain = 0;
+  }
+
+  clearCanvas(config = this.props.layoutConfig)
+  {
     this.state.colormap = new Array(config.width).fill(null).map(
       () => new Array(config.height).fill(palette[0])) //I write directly into state because that takes so long it will be complete by the time render is over and throw an error already. Since shouldComponentUpdate will enforce update I will give it a pass
-    // this.setState({colormap: this.state.colormap})
-    if(projectFile !== undefined)
-    {
-    this.keypressHistory = new Array(projectFile.info.chain).fill(null).map(
-      () => new Array(config.width).fill(null).map(
-      () => new Array(config.height).fill(0)));
-    }
-    this.currentChain = 0;
+  }
+
+  clearKeypressHistory(config = this.props.layoutConfig)
+  {
+    this.keypressHistory =  new Array(config.width).fill(null).map(
+      () => new Array(config.height).fill(0));
   }
 
   setupMidiInput(newInput, oldInput)
@@ -97,7 +103,7 @@ class Canvas extends Component {
       //Sound
       if(this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0)
       {
-        let soundIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
+        let soundIndex = this.keypressHistory[x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
         this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].loop = false;
         this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].stop();
         // console.log('Play sound ${this.currentChain} ${offseted_x}')
@@ -125,13 +131,13 @@ class Canvas extends Component {
       //LED
       if(this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[this.currentChain] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0)
       {
-        let ledIndex = this.keypressHistory[this.currentChain][x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
+        let ledIndex = this.keypressHistory[x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play(this);
       }
 
       //Update History
-      if(this.keypressHistory[this.currentChain][x] != undefined && this.keypressHistory[this.currentChain][x][y] != undefined)
-        this.keypressHistory[this.currentChain][x][y] ++;
+      if(this.keypressHistory[x] != undefined && this.keypressHistory[x][y] != undefined)
+        this.keypressHistory[x][y] ++;
 
       //Chain Change
       if(targetChain === undefined)
@@ -163,6 +169,8 @@ class Canvas extends Component {
   chainChange = (chain) =>
   {
     console.log("Chain Changed to " + (chain + 1));
+    if(chain !== this.currentChain)
+      this.clearKeypressHistory(); 
     this.currentChain = chain;
   }
 

@@ -47,7 +47,7 @@ class App extends Component {
     outputConfigName: undefined,
     outputConfig: undefined,
 
-    autoplayProgress: undefined,
+    
   };
 
   canvas = React.createRef();
@@ -185,7 +185,7 @@ class App extends Component {
     return (
       <React.Fragment>
         <div className="main"> 
-          <div className="toolbar"> {/* Not yet made */}
+          <div className="toolbar">
           <text>203 | Prismatic (Tech Preview Demo)</text>
           <div  className="toolbarItem"/>
           <text className="toolbarItem">{this.state.projectFile !== undefined ? `Current Project: ${this.state.projectFile.info["title"]} by ${this.state.projectFile.info["producerName"]}` : "No project loaded"}</text>
@@ -328,7 +328,7 @@ class App extends Component {
     {
       this.state.projectFile.autoplay.play(this.canvas.current, this.state.layoutConfig.canvas_origin, 
         function([current, total]){
-          this.setState({autoplayProgress: ` - ${(current / total * 100).toFixed(2)}% completed (${current}/${total})`});
+          // this.setState({autoplayProgress: ` - ${(current / total * 100).toFixed(2)}% completed (${current}/${total})`});
         }.bind(this));
     }
     else
