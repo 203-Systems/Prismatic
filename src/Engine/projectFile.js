@@ -1,6 +1,7 @@
 import { Howl } from 'howler';
 import KeyLED from "./keyLED"
 import AutoPlay from "./autoPlay"
+import keySound from './keySound';
 
 class ProjectFile {
   info = {};
@@ -39,9 +40,7 @@ class ProjectFile {
           {
             console.log("Sound file: " + file.name);
             this.soundFiles[file.name.split("/").pop()] = await file.async("blob").then(function (sound) {
-              sound = window.URL.createObjectURL(sound);
-              let format = file.name.split(".").pop()
-              return new Howl({ src: [sound], format: [format]});
+              return new keySound(sound, file.name.split("/").pop())
             });
           }
           else {
@@ -129,7 +128,7 @@ class ProjectFile {
           continue;
 
         // console.log(command);
-        this.keySound[parseInt(command[0]) - 1][parseInt(command[2]) - 1][parseInt(command[1]) - 1].push([this.soundFiles[command[3]], command.slice(3)]);
+        this.keySound[parseInt(command[0]) - 1][parseInt(command[2]) - 1][parseInt(command[1]) - 1].push([this.soundFiles[command[3]], command.slice(4)]);
       }
 
       //Load AutoPlay

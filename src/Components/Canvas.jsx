@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 // import ProjectFileReader from './Components/projectFileReader';
 import Button from "./Button";
-import {palette, rawPalette} from "../palette";
+import { palette, rawPalette } from "../palette";
 
 class Canvas extends Component {
   constructor(props) {
@@ -12,14 +12,10 @@ class Canvas extends Component {
   }
 
   state = {
-    colormap: new Array(this.props.layoutConfig.width)
-      .fill(null)
-      .map(() => new Array(this.props.layoutConfig.height).fill(palette[0])),
+    colormap: new Array(this.props.layoutConfig.width).fill(null).map(() => new Array(this.props.layoutConfig.height).fill(palette[0])),
   };
 
-  keypressHistory = new Array(this.props.layoutConfig.width)
-    .fill(null)
-    .map(() => new Array(this.props.layoutConfig.height).fill(0));
+  keypressHistory = new Array(this.props.layoutConfig.width).fill(null).map(() => new Array(this.props.layoutConfig.height).fill(0));
   currentChain = 0;
   // overlay = "#808080";
 
@@ -37,8 +33,7 @@ class Canvas extends Component {
 
     if (
       nextProps.inputDevice !==
-      this.props
-        .inputDevice /* || prevProps.inputConfig !== this.props.inputConfig */
+      this.props.inputDevice /* || prevProps.inputConfig !== this.props.inputConfig */
     ) {
       this.setupMidiInput(nextProps.inputDevice, this.props.inputDevice);
     }
@@ -56,15 +51,11 @@ class Canvas extends Component {
   }
 
   clearCanvas(config = this.props.layoutConfig) {
-    this.state.colormap = new Array(config.width)
-      .fill(null)
-      .map(() => new Array(config.height).fill(palette[0])); //I write directly into state because that takes so long it will be complete by the time render is over and throw an error already. Since shouldComponentUpdate will enforce update I will give it a pass
+    this.state.colormap = new Array(config.width).fill(null).map(() => new Array(config.height).fill(palette[0])); //I write directly into state because that takes so long it will be complete by the time render is over and throw an error already. Since shouldComponentUpdate will enforce update I will give it a pass
   }
 
   clearKeypressHistory(config = this.props.layoutConfig) {
-    this.keypressHistory = new Array(config.width)
-      .fill(null)
-      .map(() => new Array(config.height).fill(0));
+    this.keypressHistory = new Array(config.width).fill(null).map(() => new Array(config.height).fill(0));
   }
 
   setupMidiInput(newInput, oldInput) {
@@ -98,7 +89,8 @@ class Canvas extends Component {
 
   keyOn = (x, y, config = this.props.layoutConfig, bypassOffset = false) => {
     let targetChain = undefined;
-    // console.log("Note On - " + x.toString() + " " + y.toString());
+    let soundLoop = 1
+    console.log("Note On - " + x.toString() + " " + y.toString());
 
     let [offseted_x, offseted_y] = [x, y];
     if (!bypassOffset) {
@@ -115,91 +107,47 @@ class Canvas extends Component {
       if (
         this.props.projectFile.keySound !== undefined &&
         this.props.projectFile.keySound[this.currentChain] !== undefined &&
-        this.props.projectFile.keySound[this.currentChain][offseted_x] !==
-          undefined &&
-        this.props.projectFile.keySound[this.currentChain][offseted_x][
-          offseted_y
-        ] !== undefined &&
-        this.props.projectFile.keySound[this.currentChain][offseted_x][
-          offseted_y
-        ].length > 0
+        this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined &&
+        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined &&
+        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0
       ) {
         let soundIndex =
           this.keypressHistory[x][y] %
-          this.props.projectFile.keySound[this.currentChain][offseted_x][
-            offseted_y
-          ].length;
-        this.props.projectFile.keySound[this.currentChain][offseted_x][
-          offseted_y
-        ][soundIndex][0].loop = false;
-        this.props.projectFile.keySound[this.currentChain][offseted_x][
-          offseted_y
-        ][soundIndex][0].stop();
+          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
+        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].loop = false;
+        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].stop();
         // console.log('Play sound ${this.currentChain} ${offseted_x}')
         if (
-          this.props.projectFile.keySound[this.currentChain][offseted_x][
-            offseted_y
-          ][soundIndex][1] !== undefined
+          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1] !== undefined
         ) {
-          if (
-            this.props.projectFile.keySound[this.currentChain][offseted_x][
-              offseted_y
-            ][soundIndex][1][0] !== undefined &&
-            this.props.projectFile.keySound[this.currentChain][offseted_x][
-              offseted_y
-            ][soundIndex][1][0] > 1
-          ) {
+          if (  
             // Loop
-            this.props.projectFile.keySound[this.currentChain][offseted_x][
-              offseted_y
-            ][soundIndex][0].loop = this.props.projectFile.keySound[
-              this.currentChain
-            ][offseted_x][offseted_y][soundIndex][1][0];
-            this.props.projectFile.keySound[this.currentChain][offseted_x][
-              offseted_y
-            ][soundIndex][0].onend = function () {
-              this.props.projectFile.keySound[this.currentChain][offseted_x][
-                offseted_y
-              ][soundIndex][0].loop--;
-            };
+            this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] !== undefined
+          ) {
+            soundLoop = parseInt(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0])
           }
 
           if (
-            this.props.projectFile.keySound[this.currentChain][offseted_x][
-              offseted_y
-            ][soundIndex][1][1] !== undefined
+            this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1] !== undefined
           ) {
             //Wormhole
-            targetChain = this.props.projectFile.keySound[this.currentChain][
-              offseted_x
-            ][offseted_y][soundIndex][1][1];
+            targetChain = parseInt(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1]) - 1;
           }
         }
-        this.props.projectFile.keySound[this.currentChain][offseted_x][
-          offseted_y
-        ][soundIndex][0].play();
+        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].play(soundLoop);
+        console.log(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex])
       }
 
       //LED
       if (
         this.props.projectFile.keyLED !== undefined &&
         this.props.projectFile.keyLED[this.currentChain] !== undefined &&
-        this.props.projectFile.keyLED[this.currentChain][offseted_x] !==
-          undefined &&
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][
-          offseted_y
-        ] !== undefined &&
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y]
-          .length > 0
+        this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined &&
+        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined &&
+        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0
       ) {
-        let ledIndex =
-          this.keypressHistory[x][y] %
-          this.props.projectFile.keyLED[this.currentChain][offseted_x][
-            offseted_y
-          ].length;
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][
-          offseted_y
-        ][ledIndex].play(this);
+        let ledIndex = this.keypressHistory[x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
+        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play(this);
       }
 
       //Update History
@@ -258,8 +206,7 @@ class Canvas extends Component {
       );
     }
 
-    if (/^#[0-9A-F]{6}$/i.test(color)) {
-      //Check if it is a Hex String
+    if (/^#[0-9A-F]{6}$/i.test(color)) { //Check if it is a Hex String
       this.state.colormap[canvas_x][canvas_y] = color;
     } else {
       this.state.colormap[canvas_x][canvas_y] = palette[color];
@@ -284,8 +231,7 @@ class Canvas extends Component {
         );
       }
 
-      if (/^#[0-9A-F]{6}$/i.test(color)) {
-        //Check if it is a Hex String
+      if (/^#[0-9A-F]{6}$/i.test(color)) { //Check if it is a Hex String
         this.sendSysex(
           this.props.outputConfig.hexSysexGen(output_y, output_x, color)
         );
