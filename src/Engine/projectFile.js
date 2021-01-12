@@ -8,8 +8,10 @@ class ProjectFile {
   keySound = undefined;
   autoplay = undefined;
   keyLED = undefined;
+  canvas = undefined
 
-  constructor(file) {
+  constructor(file, canvas) {
+    this.canvas = canvas;
     return this.unpack(file);
   }
 
@@ -131,7 +133,7 @@ class ProjectFile {
       }
 
       //Load AutoPlay
-      this.autoplay = new AutoPlay(autoplayFile);
+      this.autoplay = new AutoPlay(autoplayFile, this.canvas);
 
       resolve(this)
     });

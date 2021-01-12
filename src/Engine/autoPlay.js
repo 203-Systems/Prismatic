@@ -2,23 +2,25 @@ class AutoPlay {
   autoplay = undefined;
   status = "STOPPED"
   progress = 0
+  total = 0
   currentChain = 0
-  constructor(text) {
+  canvas = undefined;
+  constructor(text, canvas) {
     this.autoplay = text;
+    this.total = text.length;
+    this.canvas = canvas.current;
   }
 
-  play = async (canvas, canvas_origin, callback) => {
-    console.time("Autoplay")
-    console.log(canvas)
-    console.log(canvas_origin);
+  play = async (callback) => {
+    // console.time("Autoplay")
     if (this.progress === 0) {
-      canvas.initlalizeCanvas();
+      this.canvas.initlalizeCanvas();
       this.currentChain = parseInt(0);
     }
     this.status = "PLAYING"
     for (this.progress; this.progress < this.autoplay.length; this.progress++) {
-      console.timeEnd("Autoplay");
-      console.time("Autoplay")
+      // console.timeEnd("Autoplay");
+      // console.time("Autoplay")
       let wait_complete = true;
       console.log(this.autoplay[this.progress])
       let command = this.autoplay[this.progress].split(" ");
@@ -29,17 +31,17 @@ class AutoPlay {
       if (command.length < 2)
         continue;
 
-      if (canvas.currentChain != this.currentChain) {
-        canvas.chainChange(this.currentChain);
+      if (this.canvas.currentChain != this.currentChain) {
+        this.canvas.chainChange(this.currentChain);
       }
 
       switch (command[0]) {
         case 't':
         case 'o':
-          canvas.keyOn(parseInt(command[2]) - 1 + canvas_origin[0], parseInt(command[1]) - 1 + canvas_origin[1]);
+          this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
           break;
         case 'f':
-          canvas.keyOff(parseInt(command[2]) - 1 + canvas_origin[0], parseInt(command[1]) - 1 + canvas_origin[1]);
+          this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
           break;
         case 'd':
           // console.time("Autoplay wait");
@@ -56,7 +58,7 @@ class AutoPlay {
           break;
         case 'c':
         case 'chain':
-          canvas.chainChange(parseInt(command[1]) - 1);
+          this.canvas.chainChange(parseInt(command[1]) - 1);
           this.currentChain = parseInt(command[1]) - 1;
           break;
         default:
@@ -68,11 +70,13 @@ class AutoPlay {
 
   pause() {
     this.status = "PAUSED"
+    this.canvas.stopAll();
   }
 
   stop() {
     this.status = "STOPPED"
     this.progress = 0
+    this.canvas.initlalizeCanvas();
   }
 
   wait(ms) {

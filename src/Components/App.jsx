@@ -8,6 +8,7 @@ import config from "../config";
 import deviceConfigs from "../deviceConfigs";
 import Select from "react-select";
 import download from "downloadjs";
+import AutoplayControl from "./Autoplay";
 
 class App extends Component {
   constructor(props) {
@@ -91,7 +92,7 @@ class App extends Component {
 
   loadProjectFile = (projectPack) => {
     // console.log(projectPack)
-    new ProjectFile(projectPack)
+    new ProjectFile(projectPack, this.canvas)
       .then((projectFile) => {
         this.setState({ projectFile: projectFile });
         console.log(projectFile);
@@ -266,10 +267,10 @@ class App extends Component {
     return (
       <React.Fragment>
         <div className="main">
-          <div className="toolbar">
+          <div className="sidebar">
             <text>203 | Prismatic (Tech Preview Demo)</text>
-            <div className="toolbarItem" />
-            <text className="toolbarItem">
+            <div className="sidebarItem" />
+            <text className="sidebarItem">
               {this.state.projectFile !== undefined
                 ? `Current Project: ${this.state.projectFile.info["title"]} by ${this.state.projectFile.info["producerName"]}`
                 : "No project loaded"}
@@ -277,10 +278,10 @@ class App extends Component {
             <ProjectFileReader
               loadProjectFile={this.loadProjectFile}
             ></ProjectFileReader>
-            <div className="toolbarItem" />
+            <div className="sidebarItem" />
             <text>UI Layout</text>
             <Select
-              className="toolbarItem"
+              className="sidebarItem"
               options={this.prepSelectConfig(deviceConfigs, "layout")}
               autosize={true}
               value={
@@ -295,7 +296,7 @@ class App extends Component {
             />
             <text>Midi Input Device</text>
             <Select
-              className="toolbarItem"
+              className="sidebarItem"
               options={this.state.midiInput}
               autosize={true}
               value={
@@ -310,7 +311,7 @@ class App extends Component {
             />
             <text>Midi Input Device Config</text>
             <Select
-              className="toolbarItem"
+              className="sidebarItem"
               options={this.prepSelectConfig(deviceConfigs, "keymap")}
               autosize={true}
               value={
@@ -325,7 +326,7 @@ class App extends Component {
             />
             <text>Midi Output Device</text>
             <Select
-              className="toolbarItem"
+              className="sidebarItem"
               options={this.state.midiOutput}
               autosize={true}
               value={
@@ -340,7 +341,7 @@ class App extends Component {
             />
             <text>Midi Output Device Config</text>
             <Select
-              className="toolbarItem"
+              className="sidebarItem"
               options={this.prepSelectConfig(deviceConfigs, "keymap")}
               autosize={true}
               value={
@@ -354,64 +355,8 @@ class App extends Component {
               onChange={this.setOutputConfig.bind(this)}
             />
             <div />
-            <text>
-              {"Autoplay" +
-                (this.state.autoplayProgress === undefined
-                  ? ""
-                  : this.state.autoplayProgress)}
-            </text>
-            <div />
-            <button
-              style={{
-                width: "50px",
-                marginRight: "10px",
-                display: !(
-                  this.state.projectFile !== undefined &&
-                  this.state.projectFile.autoplay.status === "PLAYING"
-                )
-                  ? "inline"
-                  : "none",
-              }}
-              onClick={this.playAutoplay}
-            >
-              Play
-            </button>
-            <button
-              style={{
-                width: "50px",
-                marginRight: "10px",
-                display:
-                  this.state.projectFile !== undefined &&
-                  this.state.projectFile.autoplay.status === "PAUSED"
-                    ? "inline"
-                    : "none",
-              }}
-              onClick={this.stopAutoplay}
-            >
-              Stop
-            </button>
-            <button
-              style={{
-                width: "50px",
-                marginRight: "10px",
-                display:
-                  this.state.projectFile !== undefined &&
-                  this.state.projectFile.autoplay.status === "PLAYING"
-                    ? "inline"
-                    : "none",
-              }}
-              onClick={this.pauseAutoplay}
-            >
-              Pause
-            </button>
+            <AutoplayControl autoplay={this.state.projectFile === undefined ? undefined : this.state.projectFile.autoplay} canvas={this.canvas} layoutConfig={this.state.layoutConfig}/>
           </div>
-          <div
-            className="canvas"
-            style={{
-              padding: this.state.layoutConfig.padding,
-              borderRadius: this.state.layoutConfig.radius,
-            }}
-          >
             <Canvas
               ref={this.canvas}
               projectFile={this.state.projectFile}
@@ -421,7 +366,6 @@ class App extends Component {
               outputDevice={this.state.outputDevice}
               outputConfig={this.state.outputConfig}
             />
-          </div>
         </div>
       </React.Fragment>
     );
@@ -468,50 +412,6 @@ class App extends Component {
     }
     return result;
   }
-
-  playAutoplay = () => {
-    if (
-      this.state.projectFile !== undefined &&
-      this.state.projectFile.autoplay !== undefined
-    ) {
-      this.state.projectFile.autoplay.play(
-        this.canvas.current,
-        this.state.layoutConfig.canvas_origin,
-        // function ([current, total]) {
-        //   // this.setState({autoplayProgress: ` - ${(current / total * 100).toFixed(2)}% completed (${current}/${total})`});
-        // }.bind(this)
-      );
-      this.setState({autoplayProgress: " - Playing"})
-      } else {
-      alert("No project loaded!");
-    }
-  };
-
-  stopAutoplay = () => {
-    if (
-      this.state.projectFile !== undefined &&
-      this.state.projectFile.autoplay !== undefined
-    ) {
-      this.state.projectFile.autoplay.stop();
-      this.setState({ autoplayProgress: undefined });
-    } else {
-      alert("No project loaded!");
-    }
-  };
-
-  pauseAutoplay = () => {
-    if (
-      this.state.projectFile !== undefined &&
-      this.state.projectFile.autoplay !== undefined
-    ) {
-      this.state.projectFile.autoplay.pause();
-      this.setState({
-        autoplayProgress: this.state.autoplayProgress + " - Paused",
-      });
-    } else {
-      alert("No project loaded!");
-    }
-  };
 
   getCookie() {
     return document.cookie.split('; ').reduce((prev, current) => {

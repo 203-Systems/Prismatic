@@ -3,6 +3,9 @@ const deviceConfigs = {
   {
     channel: 1,
     midiNameRegex: "Launchpad Pro", //For some reason mine shows up as "3- Launchpad Pro"
+
+    initializationSysex: 
+    [0xf0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x21, 0x0, 0xf7],
     
     layout: [
       ["　", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "　"],
@@ -14,7 +17,7 @@ const deviceConfigs = {
       ["⬤", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "⬤"],
       ["⬤", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "⬤"],
       ["⬤", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "⬤"],
-      ["　", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "　"]],
+      ["　", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "◻"]],
 
     keymap: [
       [null, 91, 92, 93, 94, 95, 96, 97, 98, null],
@@ -26,7 +29,7 @@ const deviceConfigs = {
       [30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
       [20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
       [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
-      [null, 1, 2, 3, 4, 5, 6, 7, 8, null]],
+      [null, 1, 2, 3, 4, 5, 6, 7, 8, "X99"]],
 
     //Size of LED since sometimes Key can come without LED. We don't really need them since we can load the size of layout array
     width: 10, 
@@ -48,27 +51,10 @@ const deviceConfigs = {
       [8,9], [7,9], [6,9], [5,9], [4,9], [3,9], [2,9], [1,9],
       [0,8], [0,7], [0,6], [0,5], [0,4], [0,3], [0,2], [0,1]],
 
-    hexSysexGen: function()
+    lKey: [9,9],
+
+    hexSysexGen: function(x, y, hex)
     {
-      if(arguments.length != 2 && arguments.length != 3)
-        return //Error
-      switch(arguments.length)
-      {
-        case 2: //MC
-          var mc = arguments[0]
-          if(this.mcTable[mc] == null)
-            return
-          var x,y = this.mcTable[mc]
-          var hex = arguments[1]
-          break;
-        case 3: //XY
-          var x = arguments[0] + 1
-          var y = arguments[1] + 1
-          var hex = arguments[2]
-          break;
-        default:
-          return
-      }
       var xy = x * 10 + y
       var r = (hex >> 16) >> 2 //6 bit color
       var g = (hex & 0xFF00 >> 8) >> 2

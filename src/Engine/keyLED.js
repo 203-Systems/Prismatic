@@ -2,6 +2,8 @@ class KeyLED
 {
   keyLED = undefined
   repeat = 1;
+  status = "STOPPED"
+
   constructor(text, repeat)
   {
     this.keyLED = text;
@@ -10,12 +12,14 @@ class KeyLED
 
   play = async(canvas) =>
   {
+    this.status = "PLAYING"
     for(var i = 0; i < this.repeat; i++)
     {
       for(var line of this.keyLED)
       {
+        let wait_complete = true;
         let command = line.split(" ");
-        // console.log(command);
+        // console.log(line)
         if(command.length < 2)
           continue;
 
@@ -23,51 +27,70 @@ class KeyLED
         {
           case 'o': //set color
           case 'on': //set color
-            if(command.length === 5) //PaletteMode
-            {
-              if(command[1] !== "mc")
+              var [x, y] = [undefined, undefined]
+              if(command[1] === "mc" || command[1] === "l") //For "l", the y is garbage but it won't be read for the setColor functions so just gonna let it be
               {
-                canvas.setColorPalette(parseInt(command[2] - 1), parseInt(command[1] - 1), parseInt(command[4]));
+                [x, y] = [command[1], parseInt(command[2] - 1)]
+              }
+              else if(parseInt(command[1]) !== NaN)
+              {
+                [x, y] = [parseInt(command[2] - 1), parseInt(command[1] - 1)]
+              }
+
+              var color
+              if(command[command.length - 2] === "a")
+              {
+                color = parseInt(command[command.length - 1])
               }
               else
               {
-                canvas.setMCColorPalette(parseInt(command[2] - 1), parseInt(command[4]));
+                color = "#" + command[command.length - 1]
               }
-            }else if(command.length === 4)
-            {
-              if(command[1] !== "mc")
-              {
-                canvas.setColorHEX(parseInt(command[2] - 1), parseInt(command[1] - 1), "#" + command[3]);
-              }
-              else
-              {
-                canvas.setMCColorHEX(parseInt(command[2] - 1), "#" + command[3]);
-              }
-            }
+
+              canvas.setColor(x, y, color)
               break;
           case 'f': //color off
           case 'off': //color off
-          if(command[1] !== "mc")
+            var [x, y] = [undefined, undefined]
+            if(command[1] === "mc" || command[1] === "l")
             {
-              canvas.setColorPalette(parseInt(command[2] - 1), parseInt(command[1] - 1), 0);
+              [x, y] = [command[1], parseInt(command[2] - 1)]
             }
-            else
+            else if(parseInt(command[1]) !== NaN)
             {
-              canvas.setMCColorPalette(parseInt(command[2] - 1), 0);
+              [x, y] = [parseInt(command[2] - 1), parseInt(command[1] - 1)]
             }
+
+            canvas.setColor(x, y, 0)
             break;
           case 'd': //wait
-            await this.wait(parseInt(command[1]));
+          case 'delay': 
+          wait_complete = false;
+          this.wait(parseInt(command[1])).then(() => { wait_complete = true });
+          // await this.wait(parseInt(command[1]));
+          do {
+            if (this.status === "STOPPED") {
+              // this.progress++;
+              return;
+            }
+            await this.wait(5)
+          } while (!wait_complete)
             break;
           default:
         }
       }
     }
+    this.status = "STOPPED"
   }
 
   wait(ms)
   {
     return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  stop()
+  {
+    this.status = "STOPPED"
   }
 }
 

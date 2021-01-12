@@ -13,7 +13,7 @@
   margin: 0px !important;
 }
 
-.toolbar
+.sidebar
 {
   display: list-item;
   gap: 20px;
@@ -22,7 +22,7 @@
   padding: 15px;
 }
 
-.toolbarItem
+.sidebarItem
 {
   margin-top: 5px;
   margin-bottom: 15px;
