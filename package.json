@@ -8,13 +8,13 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.21.1",
-    "downloadjs": "^1.4.7",
-    "howler": "^2.2.0",
+    "howler": "^2.2.1",
     "jszip": "^3.5.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-scripts": "^4.0.1",
-    "react-select": "^3.1.1"
+    "react-select": "^3.2.0",
+    "webmidi": "^2.5.1"
   },
   "scripts": {
     "start": "react-scripts start",

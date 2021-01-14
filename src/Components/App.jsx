@@ -1,14 +1,12 @@
 import React, { Component } from "react";
-import Navbar from "./Navbar";
 import ProjectFileReader from "./ProjectFileReader";
 import ProjectFile from "../Engine/projectFile";
-import Button from "./Button";
 import Canvas from "./Canvas";
 import config from "../config";
 import deviceConfigs from "../deviceConfigs";
 import Select from "react-select";
-import download from "downloadjs";
 import AutoplayControl from "./Autoplay";
+import WebMidi from "webmidi";
 
 class App extends Component {
   constructor(props) {
@@ -22,13 +20,15 @@ class App extends Component {
 
   initlization()
   {
-    if (navigator.requestMIDIAccess != undefined) {
-      navigator
-        .requestMIDIAccess()
-        .then(this.onMIDISuccess, this.onMIDIFailure);
-    } else {
-      alert("Your device doesn't support WebMidi");
-    }
+    WebMidi.enable(err => {
+
+      if (err) {
+        this.onMIDIFailure()
+      } else {
+        this.onMIDISuccess();
+      }},
+      true
+    );
 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("unipack")) {
@@ -69,19 +69,6 @@ class App extends Component {
 
   downloadProjectFile = (url) => {
     alert("Download Unipack from " + url)
-    // var result = null;
-    // var xmlhttp = new XMLHttpRequest();
-    // xmlhttp.open("GET", "https://cors-anywhere.herokuapp.com/" + url, false);
-    // xmlhttp.send();
-    // if (xmlhttp.status==200) {
-    //   result = xmlhttp.responseBlob;
-    //   console.log(xmlhttp)
-    // }
-    // else
-    // {
-    //   alert("File download failed: " + xmlhttp.status)
-    //   return
-    // }
     fetch("https://cors-anywhere.herokuapp.com/" + url).then
     ((r => 
       {var file = r.blob();
@@ -102,81 +89,14 @@ class App extends Component {
       });
   };
 
-  onMIDISuccess = (midiAccess) => {
+  onMIDISuccess(){
     console.log("Got access your MIDI devices.");
 
-    this.updateMidiList(midiAccess);
+    this.updateMidiList();
 
-    midiAccess.onstatechange = this.onMidiStateChange.bind(this);
+    WebMidi.addListener("connected", this.onMidiStateChange.bind(this))
+    WebMidi.addListener("disconnected", this.onMidiStateChange.bind(this))
   };
-
-  // onMidiStateChange(e)
-  // {
-  //   console.log(e);
-  //   console.log(e.port.name, e.port.type, e.port.state);
-  //   if(e.port.state === "connected")
-  //   {
-  //     if(e.port.type === "input")
-  //     {
-  //       var midiInput = this.state.midiInput
-  //       midiInput.push({label: e.port.name, value: e.port})
-  //       this.setState({midiInput: midiInput})
-  //       console.log(this.state.midiInput)
-  //     }
-  //     else if(e.port.type === "output")
-  //     {
-  //       var midiOutput = this.state.midiOutput
-  //       midiOutput.push({label: e.port.name, value: e.port})
-  //       this.setState({midiOutput: midiOutput})
-  //       console.log(this.state.midiOutput)
-  //     }
-  //   }
-  //   else if(e.port.state === "disconnected")
-  //   {
-  //     if(e.port.type === "input")
-  //     {
-  //       var midiInput = this.state.midiInput
-  //       for(var i = 0; i < midiInput.length; i++)
-  //       {
-  //         if(midiInput[i].label === e.port.name)
-  //         {
-  //           midiInput.splice(i, 1);
-  //           break;
-  //         }
-  //       }
-  //       this.setState({midiInput: midiInput})
-  //       console.log(midiInput)
-
-  //       if(this.state.inputDevice !== undefined && this.state.inputDevice.name === e.port.name)
-  //       {
-  //         this.setState({inputDevice: undefined})
-  //         this.setState({inputDeviceConfig: undefined})
-  //         this.setState({inputDeviceName: undefined})
-  //       }
-  //     }
-  //     else if(e.port.type === "output")
-  //     {
-  //       var midiOutput = this.state.midiOutput
-  //       for(var i = 0; i < midiOutput.length; i++)
-  //       {
-  //         if(midiOutput[i].label === e.port.name)
-  //         {
-  //           midiOutput.splice(i, 1);
-  //           break;
-  //         }
-  //       }
-  //       this.setState({midiOutput: midiOutput})
-  //       console.log(midiOutput)
-
-  //       if(this.state.outputDevice !== undefined && this.state.outputDevice.name === e.port.name)
-  //       {
-  //         this.setState({outputDevice: undefined})
-  //         this.setState({outputDeviceConfig: undefined})
-  //         this.setState({outputDeviceName: undefined})
-  //       }
-  //     }
-  //   }
-  // }
 
   onMidiStateChange(e) {
     console.log(e);
@@ -202,14 +122,13 @@ class App extends Component {
         }
       }
     }
-
-    navigator.requestMIDIAccess().then(this.updateMidiList.bind(this));
+    this.updateMidiList();
   }
-
-  updateMidiList(midiAccess) {
+  
+  updateMidiList() {
     var midiInput = [];
     console.log("Input");
-    for (var input of midiAccess.inputs.values()) {
+    for (var input of WebMidi.inputs) {
       console.log(input.name);
       midiInput.push({ label: input.name, value: input });
     }
@@ -218,17 +137,18 @@ class App extends Component {
     var midiOutput = [];
     console.log();
     console.log("Output");
-    for (var output of midiAccess.outputs.values()) {
+    for (var output of WebMidi.outputs) {
       console.log(output.name);
       midiOutput.push({ label: output.name, value: output });
     }
     this.setState({ midiOutput: midiOutput });
   }
 
+
   onMIDIFailure() {
     console.log("Could not access your MIDI devices.");
     alert(
-      "Could not access your MIDI devices. Try use another web browser or hardware platform"
+      "Could not access your MIDI devices. Try use another web browser or hardware platform."
     );
   }
 
@@ -245,13 +165,11 @@ class App extends Component {
           );
           switch (mode) {
             case 0:
-              this.setState({ inputConfigName: key });
-              this.setState({ inputConfig: config });
-              return;
+              this.setInputConfig({label: key, value: config})
+              return true;
             case 1:
-              this.setState({ outputConfigName: key });
-              this.setState({ outputConfig: config });
-              return;
+              this.setOutputConfig({label: key, value: config})
+              return true;
           }
         }
       }
@@ -261,6 +179,7 @@ class App extends Component {
         mode ? "output" : "input"
       } config for device ${deviceName}`
     );
+    return false
   }
 
   render() {
@@ -380,13 +299,13 @@ class App extends Component {
   setInputConfig(config) {
     // console.log(config)
     this.setState({ inputConfigName: config.label });
-    this.setState({ inputConfig: config.value });
+    this.setState({ inputConfig: config.value }, this.initlizateInputDevice.bind(this));
   }
 
   setOutputConfig(config) {
     // console.log(config)
     this.setState({ outputConfigName: config.label });
-    this.setState({ outputConfig: config.value });
+    this.setState({ outputConfig: config.value }, this.initlizateOutputDevice.bind(this));
   }
 
   setInputDevice(device) {
@@ -396,8 +315,45 @@ class App extends Component {
 
   setOutputDevice(device) {
     // console.log("Output device set to " + device.name);
+    console.log(device)
     this.setState({ outputDevice: device.value });
     this.autoConfigPicker(device.value.name, 1);
+  }
+
+  initlizateInputDevice()
+  {
+    if(this.state.inputConfig !== undefined && this.state.inputDevice !== undefined)
+    {
+      if(this.state.inputConfig.inputInfoMessage !== undefined)
+      {
+        for(var i in this.state.inputConfig.infoMessage)
+        {
+          alert(this.state.inputConfig.inputInfoMessage[i])
+        }
+      }
+    }
+  }
+
+  initlizateOutputDevice()
+  {
+    //Sysex
+    if(this.state.outputConfig !== undefined && this.state.outputDevice !== undefined)
+    {
+      if(this.state.outputConfig.initializationSysex !== undefined)
+      {
+        for(var i in this.state.outputConfig.initializationSysex)
+        {
+          this.state.outputDevice.sendSysex([], this.state.outputConfig.initializationSysex[i])
+        }
+      }
+      if(this.state.outputConfig.outputInfoMessage !== undefined)
+      {
+        for(var i in this.state.outputConfig.infoMessage)
+        {
+          alert(this.state.outputConfig.outputInfoMessage[i])
+        }
+      }
+    }
   }
 
   prepSelectConfig(config, requiredKey = undefined) {

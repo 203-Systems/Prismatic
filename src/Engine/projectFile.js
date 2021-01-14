@@ -1,4 +1,3 @@
-import { Howl } from 'howler';
 import KeyLED from "./keyLED"
 import AutoPlay from "./autoPlay"
 import keySound from './keySound';
@@ -12,7 +11,7 @@ class ProjectFile {
   canvas = undefined
 
   constructor(file, canvas) {
-    this.canvas = canvas;
+    this.canvas = canvas.current;
     return this.unpack(file);
   }
 
@@ -39,8 +38,8 @@ class ProjectFile {
           if (file.name.toLowerCase().includes("sounds/")) //Audio
           {
             console.log("Sound file: " + file.name);
-            this.soundFiles[file.name.split("/").pop()] = await file.async("blob").then(function (sound) {
-              return new keySound(sound, file.name.split("/").pop())
+            this.soundFiles[file.name.split("/").pop()] = await file.async("blob").then(function (blob) {
+              return new keySound(blob, file.name.split("/").pop())
             });
           }
           else {
@@ -70,7 +69,7 @@ class ProjectFile {
               if (this.info["chain"] > 8) {
                 // reject("Only Unipad project that has within 8 chains are supported");
                 alert(`This Unipad Project has ${this.info["chain"]} chains. Projects that has more than 8 chains are limited supported`)
-                return;
+                // return;
               }
             }
             else if (file.name.toLowerCase().endsWith("keysound")) {
@@ -106,18 +105,20 @@ class ProjectFile {
       // Load KeyLED
       for (var [name, text] of Object.entries(keyLEDFiles)) {
         let fileInfo = name.split("/").pop().split(" ");
-        if (fileInfo.length === 5) {
-          this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][fileInfo[4].charCodeAt(0) - 97] = new KeyLED(text, parseInt(fileInfo[3]))
-          // console.log(name)
-          // console.log([parseInt(fileInfo[0]) - 1, parseInt(fileInfo[2]) - 1, parseInt(fileInfo[1]) - 1, fileInfo[4].charCodeAt(0) - 97])
-          // console.log(this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][fileInfo[4].charCodeAt(0) - 97])
-        }
-        else if (fileInfo.length === 4) {
-          this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][0] = new KeyLED(text, parseInt(fileInfo[3]))
-        }
-        else {
-          console.warn("Unknown keyLED file name: " + name);
-        }
+        // if (fileInfo.length === 5) {
+        //   this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][fileInfo[4].charCodeAt(0) - 97] = new KeyLED(text, parseInt(fileInfo[3]), this.canvas)
+        //   // console.log(name)
+        //   // console.log([parseInt(fileInfo[0]) - 1, parseInt(fileInfo[2]) - 1, parseInt(fileInfo[1]) - 1, fileInfo[4].charCodeAt(0) - 97])
+        //   // console.log(this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][fileInfo[4].charCodeAt(0) - 97])
+        // }
+        // else if (fileInfo.length === 4) {
+          let index = fileInfo[4] !== undefined ? fileInfo[4].charCodeAt(0) - 97 : 0 //97 is 'a' 
+          // console.log([parseInt(fileInfo[0]) - 1, parseInt(fileInfo[2]) - 1, parseInt(fileInfo[1]) - 1, index])
+          this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][index] = new KeyLED(text, parseInt(fileInfo[3]), this.canvas)
+        // }
+        // else {
+        //   console.warn("Unknown keyLED file name: " + name);
+        // }
       }
 
       //Load KeySound

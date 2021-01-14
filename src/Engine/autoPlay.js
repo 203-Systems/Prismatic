@@ -3,19 +3,19 @@ class AutoPlay {
   status = "STOPPED"
   progress = 0
   total = 0
-  currentChain = 0
+  // currentChain = 0
   canvas = undefined;
   constructor(text, canvas) {
     this.autoplay = text;
     this.total = text.length;
-    this.canvas = canvas.current;
+    this.canvas = canvas;
   }
 
   play = async (callback) => {
     // console.time("Autoplay")
     if (this.progress === 0) {
       this.canvas.initlalizeCanvas();
-      this.currentChain = parseInt(0);
+      // this.currentChain = parseInt(0);
     }
     this.status = "PLAYING"
     for (this.progress; this.progress < this.autoplay.length; this.progress++) {
@@ -31,9 +31,9 @@ class AutoPlay {
       if (command.length < 2)
         continue;
 
-      if (this.canvas.currentChain != this.currentChain) {
-        this.canvas.chainChange(this.currentChain);
-      }
+      // if (this.canvas.currentChain != this.currentChain) {
+      //   this.canvas.chainChange(this.currentChain);
+      // }
 
       switch (command[0]) {
         case 't':
@@ -59,7 +59,7 @@ class AutoPlay {
         case 'c':
         case 'chain':
           this.canvas.chainChange(parseInt(command[1]) - 1);
-          this.currentChain = parseInt(command[1]) - 1;
+          // this.currentChain = parseInt(command[1]) - 1;
           break;
         default:
       }
