@@ -4,7 +4,7 @@ class AutoplayControl extends Component {
   constructor(props) {
     super(props);
     setInterval(() => {
-      if (this.props.autoplay !== undefined) {
+      if (this.props.project !== undefined && this.props.project.autoplay !== undefined) {
         this.forceUpdate();
       }
     }, 1000 / 60);
@@ -38,24 +38,24 @@ class AutoplayControl extends Component {
     var buttons = [];
 
     var statusText = "";
-    if (this.props.autoplay == undefined || this.props.autoplay.total === 0)
+    if (this.props.project == undefined || this.props.project.autoplay == undefined || this.props.project.autoplay.total === 0)
       return null;
-    switch (this.props.autoplay.status) {
+    switch (this.props.project.autoplay.status) {
       case "PLAYING":
         statusText = ` - ${(
-          (this.props.autoplay.progress / this.props.autoplay.total) *
+          (this.props.project.autoplay.progress / this.props.project.autoplay.total) *
           100
-        ).toFixed(2)}% completed (${this.props.autoplay.progress}/${
-          this.props.autoplay.total
+        ).toFixed(2)}% completed (${this.props.project.autoplay.progress}/${
+          this.props.project.autoplay.total
         })`;
         buttons.push(pauseButton);
         break;
       case "PAUSED":
         statusText = ` - ${(
-          (this.props.autoplay.progress / this.props.autoplay.total) *
+          (this.props.project.autoplay.progress / this.props.project.autoplay.total) *
           100
-        ).toFixed(2)}% completed (${this.props.autoplay.progress}/${
-          this.props.autoplay.total
+        ).toFixed(2)}% completed (${this.props.project.autoplay.progress}/${
+          this.props.project.autoplay.total
         }) - Paused`;
         buttons.push(playButton, stopButton);
         break;
@@ -73,8 +73,8 @@ class AutoplayControl extends Component {
   }
 
   playAutoplay = () => {
-    if (this.props.autoplay !== undefined) {
-      this.props.autoplay.play(
+    if (this.props.project.autoplay !== undefined) {
+      this.props.project.autoplay.play(
         // this.props.canvas.current,
         // this.props.layoutConfig.canvas_origin
       );
@@ -84,16 +84,18 @@ class AutoplayControl extends Component {
   };
 
   stopAutoplay = () => {
-    if (this.props.autoplay !== undefined) {
-      this.props.autoplay.stop();
+    if (this.props.project.autoplay !== undefined) {
+      this.props.project.autoplay.stop();
+      this.props.canvas.current.initlalizeCanvas();
     } else {
       alert("No project loaded!");
     }
   };
 
   pauseAutoplay = () => {
-    if (this.props.autoplay !== undefined) {
-      this.props.autoplay.pause();
+    if (this.props.project.autoplay !== undefined) {
+      this.props.project.autoplay.pause();
+      this.props.project.stopAll();
     } else {
       alert("No project loaded!");
     }

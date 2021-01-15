@@ -5,7 +5,7 @@ import Canvas from "./Canvas";
 import config from "../config";
 import deviceConfigs from "../deviceConfigs";
 import Select from "react-select";
-import AutoplayControl from "./Autoplay";
+import AutoplayControl from "./AutoplayControl";
 import WebMidi from "webmidi";
 
 class App extends Component {
@@ -41,6 +41,7 @@ class App extends Component {
 
   state = {
     projectFile: undefined,
+    statusMessage: "No project loaded",
 
     midiInput: [],
     midiOutput: [],
@@ -79,13 +80,18 @@ class App extends Component {
 
   loadProjectFile = (projectPack) => {
     // console.log(projectPack)
+    this.setState({statusMessage: "Loading Unipack"});
     new ProjectFile(projectPack, this.canvas)
       .then((projectFile) => {
         this.setState({ projectFile: projectFile });
         console.log(projectFile);
+        this.setState({statusMessage: `Current Project: ${this.state.projectFile.info["title"]} by ${this.state.projectFile.info["producerName"]}`});
       })
       .catch((message) => {
-        alert(message);
+        this.setState({statusMessage: "Error Loading Unipack"});
+        alert("Error Loading Unipack: " + projectPack.name)
+        console.error("Error Loading Unipack")
+        console.error(message);
       });
   };
 
@@ -190,9 +196,7 @@ class App extends Component {
             <text>203 | Prismatic (Tech Preview Demo)</text>
             <div className="sidebarItem" />
             <text className="sidebarItem">
-              {this.state.projectFile !== undefined
-                ? `Current Project: ${this.state.projectFile.info["title"]} by ${this.state.projectFile.info["producerName"]}`
-                : "No project loaded"}
+              {this.state.statusMessage}
             </text>
             <ProjectFileReader
               loadProjectFile={this.loadProjectFile}
@@ -274,7 +278,7 @@ class App extends Component {
               onChange={this.setOutputConfig.bind(this)}
             />
             <div />
-            <AutoplayControl autoplay={this.state.projectFile === undefined ? undefined : this.state.projectFile.autoplay} canvas={this.canvas} layoutConfig={this.state.layoutConfig}/>
+            <AutoplayControl project={this.state.projectFile} canvas={this.canvas} layoutConfig={this.state.layoutConfig}/>
           </div>
             <Canvas
               ref={this.canvas}

@@ -1,29 +1,41 @@
 class KeyLED
 {
   keyLED = undefined
+  id = undefined
+  id_str = undefined
   repeat = 1;
   status = {}
   nextIndex = 0
   canvas = undefined
   currentOn=[]
+  activeList = undefined //Global, refence to the activeKeyLED object in the projectFile
 
-  constructor(text, repeat, canvas)
+  constructor(text, repeat, canvas, id, activeList)
   {
     this.keyLED = text;
     this.repeat = repeat;
-    this.canvas = canvas
+    this.canvas = canvas;
+    this.id = id;
+    this.id_str = `${id[0]} ${id[1]} ${id[2]} ${id[3]}` 
+    this.activeList = activeList
   }
 
   play = async() =>
   {
+    if(this.activeList[this.id_str] === undefined)
+    {
+      this.activeList[this.id_str] = this.id
+      // console.log("Active List added")
+      // console.log(this.activeList)
+    }
     var threadIndex = this.getIndex()
     this.status[threadIndex] = "PLAYING"
     this.currentOn = []
     for(var i = 0; i < (this.repeat === 0 ? Infinity : this.repeat); i++)
     {
+
       for(var line of this.keyLED)
       {
-        let wait_complete = true;
         let command = line.split(" ");
         // console.log(line)
         if(command.length < 2)
@@ -81,23 +93,17 @@ class KeyLED
             break;
           case 'd': //wait
           case 'delay': 
-          wait_complete = false;
-          this.wait(parseInt(command[1])).then(() => { wait_complete = true });
-          // await this.wait(parseInt(command[1]));
-          do {
-            if (this.status[threadIndex] === "STOPPED") {
-              // this.progress++;
-              delete this.status[threadIndex]
-              return;
-            }
-            await this.wait(5)
-          } while (!wait_complete)
+          await this.wait(parseInt(command[1]));
             break;
           default:
         }
       }
     }
     delete this.status[threadIndex]
+    if(Object.keys(this.status).length === 0)
+    {
+      this.removeFromActiveList()
+    }
   }
 
   wait(ms)
@@ -110,19 +116,31 @@ class KeyLED
     return this.nextIndex++;
   }
 
-  stop()
+  stop(clearLight = true)
   {
     for(var index in this.status)
     {
-      // console.log(`Thread ${index}`)
+      // console.log(`Thread ${index} Stop`)
       this.status[index] = "STOPPED"
     }
-    for(var id in this.currentOn)
+    if(clearLight)
     {
-      var [x,y] = this.currentOn[id]
-      this.canvas.setColor(x, y, 0)
+      for(var id in this.currentOn)
+      {
+        var [x,y] = this.currentOn[id]
+        this.canvas.setColor(x, y, 0)
+      }
     }
     this.currentOn = []
+    this.removeFromActiveList()
+  }
+
+  removeFromActiveList()
+  {
+    // console.log("Try to delete " + this.id_str)
+    // console.log(this.activeList)
+    delete this.activeList[this.id_str]
+    // console.log(this.activeList)
   }
 }
 

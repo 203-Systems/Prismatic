@@ -1,31 +1,23 @@
 // import {Howler, Howl} from "../../howler/howler.core";
 import {Howler, Howl} from "howler";
 class keySound {
+  file = undefined;
   howl = undefined;
-  loopTarget = 0;
-  loopCounter = 0;
+  format = undefined
+  loopTarget = {};
+  loopCounter = {};
 
   constructor(file, name) {
-    console.log(Howler.usingWebAudio)
-    console.log(file)
-    let blob = window.URL.createObjectURL(file)
-    let format = name.toLowerCase().split(".").pop()
-    console.log(format)
-    console.log(Howler.codecs(format))
-    // var result_debug = Howler.checkCodecs();
-    // console.log(result_debug[0])
-    // console.log(result_debug[1])
-    // console.log(result_debug[2])
-    Howler.usingWebAudio = false
-    // let audioTest = (typeof Audio !== 'undefined') ? new Audio() : null;
-    // console.log(!!(audioTest.canPlayType('audio/wav; codecs="1"') || audioTest.canPlayType('audio/wav')).replace(/^no$/, ''))
-    // console.log(audioTest.canPlayType('audio/wav; codecs="1"'))
-    // console.log(audioTest.canPlayType('audio/wav'))
+    // console.log(Howler.usingWebAudio)
+    // console.log(file)
+    this.file = window.URL.createObjectURL(new File([file], name))
+    this.format = name.toLowerCase().split(".").pop()
+    // console.log(this.format)
+    // console.log(Howler.codecs(this.format))
     this.howl = new Howl({
-      src: [blob],
-      format: [format],
-      // html5: true,
-      volume: 1.0,
+      src: [this.file],
+      format: [this.format],
+      html5: !Howler.usingWebAudio,
       onend: this.onEnd.bind(this),
       onloaderror:function (id, message) {
         console.error(`Howler Load Error ${id} ${message}`)
@@ -37,27 +29,29 @@ class keySound {
   }
 
   play(loop = 1) {
-    this.loopCounter = 0
-    this.loopTarget = loop;
-    if (loop > 1) {
-      this.howl._loop = true
+    if(loop !== 1)
+    {
+      this.howl._loop = true;
     }
-    else {
-      this.howl._loop = false
-    }
-    this.howl.play()
+
+    var id = this.howl.play()
+
+    this.loopCounter[id] = 0
+    this.loopTarget[id] = loop;
   }
 
   stop() {
-    this.howl.stop()
+    if(this.howl !== undefined)
+    {
+      this.howl.stop()
+    }
   }
 
-  onEnd() {
-    this.loopCounter++;
-    // console.log(`Loop #${this.loopCounter} ended`)
-    if (this.loopCounter == this.loopTarget) {
+  onEnd(id) {
+    // console.log(`ID ${id} Loop #${this.loopCounter[id]} ended`)
+    if (this.loopTarget[id] !== 0 && ++this.loopCounter[id] >= this.loopTarget[id]) { // So if loopTarget is 0 then it will keep going
       this.howl._loop = false
-      this.howl.stop()
+      this.howl.stop(id)
     }
   }
 }

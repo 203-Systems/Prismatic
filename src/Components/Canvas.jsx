@@ -31,20 +31,14 @@ class Canvas extends Component {
       this.initlalizeCanvas(nextProps.layoutConfig);
     }
 
-    if (
-      nextProps.inputDevice !==
-      this.props.inputDevice /* || prevProps.inputConfig !== this.props.inputConfig */
-    ) {
+    if (nextProps.inputDevice !== this.props.inputDevice /* || prevProps.inputConfig !== this.props.inputConfig */) {
       this.setupMidiInput(nextProps.inputDevice, this.props.inputDevice);
     }
 
     return true;
   }
 
-  initlalizeCanvas(
-    config = this.props.layoutConfig,
-    projectFile = this.props.projectFile
-  ) {
+  initlalizeCanvas(config = this.props.layoutConfig, projectFile = this.props.projectFile) {
     this.clearCanvas(config);
     this.clearKeypressHistory(config);
     this.currentChain = 0;
@@ -66,10 +60,7 @@ class Canvas extends Component {
 
   midiInputHandler = (midiMessage) => {
     console.log(midiMessage);
-    let [x, y] = this.indexOf2dArray(
-      midiMessage.data[1],
-      this.props.inputConfig.keymap
-    );
+    let [x, y] = this.indexOf2dArray(midiMessage.data[1], this.props.inputConfig.keymap);
     console.log([x, y]);
     if (x !== NaN && y !== NaN) {
       // let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.inputConfig.canvas_origin, "-");
@@ -87,126 +78,123 @@ class Canvas extends Component {
     }
   };
 
-  keyOn = (x, y, config = this.props.layoutConfig, bypassOffset = false) => {
-    let targetChain = undefined;
-    let soundLoop = 1
+  keyOn = (x, y, config = this.props.layoutConfig, reverseOffset = false, sound = true, led = true) => {
+    let soundLoop = 1;
     console.log("Note On - " + x.toString() + " " + y.toString());
 
     let [offseted_x, offseted_y] = [x, y];
-    if (!bypassOffset) {
-      [offseted_x, offseted_y] = this.arrayCalculation(
-        [x, y],
-        config.canvas_origin,
-        "-"
-      );
+    if (!reverseOffset) {
+      [offseted_x, offseted_y] = this.arrayCalculation([x, y], config.canvas_origin, "-");
+    } else {
+      [x, y] = this.arrayCalculation([x, y], config.canvas_origin, "+");
     }
     // console.log([x, y, offseted_x, offseted_y])
 
     if (this.props.projectFile !== undefined) {
-      //Sound
-      if (
-        this.props.projectFile.keySound !== undefined &&
-        this.props.projectFile.keySound[this.currentChain] !== undefined &&
-        this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined &&
-        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined &&
-        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0
-      ) {
-        let soundIndex =
-          this.keypressHistory[x][y] %
-          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
-        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].loop = false;
-        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].stop();
-        // console.log('Play sound ${this.currentChain} ${offseted_x}')
-        if (
-          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1] !== undefined
-        ) {
-          if (  
-            // Loop
-            this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] !== undefined
+      if (offseted_x >= 0 && offseted_x < 8 && offseted_y >= 0 && offseted_y < 8)
+        if (sound && this.props.projectFile.keySound !== undefined && 
+          this.props.projectFile.keySound[this.currentChain] !== undefined && 
+          this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && 
+          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && 
+          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0
           ) {
-            soundLoop = parseInt(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0])
+          //Sound
+          let soundIndex = this.keypressHistory[x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
+          // console.log('Play sound ${this.currentChain} ${offseted_x}')
+          if (this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1] !== undefined) { //Has special data
+            if (
+              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] !== undefined  // Loop
+            ) {
+              soundLoop = parseInt(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0]);
+            }
           }
-
-          if (
-            this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1] !== undefined
-          ) {
-            //Wormhole
-            
-            targetChain = parseInt(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1]) - 1;
-            console.log(`Wormhole to Chain ${targetChain}`)
-          }
+          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].stop();
+          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].play(soundLoop);
+          console.log("Play")
         }
-        this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].play(soundLoop);
-      }
 
       //LED
       if (
-        this.props.projectFile.keyLED !== undefined &&
-        this.props.projectFile.keyLED[this.currentChain] !== undefined &&
-        this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined &&
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined &&
+        led && 
+        this.props.projectFile.keyLED !== undefined && 
+        this.props.projectFile.keyLED[this.currentChain] !== undefined && 
+        this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && 
+        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && 
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0
-      ) {
+        ) {
         let ledIndex = this.keypressHistory[x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
+        // this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play();
       }
 
       //Update History
-      if (
-        this.keypressHistory[x] != undefined &&
-        this.keypressHistory[x][y] != undefined
-      )
-        this.keypressHistory[x][y]++;
-
-      //Chain Change
-      if (targetChain === undefined) {
-        this.checkChain(x, y, config);
-      } else {
-        this.chainChange(targetChain);
-      }
+      if (this.keypressHistory[x] != undefined && this.keypressHistory[x][y] != undefined) this.keypressHistory[x][y]++;
     }
   };
 
   checkChain = (x, y, config) => {
-    for (
-      var i = 0;
-      i < Math.min(config.chainKey.length, this.props.projectFile.info.chain);
-      i++
-    ) {
-      if (config.chainKey[i][0] === x && config.chainKey[i][1] === y)
-        this.chainChange(i);
+    for (var i = 0; i < Math.min(config.chainKey.length, this.props.projectFile.info.chain); i++) {
+      if (config.chainKey[i][0] === x && config.chainKey[i][1] === y) this.chainChange(i);
     }
   };
 
-  keyOff = (x, y, config = this.props.layoutConfig, bypassOffset = false) => {
+  keyOff = (x, y, config = this.props.layoutConfig, reverseOffset = false, sound = true, led = true) => {
     console.log("Note Off - " + x.toString() + " " + y.toString());
-
+    let targetChain = undefined;
     let [offseted_x, offseted_y] = [x, y];
-    if (!bypassOffset) {
-      [offseted_x, offseted_y] = this.arrayCalculation(
-        [x, y],
-        config.canvas_origin,
-        "-"
-      );
+    if (!reverseOffset) {
+      [offseted_x, offseted_y] = this.arrayCalculation([x, y], config.canvas_origin, "-");
+    } else {
+      [x, y] = this.arrayCalculation([x, y], config.canvas_origin, "+");
     }
+
     if (this.props.projectFile !== undefined) {
-    //LED
-    if (
-      this.props.projectFile.keyLED !== undefined &&
-      this.props.projectFile.keyLED[this.currentChain] !== undefined &&
-      this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined &&
-      this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined &&
-      this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0
-    ) {
-      let ledIndex = (this.keypressHistory[x][y] - 1) % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
-      if(this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].repeat === 0)
-      {
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
+      if (offseted_x >= 0 && offseted_x < 8 && offseted_y >= 0 && offseted_y < 8)
+        if (sound && this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0) {
+          //Sound
+          let soundIndex = this.keypressHistory[x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
+          // console.log('Play sound ${this.currentChain} ${offseted_x}')
+          if (this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1] !== undefined) {
+            if (
+              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] === 0 // Loop
+            ) {
+              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].stop();
+            }
+
+            if (this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1] !== undefined) {
+              //Wormhole
+              targetChain = parseInt(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1]) - 1;
+              console.log(`Wormhole to Chain ${targetChain + 1}`);
+            }
+          }
+        }
+        
+      //LED
+      if (
+          this.props.projectFile.keyLED !== undefined && 
+          this.props.projectFile.keyLED[this.currentChain] !== undefined && 
+          this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && 
+          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && 
+          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0
+        ) {
+        let ledIndex = (this.keypressHistory[x][y] - 1) % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
+        if (
+            this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex] !== undefined && 
+            this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].repeat === 0
+          ) {
+          //Page might have changed
+          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
+        }
       }
+
+      // //Chain Change
+      // if (targetChain === undefined) {
+      //   this.checkChain(x, y, config);
+      // } else {
+      //   this.chainChange(targetChain);
+      // }
     }
-  }
-    };
+  };
 
   chainChange = (chain) => {
     console.log("Chain Changed to " + (chain + 1));
@@ -221,22 +209,18 @@ class Canvas extends Component {
   };
 
   setColorCanvas(x, y, color) {
-    var [canvas_x, canvas_y] = [undefined, undefined]
+    var [canvas_x, canvas_y] = [undefined, undefined];
     if (x === "l") {
       [canvas_x, canvas_y] = this.props.layoutConfig.lKey;
     } else if (x === "mc") {
-      if(this.props.layoutConfig.mcTable[y] == null)
-        return
+      if (this.props.layoutConfig.mcTable[y] == null) return;
       [canvas_x, canvas_y] = this.props.layoutConfig.mcTable[y];
     } else {
-      [canvas_x, canvas_y] = this.arrayCalculation(
-        [x, y],
-        this.props.layoutConfig.canvas_origin,
-        "+"
-      );
+      [canvas_x, canvas_y] = this.arrayCalculation([x, y], this.props.layoutConfig.canvas_origin, "+");
     }
 
-    if (/^#[0-9A-F]{6}$/i.test(color)) { //Check if it is a Hex String
+    if (/^#[0-9A-F]{6}$/i.test(color)) {
+      //Check if it is a Hex String
       this.state.colormap[canvas_x][canvas_y] = color;
     } else {
       this.state.colormap[canvas_x][canvas_y] = palette[color];
@@ -244,36 +228,21 @@ class Canvas extends Component {
   }
 
   setColorOutput(x, y, color) {
-    if (
-      this.props.outputDevice !== undefined &&
-      this.props.outputConfig !== undefined
-    ) {
-      var [output_x, output_y] = [undefined, undefined]
+    if (this.props.outputDevice !== undefined && this.props.outputConfig !== undefined) {
+      var [output_x, output_y] = [undefined, undefined];
       if (x === "l") {
         [output_x, output_y] = this.props.outputConfig.lKey;
       } else if (x === "mc") {
-        if(this.props.outputConfig.mcTable[y] == null)
-          return
-        [output_x, output_y] = this.props.outputConfig.mcTable[y];
+        if (this.props.outputConfig.mcTable[y] == null) return ([output_x, output_y] = this.props.outputConfig.mcTable[y]);
       } else {
-        [output_x, output_y] = this.arrayCalculation(
-          [x, y],
-          this.props.outputConfig.canvas_origin,
-          "+"
-        );
+        [output_x, output_y] = this.arrayCalculation([x, y], this.props.outputConfig.canvas_origin, "+");
       }
 
-      if (/^#[0-9A-F]{6}$/i.test(color)) { //Check if it is a Hex String
-        this.sendSysex(
-          this.props.outputConfig.hexSysexGen(output_y, output_x, color)
-        );
+      if (/^#[0-9A-F]{6}$/i.test(color)) {
+        //Check if it is a Hex String
+        this.sendSysex(this.props.outputConfig.hexSysexGen(output_y, output_x, color));
       } else {
-        this.sendMidi(
-          "NoteOn",
-          this.props.outputConfig.channel,
-          this.props.outputConfig.keymap[output_y][output_x],
-          color
-        );
+        this.sendMidi("NoteOn", this.props.outputConfig.channel, this.props.outputConfig.keymap[output_y][output_x], color);
       }
     }
   }
@@ -304,9 +273,7 @@ class Canvas extends Component {
         this.props.outputDevice.send(0xb0 + channel - 1, [note, value]);
         break;
       case "HEX":
-        this.sendSysex(
-          this.props.outputConfig.hexSysexGen(note, rawPalette[value])
-        );
+        this.sendSysex(this.props.outputConfig.hexSysexGen(note, rawPalette[value]));
         break;
     }
   }
@@ -372,64 +339,6 @@ class Canvas extends Component {
     return [NaN, NaN];
   }
 
-  stopKeyLED() {
-    for (var chain = 0; chain < this.props.projectFile.info.chain; chain++) {
-      for (
-        var x = 0;
-        chain < this.props.projectFile.keyLED[chain].length;
-        x++
-      ) {
-        for (
-          var y = 0;
-          chain < this.props.projectFile.keyLED[chain][x].length;
-          y++
-        ) {
-          for (
-            var index = 0;
-            chain < this.props.projectFile.keyLED[chain][x][y].length;
-            index++
-          ) {
-            if (
-              this.props.projectFile.keyLED[chain][x][y][index] !== undefined
-            ) {
-              this.props.projectFile.keyLED[chain][x][y][index].stop();
-            }
-          }
-        }
-      }
-    }
-  }
-
-  stopKeySound() {
-    for (var chain = 0; chain < this.props.projectFile.info.chain; chain++) {
-      for (
-        var x = 0;
-        chain < this.props.projectFile.keySound[chain].length;
-        x++
-      ) {
-        for (
-          var y = 0;
-          chain < this.props.projectFile.keySound[chain][x].length;
-          y++
-        ) {
-          for (
-            var index = 0;
-            chain < this.props.projectFile.keySound[chain][x][y].length;
-            index++
-          ) {
-            this.props.projectFile.keySound[chain][x][y][index].stop();
-          }
-        }
-      }
-    }
-  }
-
-  stopAll() {
-    // this.stopKeyLED()
-    // this.stopKeySound()
-    // this.clearCanvas()
-  }
-
   render() {
     return (
       <div
@@ -445,41 +354,14 @@ class Canvas extends Component {
               {this.props.layoutConfig.layout[y].map((value, x) => {
                 switch (value) {
                   case "◻":
-                    return (
-                      <Button
-                        x={x}
-                        y={y}
-                        class="LEDButtonSquare"
-                        color={this.state.colormap[x][y]}
-                        on={this.keyOn}
-                        off={this.keyOff}
-                      />
-                    );
+                    return <Button x={x} y={y} class="LEDButtonSquare" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff} />;
                   case "⬤":
-                    return (
-                      <Button
-                        x={x}
-                        y={y}
-                        class="LEDButtonCircle75"
-                        color={this.state.colormap[x][y]}
-                        on={this.keyOn}
-                        off={this.keyOff}
-                      />
-                    );
+                    return <Button x={x} y={y} class="LEDButtonCircle75" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff} />;
                   case "◪":
                   case "⬕":
                   case "⬔":
                   case "◩":
-                    return (
-                      <Button
-                        x={x}
-                        y={y}
-                        class="LEDButtonSquare"
-                        color={this.state.colormap[x][y]}
-                        on={this.keyOn}
-                        off={this.keyOff}
-                      />
-                    );
+                    return <Button x={x} y={y} class="LEDButtonSquare" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff} />;
                   default:
                     return (
                       <div

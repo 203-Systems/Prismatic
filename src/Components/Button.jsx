@@ -26,17 +26,16 @@ class Button extends Component {
     shouldUpdate = (nextProps) => this.props.color !== nextProps.color
 
     render = () => (
-        <div>
-            <button onMouseDown={this.on} onTouchStart={this.on} 
-                    onMouseUp={this.off} onMouseLeave={this.off} onTouchEnd={this.off} onTouchCancel={this.off}
-                    className={this.props.class} style={
-                {
-                backgroundColor: this.props.color,
-                }
-            }>
-            </button>
-        </div>
+        (this.isTouchDevice()) ? 
+        (<button className={this.props.class} style={{backgroundColor: this.props.color}} onTouchStart={this.on} onTouchEnd={this.off} onTouchCancel={this.off}/>) : 
+        (<button className={this.props.class} style={{backgroundColor: this.props.color}} onMouseDown={this.on} onMouseUp={this.off} onMouseLeave={this.off}/>)
     )
+
+    isTouchDevice() {
+        return (('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0) ||
+        (navigator.msMaxTouchPoints > 0));
+    }
 }
 
 export default Button;

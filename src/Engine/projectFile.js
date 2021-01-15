@@ -1,6 +1,7 @@
 import KeyLED from "./keyLED"
 import AutoPlay from "./autoPlay"
 import keySound from './keySound';
+import { Howler } from "howler";
 
 class ProjectFile {
   info = {};
@@ -9,6 +10,7 @@ class ProjectFile {
   autoplay = undefined;
   keyLED = undefined;
   canvas = undefined
+  activeKeyLED = {}
 
   constructor(file, canvas) {
     this.canvas = canvas.current;
@@ -17,6 +19,7 @@ class ProjectFile {
 
   unpack(projectFile) {
     return new Promise(async (resolve, reject) => {
+      try{
       console.log(this.info)
       let JSZip = require("jszip");
       let files = await JSZip.loadAsync(projectFile).then(function (zip) {
@@ -68,7 +71,7 @@ class ProjectFile {
               }
               if (this.info["chain"] > 8) {
                 // reject("Only Unipad project that has within 8 chains are supported");
-                alert(`This Unipad Project has ${this.info["chain"]} chains. Projects that has more than 8 chains are limited supported`)
+                // alert(`This Unipad Project has ${this.info["chain"]} chains. Projects that has more than 8 chains are limited supported`)
                 // return;
               }
             }
@@ -114,7 +117,8 @@ class ProjectFile {
         // else if (fileInfo.length === 4) {
           let index = fileInfo[4] !== undefined ? fileInfo[4].charCodeAt(0) - 97 : 0 //97 is 'a' 
           // console.log([parseInt(fileInfo[0]) - 1, parseInt(fileInfo[2]) - 1, parseInt(fileInfo[1]) - 1, index])
-          this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][index] = new KeyLED(text, parseInt(fileInfo[3]), this.canvas)
+          let [chain, x, y, repeat] = [parseInt(fileInfo[0]) - 1, parseInt(fileInfo[2]) - 1, parseInt(fileInfo[1]) - 1, parseInt(fileInfo[3])]
+          this.keyLED[chain][x][y][index] = new KeyLED(text, repeat, this.canvas, [chain, x, y, index], this.activeKeyLED)
         // }
         // else {
         //   console.warn("Unknown keyLED file name: " + name);
@@ -129,14 +133,66 @@ class ProjectFile {
           continue;
 
         // console.log(command);
-        this.keySound[parseInt(command[0]) - 1][parseInt(command[2]) - 1][parseInt(command[1]) - 1].push([this.soundFiles[command[3]], command.slice(4)]);
+        let [chain, x, y, filename] = [parseInt(command[0]) - 1, parseInt(command[2]) - 1, parseInt(command[1]) - 1, command[3]]
+        this.keySound[chain][x][y].push([this.soundFiles[filename], command.slice(4)]);
       }
 
       //Load AutoPlay
       this.autoplay = new AutoPlay(autoplayFile, this.canvas);
 
       resolve(this)
+    }
+    catch(e)
+    {
+      reject(e)
+    }
     });
+  }
+
+  stopKeySound() {
+    Howler.stop()
+  }
+
+  stopKeyLED() {
+    // console.log(this.activeKeyLED)
+    for(var id_str in this.activeKeyLED)
+    {
+      var[chain, x, y, index] = this.activeKeyLED[id_str]
+      this.keyLED[chain][x][y][index].stop(false)
+      delete this.activeKeyLED[id_str]
+    }
+    setTimeout(this.canvas.clearCanvas(), 200)
+    // new KeyLED().stopAll()
+    // for (var chain = 0; chain < this.info.chain; chain++) {
+    //   for (
+    //     var x = 0;
+    //     chain < this.keyLED[chain].length;
+    //     x++
+    //   ) {
+    //     for (
+    //       var y = 0;
+    //       chain < this.keyLED[chain][x].length;
+    //       y++
+    //     ) {
+    //       for (
+    //         var index = 0;
+    //         chain < this.keyLED[chain][x][y].length;
+    //         index++
+    //       ) {
+    //         if (
+    //           this.keyLED[chain][x][y][index] !== undefined
+    //         ) {
+    //           this.keyLED[chain][x][y][index].stop();
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+  }
+
+  stopAll() {
+    // this.stopKeyLED()
+    this.stopKeySound()
   }
 }
 

@@ -3,8 +3,10 @@ class AutoPlay {
   status = "STOPPED"
   progress = 0
   total = 0
+  led = true;
   // currentChain = 0
   canvas = undefined;
+  
   constructor(text, canvas) {
     this.autoplay = text;
     this.total = text.length;
@@ -21,7 +23,11 @@ class AutoPlay {
     for (this.progress; this.progress < this.autoplay.length; this.progress++) {
       // console.timeEnd("Autoplay");
       // console.time("Autoplay")
-      let wait_complete = true;
+
+      if (this.status === "STOPPED" || this.status === "PAUSED") {
+        return;
+      }
+
       console.log(this.autoplay[this.progress])
       let command = this.autoplay[this.progress].split(" ");
 
@@ -36,25 +42,51 @@ class AutoPlay {
       // }
 
       switch (command[0]) {
-        case 't':
         case 'o':
-          this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
+        case 'on':
+          if(this.led)
+          {
+            this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
+          }
+          else
+          {
+            this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true, true, false);
+            this.canvas.setColor(parseInt(command[2]) - 1, parseInt(command[1]) - 1, 127)
+          }
           break;
         case 'f':
-          this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
+        case 'off':
+          if(this.led)
+          {
+            this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
+          }
+          else
+          {
+            this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
+            this.canvas.setColor(parseInt(command[2]) - 1, parseInt(command[1]) - 1, 0)
+          }
           break;
-        case 'd':
-          // console.time("Autoplay wait");
-          wait_complete = false;
-          this.wait(parseInt(command[1])).then(() => { wait_complete = true });
-          // await this.wait(parseInt(command[1]));
-          do {
-            if (this.status === "STOPPED" || this.status === "PAUSED") {
-              this.progress++;
-              return;
+        case 't':
+        case 'touch':
+            if(this.led)
+            {
+              this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
+              this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
             }
-            await this.wait(5)
-          } while (!wait_complete)
+            else
+            {
+              this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true, true, false);
+              this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
+              this.canvas.setColor(parseInt(command[2]) - 1, parseInt(command[1]) - 1, 3)
+              setTimeout(() => {this.canvas.setColor(parseInt(command[2]) - 1, parseInt(command[1]) - 1, 0)}, 200)
+            }
+            break;
+        case 'd':
+        case 'delay':
+          var ms = parseInt(command[1])
+          if(ms < 10)
+            break;
+          await this.wait(parseInt(command[1]));
           break;
         case 'c':
         case 'chain':
@@ -70,13 +102,11 @@ class AutoPlay {
 
   pause() {
     this.status = "PAUSED"
-    this.canvas.stopAll();
   }
 
   stop() {
     this.status = "STOPPED"
     this.progress = 0
-    this.canvas.initlalizeCanvas();
   }
 
   wait(ms) {
