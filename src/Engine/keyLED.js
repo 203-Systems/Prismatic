@@ -4,6 +4,7 @@ class KeyLED
   id = undefined
   id_str = undefined
   repeat = 1;
+  end = false;
   activeThread = -1
   nextID = 0
   canvas = undefined
@@ -31,7 +32,9 @@ class KeyLED
     var threadID = this.getID()
     this.activeThread = threadID
     this.currentOn = []
-    for(var i = 0; i < (this.repeat === 0 ? Infinity : this.repeat); i++)
+    var currentLoop = 0
+    this.end = false;
+    while(this.repeat === 0 || ++currentLoop < this.repeat)
     {
       for(var line of this.keyLED)
       {
@@ -102,6 +105,8 @@ class KeyLED
           default:
         }
       }
+      if(this.end)
+        break;
     }
     this.activeThread = -1
     this.removeFromActiveList()
@@ -133,6 +138,11 @@ class KeyLED
     }
     this.currentOn = []
     this.removeFromActiveList()
+  }
+
+  endLoop()
+  {
+    this.end = true
   }
 
   removeFromActiveList()

@@ -80,14 +80,13 @@ class Canvas extends Component {
 
   keyOn = (x, y, config = this.props.layoutConfig, reverseOffset = false, sound = true, led = true) => {
     let soundLoop = 1;
-    console.log("Note On - " + x.toString() + " " + y.toString());
-
     let [offseted_x, offseted_y] = [x, y];
     if (!reverseOffset) {
       [offseted_x, offseted_y] = this.arrayCalculation([x, y], config.canvas_origin, "-");
     } else {
       [x, y] = this.arrayCalculation([x, y], config.canvas_origin, "+");
     }
+    console.log("Note On - " + x.toString() + " " + y.toString());
     // console.log([x, y, offseted_x, offseted_y])
 
     if (this.props.projectFile !== undefined) {
@@ -122,12 +121,10 @@ class Canvas extends Component {
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0
         ) {
         let ledIndex = this.keypressHistory[x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
+        console.log([this.currentChain, offseted_x, offseted_y])
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play();
       }
-
-      //Update History
-      if (this.keypressHistory[x] != undefined && this.keypressHistory[x][y] != undefined) this.keypressHistory[x][y]++;
     }
   };
 
@@ -138,26 +135,30 @@ class Canvas extends Component {
   };
 
   keyOff = (x, y, config = this.props.layoutConfig, reverseOffset = false, sound = true, led = true) => {
-    console.log("Note Off - " + x.toString() + " " + y.toString());
     let targetChain = undefined;
-    let [offseted_x, offseted_y] = [x, y];
+    let [offseted_x, offseted_y] = [x, y]; //Offseted_XY means the grid scope XY (Square), Raw XY will be the canvas XY (Including the chain keys)
     if (!reverseOffset) {
       [offseted_x, offseted_y] = this.arrayCalculation([x, y], config.canvas_origin, "-");
     } else {
       [x, y] = this.arrayCalculation([x, y], config.canvas_origin, "+");
     }
+    console.log("Note Off - " + x.toString() + " " + y.toString());
 
     if (this.props.projectFile !== undefined) {
       if (offseted_x >= 0 && offseted_x < 8 && offseted_y >= 0 && offseted_y < 8)
-        if (sound && this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0) {
+      if (sound && this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0) {
           //Sound
           let soundIndex = this.keypressHistory[x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
           // console.log('Play sound ${this.currentChain} ${offseted_x}')
           if (this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1] !== undefined) {
+            console.log(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex])
             if (
-              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] === 0 // Loop
+              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] == "0" // Inf Loop
             ) {
-              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].stop();
+              console.log("End Loop ")
+              console.log([this.currentChain, offseted_x, offseted_y, soundIndex])
+              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].endLoop();
+              console.log(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0])
             }
 
             if (this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1] !== undefined) {
@@ -182,16 +183,19 @@ class Canvas extends Component {
             this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].repeat === 0
           ) {
           //Page might have changed
-          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
+          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].endLoop();
         }
       }
 
-      // //Chain Change
-      // if (targetChain === undefined) {
-      //   this.checkChain(x, y, config);
-      // } else {
-      //   this.chainChange(targetChain);
-      // }
+      //Update History
+      if (this.keypressHistory[x] != undefined && this.keypressHistory[x][y] != undefined) this.keypressHistory[x][y]++;
+
+      //Chain Change
+      if (targetChain === undefined) {
+        this.checkChain(x, y, config);
+      } else {
+        this.chainChange(targetChain);
+      }
     }
   };
 
@@ -218,11 +222,19 @@ class Canvas extends Component {
       [canvas_x, canvas_y] = this.arrayCalculation([x, y], this.props.layoutConfig.canvas_origin, "+");
     }
 
+    try
+    {
     if (/^#[0-9A-F]{6}$/i.test(color)) {
       //Check if it is a Hex String
       this.state.colormap[canvas_x][canvas_y] = color;
     } else {
       this.state.colormap[canvas_x][canvas_y] = palette[color];
+    }
+  }
+    catch(e)
+    {
+      console.error(e)
+      console.error([x, y, color, canvas_x, canvas_y])
     }
   }
 

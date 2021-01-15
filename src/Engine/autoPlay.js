@@ -4,9 +4,9 @@ class AutoPlay {
   progress = 0
   total = 0
   led = true;
-  // currentChain = 0
+  currentChain = 0
   canvas = undefined;
-  
+
   constructor(text, canvas) {
     this.autoplay = text;
     this.total = text.length;
@@ -37,9 +37,9 @@ class AutoPlay {
       if (command.length < 2)
         continue;
 
-      // if (this.canvas.currentChain != this.currentChain) {
-      //   this.canvas.chainChange(this.currentChain);
-      // }
+      if (this.canvas.currentChain != this.currentChain) {
+        this.canvas.chainChange(this.currentChain);
+      }
 
       switch (command[0]) {
         case 'o':
@@ -91,7 +91,7 @@ class AutoPlay {
         case 'c':
         case 'chain':
           this.canvas.chainChange(parseInt(command[1]) - 1);
-          // this.currentChain = parseInt(command[1]) - 1;
+          this.currentChain = parseInt(command[1]) - 1;
           break;
         default:
       }

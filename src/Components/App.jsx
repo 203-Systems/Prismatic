@@ -79,7 +79,8 @@ class App extends Component {
   };
 
   loadProjectFile = (projectPack) => {
-    // console.log(projectPack)
+    if(projectPack == null)
+      return
     this.setState({statusMessage: "Loading Unipack"});
     new ProjectFile(projectPack, this.canvas)
       .then((projectFile) => {

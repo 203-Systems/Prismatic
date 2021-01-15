@@ -191,7 +191,7 @@ class ProjectFile {
   }
 
   stopAll() {
-    // this.stopKeyLED()
+    this.stopKeyLED()
     this.stopKeySound()
   }
 }

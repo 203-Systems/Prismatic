@@ -54,6 +54,15 @@ class keySound {
       this.howl.stop(id)
     }
   }
+
+  endLoop()
+  {
+    this.howl._loop = false;
+    for(var i in this.loopTarget)
+    {
+      this.loopTarget[i] = 1
+    }
+  }
 }
 
 export default keySound;
