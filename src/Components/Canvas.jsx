@@ -209,6 +209,7 @@ class Canvas extends Component {
   setColorCanvas(x, y, color) {
     var [canvas_x, canvas_y] = [undefined, undefined];
     if (x === "l") {
+      if(this.props.LayoutConfig == undefined) return;
       [canvas_x, canvas_y] = this.props.layoutConfig.lKey;
     } else if (x === "mc") {
       if (this.props.layoutConfig.mcTable[y] == null) return;
@@ -237,19 +238,27 @@ class Canvas extends Component {
     if (this.props.outputDevice !== undefined && this.props.outputConfig !== undefined) {
       var [output_x, output_y] = [undefined, undefined];
       if (x === "l") {
+        if(this.props.outputConfig.lKey == undefined) return;
         [output_x, output_y] = this.props.outputConfig.lKey;
       } else if (x === "mc") {
-        if (this.props.outputConfig.mcTable[y] == null) return ([output_x, output_y] = this.props.outputConfig.mcTable[y]);
+        if (this.props.outputConfig.mcTable[y] == null) return;
+        [output_x, output_y] = this.props.outputConfig.mcTable[y];
       } else {
         [output_x, output_y] = this.arrayCalculation([x, y], this.props.outputConfig.canvas_origin, "+");
       }
-
+      try{
       if (/^#[0-9A-F]{6}$/i.test(color)) {
         //Check if it is a Hex String
         this.sendSysex(this.props.outputConfig.hexSysexGen(output_y, output_x, color));
       } else {
         this.sendMidi("NoteOn", this.props.outputConfig.channel, this.props.outputConfig.keymap[output_y][output_x], color);
       }
+    }
+    catch(e)
+    {
+      console.error(e)
+      console.error([x, y, color, output_x, output_y])
+    }
     }
   }
 
