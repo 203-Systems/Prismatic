@@ -30,7 +30,7 @@ const deviceConfigs = {
       ["⬤", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "⬤"],
       ["⬤", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "⬤"],
       ["⬤", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "⬤"],
-      ["　", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "◻"]],
+      ["　", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", " "]],
 
     keymap: [
       [null, 91, 92, 93, 94, 95, 96, 97, 98, null],
@@ -144,38 +144,34 @@ const deviceConfigs = {
       [8, 9], [7, 9], [6, 9], [5, 9], [4, 9], [3, 9], [2, 9], [1, 9],
       [0, 8], [0, 7], [0, 6], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1]],
 
-    hexSysexGen: function (x, y, hex) {
-      var xy = x * 10 + y
-      var r = (hex >> 16) >> 2 //6 bit color
-      var g = (hex & 0xFF00 >> 8) >> 2
-      var b = (hex & 0xFF) >> 2
-      return [0, 32, 41, 2, 24, 11, xy, r, g, b]
-    }
-
-    // hexSysexGen: function()
-    // {
-    //   if(arguments.length != 2 && arguments.length != 3)
-    //     return //Error
-    //   switch(arguments.length)
-    //   {
-    //     case 2: //ID
-    //       var id = arguments[0]
-    //       var hex = arguments[1]
-    //       break;
-    //     case 3: //XY
-    //       var x = arguments[0] + 1
-    //       var y = arguments[1] + 1
-    //       var id = x * 10 + y
-    //       var hex = arguments[2]
-    //       break;
-    //     default:
-    //       return
-    //   }
-    //   var r = (hex >> 16) >> 2 //6 bit color
-    //   var g = (hex & 0xFF00 >> 8) >> 2
-    //   var b = (hex & 0xFF) >> 2
-    //   return [0, 32, 41, 2, 24, 11, id, r, g, b]
-    // }
+      hexSysexGen: function () {
+        if (arguments.length != 2 && arguments.length != 3)
+          return [] //Error
+        switch (arguments.length) {
+          case 2: //ID
+            var id = arguments[0]
+            var hex = arguments[1]
+            break;
+          case 3: //XY
+            var x = arguments[0] + 1
+            var y = arguments[1] + 1
+            var id = x * 10 + y
+            var hex = arguments[2]
+            break;
+          default:
+            return []
+        }
+        if (typeof (hex) === "string" && hex.charAt(0) === '#') {
+          hex = parseInt(hex.substr(1), 16)
+        }
+        else {
+          return []
+        }
+        var r = (hex >> 16) >> 2 //6 bit color
+        var g = (hex & 0xFF00 >> 8) >> 2
+        var b = (hex & 0xFF) >> 2
+        return [0, 32, 41, 2, 16, 11, id, r, g, b]
+      }
   },
   "Launchpad MK2":
   {
@@ -221,13 +217,34 @@ const deviceConfigs = {
       null, null, null, null, null, null, null, null,
       null, null, null, null, null, null, null, null,],
 
-    hexSysexGen: function (x, y, hex) {
-      var xy = x * 10 + y
-      var r = (hex >> 16) >> 2 //6 bit color
-      var g = (hex & 0xFF00 >> 8) >> 2
-      var b = (hex & 0xFF) >> 2
-      return [0, 32, 41, 2, 24, 11, xy, r, g, b]
-    }
+      hexSysexGen: function () {
+        if (arguments.length != 2 && arguments.length != 3)
+          return [] //Error
+        switch (arguments.length) {
+          case 2: //ID
+            var id = arguments[0]
+            var hex = arguments[1]
+            break;
+          case 3: //XY
+            var x = arguments[0] + 1
+            var y = arguments[1] + 1
+            var id = x * 10 + y
+            var hex = arguments[2]
+            break;
+          default:
+            return []
+        }
+        if (typeof (hex) === "string" && hex.charAt(0) === '#') {
+          hex = parseInt(hex.substr(1), 16)
+        }
+        else {
+          return []
+        }
+        var r = (hex >> 16) >> 2 //6 bit color
+        var g = (hex & 0xFF00 >> 8) >> 2
+        var b = (hex & 0xFF) >> 2
+        return [0, 32, 41, 2, 24, 11, id, r, g, b]
+      }
   },
   "Launchpad X":
   {
@@ -275,12 +292,12 @@ const deviceConfigs = {
 
     hexSysexGen: function () {
       if (arguments.length != 2 && arguments.length != 3)
-        return //Error
+        return [] //Error
       switch (arguments.length) {
         case 2: //MC
           var mc = arguments[0]
           if (this.mcTable[mc] == null)
-            return
+            return []
           var x, y = this.mcTable[mc]
           var hex = arguments[1]
           break;
@@ -290,7 +307,7 @@ const deviceConfigs = {
           var hex = arguments[2]
           break;
         default:
-          return
+          return []
       }
       var xy = x * 10 + y
       var r = (hex >> 16) >> 1 //7 bit color
@@ -418,7 +435,7 @@ const deviceConfigs = {
 
     hexSysexGen: function () {
       if (arguments.length != 3)
-        return //Error
+        return [] //Error
       switch (arguments.length) {
         // case 2: //MC
         //   var mc = arguments[0]
