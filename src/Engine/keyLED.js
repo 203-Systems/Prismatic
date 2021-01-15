@@ -4,8 +4,8 @@ class KeyLED
   id = undefined
   id_str = undefined
   repeat = 1;
-  status = {}
-  nextIndex = 0
+  activeThread = -1
+  nextID = 0
   canvas = undefined
   currentOn=[]
   activeList = undefined //Global, refence to the activeKeyLED object in the projectFile
@@ -28,18 +28,22 @@ class KeyLED
       // console.log("Active List added")
       // console.log(this.activeList)
     }
-    var threadIndex = this.getIndex()
-    this.status[threadIndex] = "PLAYING"
+    var threadID = this.getID()
+    this.activeThread = threadID
     this.currentOn = []
     for(var i = 0; i < (this.repeat === 0 ? Infinity : this.repeat); i++)
     {
-
       for(var line of this.keyLED)
       {
+        if(this.activeThread != threadID)
+          return
+        
         let command = line.split(" ");
         // console.log(line)
+
         if(command.length < 2)
           continue;
+
         switch(command[0])
         {
           case 'o': //set color
@@ -99,11 +103,8 @@ class KeyLED
         }
       }
     }
-    delete this.status[threadIndex]
-    if(Object.keys(this.status).length === 0)
-    {
-      this.removeFromActiveList()
-    }
+    this.activeThread = -1
+    this.removeFromActiveList()
   }
 
   wait(ms)
@@ -111,18 +112,17 @@ class KeyLED
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  getIndex()
+  getID()
   {
-    return this.nextIndex++;
+    return this.nextID++;
   }
 
   stop(clearLight = true)
-  {
-    for(var index in this.status)
-    {
-      // console.log(`Thread ${index} Stop`)
-      this.status[index] = "STOPPED"
-    }
+  { 
+    //Threading System (Light 1 in delay then we set it to stop and create a Light 2 so it can start right away, set )
+    if(this.activeThread === -1)
+      return
+    this.activeThread = -1
     if(clearLight)
     {
       for(var id in this.currentOn)

@@ -110,7 +110,6 @@ class Canvas extends Component {
           }
           this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].stop();
           this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].play(soundLoop);
-          console.log("Play")
         }
 
       //LED
@@ -123,7 +122,7 @@ class Canvas extends Component {
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0
         ) {
         let ledIndex = this.keypressHistory[x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
-        // this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
+        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play();
       }
 
