@@ -121,7 +121,6 @@ class Canvas extends Component {
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0
         ) {
         let ledIndex = this.keypressHistory[x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
-        console.log([this.currentChain, offseted_x, offseted_y])
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
         this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play();
       }
@@ -151,14 +150,10 @@ class Canvas extends Component {
           let soundIndex = this.keypressHistory[x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
           // console.log('Play sound ${this.currentChain} ${offseted_x}')
           if (this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1] !== undefined) {
-            console.log(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex])
             if (
               this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] == "0" // Inf Loop
             ) {
-              console.log("End Loop ")
-              console.log([this.currentChain, offseted_x, offseted_y, soundIndex])
               this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].endLoop();
-              console.log(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0])
             }
 
             if (this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][1] !== undefined) {

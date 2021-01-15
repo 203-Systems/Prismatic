@@ -34,7 +34,7 @@ class KeyLED
     this.currentOn = []
     var currentLoop = 0
     this.end = false;
-    while(this.repeat === 0 || ++currentLoop < this.repeat)
+    while(this.repeat === 0 || currentLoop++ < this.repeat)
     {
       for(var line of this.keyLED)
       {
