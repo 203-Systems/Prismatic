@@ -36,21 +36,22 @@ class ProjectFile {
 
       //Load info and categorize files
       for (let file of files) {
-        if (!file.name.endsWith("/")) //Ignore folder
+        let filename = file.name.toLowerCase()
+        if (!filename.endsWith("/")) //Ignore folder
         {
-          if (file.name.toLowerCase().includes("sounds/")) //Audio
+          if (filename.includes("sounds/")) //Audio
           {
-            console.log("Sound file: " + file.name);
-            this.soundFiles[file.name.split("/").pop()] = await file.async("blob").then(function (blob) {
-              return new keySound(blob, file.name.split("/").pop())
+            console.log("Sound file: " + filename);
+            this.soundFiles[filename.split("/").pop()] = await file.async("blob").then(function (blob) {
+              return new keySound(blob, filename.split("/").pop())
             });
           }
           else {
             let text = await file.async("text").then((text) => { return text = text.split(/\r?\n/); });
-            if (file.name.toLowerCase().endsWith("info")) //Text
+            if (filename.endsWith("info")) //Text
             {
-              console.log("Info file: " + file.name);
-              projectRoot = file.name.slice(0, -4);
+              console.log("Info file: " + filename);
+              projectRoot = filename.slice(0, -4);
               console.log(" project root: " + projectRoot);
               text.forEach(info => this.info[info.split('=')[0]] = info.split('=')[1]);
               this.info["buttonX"] = parseInt(this.info["buttonX"]);
@@ -75,20 +76,20 @@ class ProjectFile {
                 // return;
               }
             }
-            else if (file.name.toLowerCase().endsWith("keysound")) {
-              console.log("KeySound file: " + file.name);
+            else if (filename.endsWith("keysound")) {
+              console.log("KeySound file: " + filename);
               keySoundFile = text;
             }
-            else if (file.name.toLowerCase().endsWith("autoplay")) {
-              console.log("AutoPlay file: " + file.name);
+            else if (filename.endsWith("autoplay")) {
+              console.log("AutoPlay file: " + filename);
               autoplayFile = text;
             }
-            else if (file.name.toLowerCase().includes("keyled/")) {
-              console.log("KeyLED file: " + file.name);
-              keyLEDFiles[file.name] = text;
+            else if (filename.includes("keyled/")) {
+              console.log("KeyLED file: " + filename);
+              keyLEDFiles[filename] = text;
             }
             else {
-              console.log("Unknown file: " + file.name);
+              console.log("Unknown file: " + filename);
             }
           }
         }
@@ -127,13 +128,15 @@ class ProjectFile {
 
       //Load KeySound
       for (var line of keySoundFile) {
+        line = line.trim()
+
+        if (line == "") //For empty lines
+        continue;
+
         let command = line.split(" ");
 
-        if (command.length < 2) //For empty lines
-          continue;
-
         // console.log(command);
-        let [chain, x, y, filename] = [parseInt(command[0]) - 1, parseInt(command[2]) - 1, parseInt(command[1]) - 1, command[3]]
+        let [chain, x, y, filename] = [parseInt(command[0]) - 1, parseInt(command[2]) - 1, parseInt(command[1]) - 1, command[3].toLowerCase()]
         this.keySound[chain][x][y].push([this.soundFiles[filename], command.slice(4)]);
       }
 

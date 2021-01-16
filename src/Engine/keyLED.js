@@ -42,14 +42,15 @@ class KeyLED
     {
       for(var line of this.keyLED)
       {
+        line = line.trim()
         if(this.activeThread != threadID)
           return
+
+        if(line == "")
+          continue;
         
         let command = line.split(" ");
         // console.log(line)
-
-        if(command.length < 2)
-          continue;
 
         switch(command[0])
         {
@@ -69,7 +70,7 @@ class KeyLED
               }
 
               var color
-              if(command[command.length - 2] === "a")
+              if(command[command.length - 2] === "a" || command[command.length - 2] === "auto")
               {
                 color = parseInt(command[command.length - 1])
               }
