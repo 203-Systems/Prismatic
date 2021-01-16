@@ -35,6 +35,8 @@ class keySound {
     }
 
     var id = this.howl.play()
+    // console.log("KeySound")
+    // console.timeLog("KeyOn")
 
     this.loopCounter[id] = 0
     this.loopTarget[id] = loop;

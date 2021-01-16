@@ -100,6 +100,11 @@ const deviceConfigs = {
     channel: 16,
     midiNameRegex: "Launchpad Open", //For some reason mine shows up as "3- Launchpad Pro"
 
+    initializationSysex:[
+      [0, 32, 41, 2, 16, 33, 1], //Enter Performance Mode
+      [0, 32, 41, 2, 16, 14, 0], //Clear canvas
+    ],
+
     // layout: [
     //   ["　", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "　"],
     //   ["⬤", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "◻", "⬤"],
@@ -122,7 +127,7 @@ const deviceConfigs = {
       [113, 44, 45, 46, 47, 76, 77, 78, 79, 105],
       [114, 40, 41, 42, 43, 72, 73, 74, 75, 106],
       [115, 36, 37, 38, 39, 68, 69, 70, 71, 107],
-      [null, 116, 117, 118, 119, 120, 121, 122, 123, null]],
+      [null, 116, 117, 118, 119, 120, 121, 122, 123, 27]],
 
     //Size of LED since sometimes Key can come without LED. We don't really need them since we can load the size of layout array
     width: 10,
@@ -143,6 +148,8 @@ const deviceConfigs = {
       [9, 1], [9, 2], [9, 3], [9, 4], [9, 5], [9, 6], [9, 7], [9, 8],
       [8, 9], [7, 9], [6, 9], [5, 9], [4, 9], [3, 9], [2, 9], [1, 9],
       [0, 8], [0, 7], [0, 6], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1]],
+
+    lKey: [9, 9],
 
       hexSysexGen: function () {
         if (arguments.length != 2 && arguments.length != 3)

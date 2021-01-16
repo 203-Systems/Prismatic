@@ -9,6 +9,7 @@ class KeyLED
   nextID = 0
   canvas = undefined
   currentOn=[]
+  lastEventTime = undefined;
   activeList = undefined //Global, refence to the activeKeyLED object in the projectFile
 
   constructor(text, repeat, canvas, id, activeList)
@@ -34,6 +35,9 @@ class KeyLED
     this.currentOn = []
     var currentLoop = 0
     this.end = false;
+    this.lastEventTime = Date.now()
+    // console.log("KeyLED")
+    // console.timeLog("KeyOn")
     while(this.repeat === 0 || currentLoop++ < this.repeat)
     {
       for(var line of this.keyLED)
@@ -51,6 +55,10 @@ class KeyLED
         {
           case 'o': //set color
           case 'on': //set color
+              if(command[1] === "*")
+              {
+                command[1] = "mc"
+              }
               if(command[1] === "mc" || command[1] === "l") //For "l", the y is garbage but it won't be read for the setColor functions so just gonna let it be
               {
                 [x, y] = [command[1], parseInt(command[2] - 1)]
@@ -85,6 +93,10 @@ class KeyLED
           case 'f': //color off
           case 'off': //color off
             var [x, y] = [undefined, undefined]
+            if(command[1] === "*")
+            {
+              command[1] = "mc"
+            }
             if(command[1] === "mc" || command[1] === "l")
             {
               [x, y] = [command[1], parseInt(command[2] - 1)]
@@ -106,15 +118,30 @@ class KeyLED
         }
       }
       if(this.end)
+      {
+        this.stop()
         break;
+      }
     }
-    this.activeThread = -1
-    this.removeFromActiveList()
+    if(this.activeThread == threadID) //Added due to current thread on the last wait then the next thread started. This will result in the next thread to be stuck
+    {
+      this.activeThread = -1
+      this.removeFromActiveList()
+    }
   }
 
   wait(ms)
   {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    var adjusted_ms = this.lastEventTime + ms - Date.now()
+    this.lastEventTime += ms
+    if(adjusted_ms > 5)
+    {
+      return new Promise(resolve => setTimeout(resolve, adjusted_ms))
+    }
+    else
+    {
+      return 
+    }
   }
 
   getID()

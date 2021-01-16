@@ -6,10 +6,11 @@ class AutoPlay {
   led = true;
   currentChain = 0
   canvas = undefined;
+  lastEventTime = undefined;
 
   constructor(text, canvas) {
     this.autoplay = text;
-    this.total = text.length;
+    this.total = text === undefined ? 0 : text.length;
     this.canvas = canvas;
   }
 
@@ -20,6 +21,7 @@ class AutoPlay {
       // this.currentChain = parseInt(0);
     }
     this.status = "PLAYING"
+    this.lastEventTime = Date.now()
     for (this.progress; this.progress < this.autoplay.length; this.progress++) {
       // console.timeEnd("Autoplay");
       // console.time("Autoplay")
@@ -110,7 +112,16 @@ class AutoPlay {
   }
 
   wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    var adjusted_ms = this.lastEventTime + ms - Date.now()
+    this.lastEventTime += ms
+    if(adjusted_ms > 5)
+    {
+      return new Promise(resolve => setTimeout(resolve, adjusted_ms))
+    }
+    else
+    {
+      return 
+    }
   }
 }
 

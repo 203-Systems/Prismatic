@@ -22,10 +22,10 @@ class Canvas extends Component {
   // shouldUpdate = (nextProps) => !Object.is(this.props.layoutConfig, nextProps.layoutConfig);
 
   shouldComponentUpdate(nextProps) {
-    // if (nextProps.projectFile !== this.props.projectFile) {
-    //   console.log("Project File Loaded")
-    //   this.initlalizeCanvas(undefined, nextProps.projectFile);
-    // }
+    if (nextProps.projectFile !== this.props.projectFile) {
+      console.log("Project File Loaded");
+      this.initlalizeCanvas();
+    }
 
     if (nextProps.layoutConfig !== this.props.layoutConfig) {
       this.initlalizeCanvas(nextProps.layoutConfig);
@@ -38,7 +38,7 @@ class Canvas extends Component {
     return true;
   }
 
-  initlalizeCanvas(config = this.props.layoutConfig, projectFile = this.props.projectFile) {
+  initlalizeCanvas(config = this.props.layoutConfig) {
     this.clearCanvas(config);
     this.clearKeypressHistory(config);
     this.currentChain = 0;
@@ -59,15 +59,16 @@ class Canvas extends Component {
   }
 
   midiInputHandler = (midiMessage) => {
-    console.log(midiMessage);
+    // console.log(midiMessage);
     let [x, y] = this.indexOf2dArray(midiMessage.data[1], this.props.inputConfig.keymap);
-    console.log([x, y]);
+    // console.log([x, y]);
     if (x !== NaN && y !== NaN) {
       // let [offseted_x, offseted_y] = this.arrayCalculation([x, y], this.props.inputConfig.canvas_origin, "-");
       switch (midiMessage.data[0] >> 4) {
         case 9: //Note On
+        case 11: //Control Change
           if (midiMessage.data[2] != 0) {
-            //Fall back to note of
+            //Fall back to Note Off
             this.keyOn(x, y, this.props.inputConfig);
             break;
           }
@@ -79,6 +80,7 @@ class Canvas extends Component {
   };
 
   keyOn = (x, y, config = this.props.layoutConfig, reverseOffset = false, sound = true, led = true) => {
+    // console.time("KeyOn")
     let soundLoop = 1;
     let [offseted_x, offseted_y] = [x, y];
     if (!reverseOffset) {
@@ -90,19 +92,22 @@ class Canvas extends Component {
     // console.log([x, y, offseted_x, offseted_y])
 
     if (this.props.projectFile !== undefined) {
-      if (offseted_x >= 0 && offseted_x < 8 && offseted_y >= 0 && offseted_y < 8)
-        if (sound && this.props.projectFile.keySound !== undefined && 
-          this.props.projectFile.keySound[this.currentChain] !== undefined && 
-          this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && 
-          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && 
-          this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0
-          ) {
+      if (offseted_x >= 0 && offseted_x < 8 && offseted_y >= 0 && offseted_y < 8) {
+        //LED
+        if (led && this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[this.currentChain] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0) {
+          let ledIndex = this.keypressHistory[x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
+          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
+          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play();
+        }
+
+        if (sound && this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0) {
           //Sound
           let soundIndex = this.keypressHistory[x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
           // console.log('Play sound ${this.currentChain} ${offseted_x}')
-          if (this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1] !== undefined) { //Has special data
+          if (this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1] !== undefined) {
+            //Has special data
             if (
-              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] !== undefined  // Loop
+              this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0] !== undefined // Loop
             ) {
               soundLoop = parseInt(this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][1][0]);
             }
@@ -110,21 +115,9 @@ class Canvas extends Component {
           this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].stop();
           this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y][soundIndex][0].play(soundLoop);
         }
-
-      //LED
-      if (
-        led && 
-        this.props.projectFile.keyLED !== undefined && 
-        this.props.projectFile.keyLED[this.currentChain] !== undefined && 
-        this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && 
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && 
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0
-        ) {
-        let ledIndex = this.keypressHistory[x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].stop();
-        this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].play();
       }
     }
+    // console.timeEnd("KeyOn")
   };
 
   checkChain = (x, y, config) => {
@@ -144,8 +137,17 @@ class Canvas extends Component {
     console.log("Note Off - " + x.toString() + " " + y.toString());
 
     if (this.props.projectFile !== undefined) {
-      if (offseted_x >= 0 && offseted_x < 8 && offseted_y >= 0 && offseted_y < 8)
-      if (sound && this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0) {
+      if (offseted_x >= 0 && offseted_x < 8 && offseted_y >= 0 && offseted_y < 8) {
+        //LED
+        if (led && this.props.projectFile.keyLED !== undefined && this.props.projectFile.keyLED[this.currentChain] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0) {
+          let ledIndex = this.keypressHistory[x][y] % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
+          if (this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex] !== undefined && this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].repeat === 0) {
+            //Page might have changed
+            this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].endLoop();
+          }
+        }
+
+        if (sound && this.props.projectFile.keySound !== undefined && this.props.projectFile.keySound[this.currentChain] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y] !== undefined && this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length > 0) {
           //Sound
           let soundIndex = this.keypressHistory[x][y] % this.props.projectFile.keySound[this.currentChain][offseted_x][offseted_y].length;
           // console.log('Play sound ${this.currentChain} ${offseted_x}')
@@ -162,23 +164,6 @@ class Canvas extends Component {
               console.log(`Wormhole to Chain ${targetChain + 1}`);
             }
           }
-        }
-        
-      //LED
-      if (
-          this.props.projectFile.keyLED !== undefined && 
-          this.props.projectFile.keyLED[this.currentChain] !== undefined && 
-          this.props.projectFile.keyLED[this.currentChain][offseted_x] !== undefined && 
-          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y] !== undefined && 
-          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length > 0
-        ) {
-        let ledIndex = (this.keypressHistory[x][y] - 1) % this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y].length;
-        if (
-            this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex] !== undefined && 
-            this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].repeat === 0
-          ) {
-          //Page might have changed
-          this.props.projectFile.keyLED[this.currentChain][offseted_x][offseted_y][ledIndex].endLoop();
         }
       }
 
@@ -209,7 +194,7 @@ class Canvas extends Component {
   setColorCanvas(x, y, color) {
     var [canvas_x, canvas_y] = [undefined, undefined];
     if (x === "l") {
-      if(this.props.LayoutConfig == undefined) return;
+      if (this.props.LayoutConfig == undefined) return;
       [canvas_x, canvas_y] = this.props.layoutConfig.lKey;
     } else if (x === "mc") {
       if (this.props.layoutConfig.mcTable[y] == null) return;
@@ -218,19 +203,16 @@ class Canvas extends Component {
       [canvas_x, canvas_y] = this.arrayCalculation([x, y], this.props.layoutConfig.canvas_origin, "+");
     }
 
-    try
-    {
-    if (/^#[0-9A-F]{6}$/i.test(color)) {
-      //Check if it is a Hex String
-      this.state.colormap[canvas_x][canvas_y] = color;
-    } else {
-      this.state.colormap[canvas_x][canvas_y] = palette[color];
-    }
-  }
-    catch(e)
-    {
-      console.error(e)
-      console.error([x, y, color, canvas_x, canvas_y])
+    try {
+      if (/^#[0-9A-F]{6}$/i.test(color)) {
+        //Check if it is a Hex String
+        this.state.colormap[canvas_x][canvas_y] = color;
+      } else {
+        this.state.colormap[canvas_x][canvas_y] = palette[color];
+      }
+    } catch (e) {
+      console.error(e);
+      console.error([x, y, color, canvas_x, canvas_y]);
     }
   }
 
@@ -238,7 +220,7 @@ class Canvas extends Component {
     if (this.props.outputDevice !== undefined && this.props.outputConfig !== undefined) {
       var [output_x, output_y] = [undefined, undefined];
       if (x === "l") {
-        if(this.props.outputConfig.lKey == undefined) return;
+        if (this.props.outputConfig.lKey == undefined) return;
         [output_x, output_y] = this.props.outputConfig.lKey;
       } else if (x === "mc") {
         if (this.props.outputConfig.mcTable[y] == null) return;
@@ -246,19 +228,17 @@ class Canvas extends Component {
       } else {
         [output_x, output_y] = this.arrayCalculation([x, y], this.props.outputConfig.canvas_origin, "+");
       }
-      try{
-      if (/^#[0-9A-F]{6}$/i.test(color)) {
-        //Check if it is a Hex String
-        this.sendSysex(this.props.outputConfig.hexSysexGen(output_y, output_x, color));
-      } else {
-        this.sendMidi("NoteOn", this.props.outputConfig.channel, this.props.outputConfig.keymap[output_y][output_x], color);
+      try {
+        if (/^#[0-9A-F]{6}$/i.test(color)) {
+          //Check if it is a Hex String
+          this.sendSysex(this.props.outputConfig.hexSysexGen(output_y, output_x, color));
+        } else {
+          this.sendMidi("NoteOn", this.props.outputConfig.channel, this.props.outputConfig.keymap[output_y][output_x], color);
+        }
+      } catch (e) {
+        console.error(e);
+        console.error([x, y, color, output_x, output_y]);
       }
-    }
-    catch(e)
-    {
-      console.error(e)
-      console.error([x, y, color, output_x, output_y])
-    }
     }
   }
 

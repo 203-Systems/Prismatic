@@ -138,7 +138,8 @@ class ProjectFile {
       }
 
       //Load AutoPlay
-      this.autoplay = new AutoPlay(autoplayFile, this.canvas);
+      if(autoplayFile !== undefined)
+        this.autoplay = new AutoPlay(autoplayFile, this.canvas);
 
       resolve(this)
     }
