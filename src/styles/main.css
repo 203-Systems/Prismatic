@@ -60,6 +60,7 @@
   outline: 0 !important;
   touch-action: manipulation;
   position: absolute;
+  pointer-events: none;
 }
 
 .LEDButtonCircle75{
@@ -81,6 +82,7 @@
   outline: 0 !important;
   touch-action: manipulation;
   position: absolute;
+  pointer-events: none;
 }
 
 .LEDButtonRectangle{
@@ -101,4 +103,5 @@
   outline: 0 !important;
   touch-action: manipulation;
   position: absolute;
+  pointer-events: none;
 }
