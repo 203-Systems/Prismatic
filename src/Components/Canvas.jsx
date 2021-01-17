@@ -2,6 +2,7 @@ import React, { Component } from "react";
 // import ProjectFileReader from './Components/projectFileReader';
 import Button from "./Button";
 import { palette, rawPalette } from "../palette";
+import buttonConfigs from "../buttonConfigs.js";
 
 class Canvas extends Component {
   constructor(props) {
@@ -347,29 +348,16 @@ class Canvas extends Component {
           return (
             <div className="button-row">
               {this.props.layoutConfig.layout[y].map((value, x) => {
-                switch (value) {
-                  case "◻":
-                    return <Button x={x} y={y} class="LEDButtonSquare" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff} />;
-                  case "◼️":
-                    return <Button x={x} y={y} class="LEDButtonSquare" overlayClass="LEDButtonSquareOverlay" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff} />;
-                  case "⬤":
-                    return <Button x={x} y={y} class="LEDButtonCircle75" overlayClass="LEDButtonCircle75Overlay" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff} />;
-                  case "◪":
-                  case "⬕":
-                  case "⬔":
-                  case "◩":
-                    return <Button x={x} y={y} class="LEDButtonSquare" color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff} />;
-                  default:
-                    return (
-                      <div
-                        key={"Spacer " + x.toString() + "-" + y.toString()}
-                        style={{
-                          width: "96px",
-                        }}
-                      ></div>
-                    );
+                if(Object.keys(buttonConfigs).includes(value))
+                  {
+                    return <Button x={x} y={y} class={buttonConfigs[value].class} overlayClass={buttonConfigs[value].overlayClass} color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff} />;
+                  }
+                  else
+                  {
+                    return <div key={"Spacer " + x.toString() + "-" + y.toString()} style={{width: "96px"}}/>
+                  }
                 }
-              })}
+              )}
             </div>
           );
         })}
