@@ -15,13 +15,13 @@ class App extends Component {
 
   componentDidMount()
   {
+    this.loadUserConfigPerfences()
     setTimeout((this.initlization).bind(this), 0) //Hacky way to get initlization done after first render
   }
 
   initlization()
   {
     WebMidi.enable(err => {
-
       if (err) {
         this.onMIDIFailure()
       } else {
@@ -35,16 +35,14 @@ class App extends Component {
       var unipack_url = urlParams.get("unipack");
       this.downloadProjectFile(unipack_url);
     }
-
-      // this.updateCookie();
   }
 
   state = {
     projectFile: undefined,
     statusMessage: "No project loaded",
 
-    midiInput: [],
-    midiOutput: [],
+    midiInput: {},
+    midiOutput: {},
 
     layoutConfigName: config.defaultLayout,
     layoutConfig: deviceConfigs[config.defaultLayout],
@@ -59,14 +57,6 @@ class App extends Component {
   };
 
   canvas = React.createRef();
-
-  cookie = {
-    perferedLayout: undefined,
-    perferedInput: undefined,
-    perferedInputConfig: undefined,
-    perferedOutput: undefined,
-    perferedOutputConfig: undefined,
-  }
 
   downloadProjectFile = (url) => {
     alert("Download Unipack from " + url)
@@ -103,6 +93,8 @@ class App extends Component {
 
     WebMidi.addListener("connected", this.onMidiStateChange.bind(this))
     WebMidi.addListener("disconnected", this.onMidiStateChange.bind(this))
+
+    this.loadUserDevicePerfences()
   };
 
   onMidiStateChange(e) {
@@ -133,20 +125,20 @@ class App extends Component {
   }
   
   updateMidiList() {
-    var midiInput = [];
+    var midiInput = {};
     console.log("Input");
     for (var input of WebMidi.inputs) {
       console.log(input.name);
-      midiInput.push({ label: input.name, value: input });
+      midiInput[input.name] = input
     }
     this.setState({ midiInput: midiInput });
 
-    var midiOutput = [];
+    var midiOutput = {};
     console.log();
     console.log("Output");
     for (var output of WebMidi.outputs) {
       console.log(output.name);
-      midiOutput.push({ label: output.name, value: output });
+      midiOutput[output.name] = output
     }
     this.setState({ midiOutput: midiOutput });
   }
@@ -160,10 +152,9 @@ class App extends Component {
   }
 
   autoConfigPicker(deviceName, mode) {
-    //mode 0 for input, mode 1 for output
     if (deviceName !== undefined) {
       for (var key in deviceConfigs) {
-        if (deviceName.match(deviceConfigs[key].midiNameRegex) !== null) {
+        if (deviceConfigs[key].midiNameRegex !== undefined && deviceName.match(deviceConfigs[key].midiNameRegex) !== null) {
           var config = deviceConfigs[key];
           console.log(
             `${
@@ -171,10 +162,10 @@ class App extends Component {
             } config has been auto assigned to ${key}`
           );
           switch (mode) {
-            case 0:
+            case "Input":
               this.setInputConfig({label: key, value: config})
               return true;
-            case 1:
+            case "Output":
               this.setOutputConfig({label: key, value: config})
               return true;
           }
@@ -221,7 +212,7 @@ class App extends Component {
             <text>Midi Input Device</text>
             <Select
               className="sidebarItem"
-              options={this.state.midiInput}
+              options={this.prepSelectConfig(this.state.midiInput)}
               autosize={true}
               value={
                 this.state.inputDevice !== undefined
@@ -251,7 +242,7 @@ class App extends Component {
             <text>Midi Output Device</text>
             <Select
               className="sidebarItem"
-              options={this.state.midiOutput}
+              options={this.prepSelectConfig(this.state.midiOutput)}
               autosize={true}
               value={
                 this.state.outputDevice !== undefined
@@ -299,30 +290,34 @@ class App extends Component {
     // console.log(config)
     this.setState({ layoutConfigName: config.label });
     this.setState({ layoutConfig: config.value });
+    localStorage.setItem('perferedLayoutConfig', config.label);
   }
 
   setInputConfig(config) {
     // console.log(config)
     this.setState({ inputConfigName: config.label });
     this.setState({ inputConfig: config.value }, this.initlizateInputDevice.bind(this));
+    localStorage.setItem('perferedInputConfig', config.label);
   }
 
   setOutputConfig(config) {
     // console.log(config)
     this.setState({ outputConfigName: config.label });
     this.setState({ outputConfig: config.value }, this.initlizateOutputDevice.bind(this));
+    localStorage.setItem('perferedOutputConfig', config.label);
   }
 
-  setInputDevice(device) {
+  setInputDevice(device, autoPickConfig = true) {
     this.setState({ inputDevice: device.value });
-    this.autoConfigPicker(device.value.name, 0);
+    if(autoPickConfig) this.autoConfigPicker(device.value.name, "Input");
+    localStorage.setItem('perferedInputDevice', device.value.name);
   }
 
-  setOutputDevice(device) {
+  setOutputDevice(device, autoPickConfig = true) {
     // console.log("Output device set to " + device.name);
-    console.log(device)
     this.setState({ outputDevice: device.value });
-    this.autoConfigPicker(device.value.name, 1);
+    if(autoPickConfig) this.autoConfigPicker(device.value.name, "Output");
+    localStorage.setItem('perferedOutputDevice', device.value.name);
   }
 
   initlizateInputDevice()
@@ -374,16 +369,38 @@ class App extends Component {
     return result;
   }
 
-  getCookie() {
-    return document.cookie.split('; ').reduce((prev, current) => {
-      const [name, value] = current.split('=');
-      prev[name] = value;
-      return prev
-    }, {});
+  loadUserConfigPerfences() {
+    const perferedLayoutConfig = localStorage.getItem('perferedLayoutConfig');
+    if(perferedLayoutConfig !== null && deviceConfigs[perferedLayoutConfig] !== undefined)
+    {
+      this.setLayoutConfig({label: perferedLayoutConfig, value:deviceConfigs[perferedLayoutConfig]})
+    }
+
+    const perferedInputConfig = localStorage.getItem('perferedInputConfig');
+    if(perferedInputConfig !== null && deviceConfigs[perferedInputConfig] !== undefined)
+    {
+      this.setInputConfig({label: perferedInputConfig, value:deviceConfigs[perferedInputConfig]})
+    }
+
+    const perferedOutputConfig = localStorage.getItem('perferedOutputConfig');
+    if(perferedOutputConfig !== null && deviceConfigs[perferedOutputConfig] !== undefined)
+    {
+      this.setOutputConfig({label: perferedOutputConfig, value:deviceConfigs[perferedOutputConfig]})
+    }
   }
 
-  updateCookie() {
-    this.JSON.stringify(this.cookie);
+  loadUserDevicePerfences() {
+    const perferedInputDevice = localStorage.getItem('perferedInputDevice');
+    if(perferedInputDevice !== null && this.state.midiInput[perferedInputDevice] !== undefined)
+    {
+      this.setInputDevice({label: perferedInputDevice, value:this.state.midiInput[perferedInputDevice]}, false)
+    }
+
+    const perferedOutputDevice = localStorage.getItem('perferedOutputDevice');
+    if(perferedOutputDevice !== null && this.state.midiOutput[perferedOutputDevice] !== undefined)
+    {
+      this.setOutputDevice({label: perferedOutputDevice, value:this.state.midiOutput[perferedOutputDevice]}, false)
+    }
   }
 }
 
