@@ -66,6 +66,12 @@ const deviceConfigs = {
 
     lKey: [9, 9],
 
+    noteToXY(note)
+    {
+      if(note >= 1 && note <= 99 /* && note != 9 && note != 90 */)
+        return [note % 10, 9 - Math.floor(note / 10)]
+    },
+
     hexSysexGen: function () {
       if (arguments.length != 2 && arguments.length != 3)
         return [] //Error
@@ -175,34 +181,63 @@ const deviceConfigs = {
 
     lKey: [9, 9],
 
-      hexSysexGen: function () {
-        if (arguments.length != 2 && arguments.length != 3)
-          return [] //Error
-        switch (arguments.length) {
-          case 2: //ID
-            var id = arguments[0]
-            var hex = arguments[1]
-            break;
-          case 3: //XY
-            var x = arguments[0] + 1
-            var y = arguments[1] + 1
-            var id = x * 10 + y
-            var hex = arguments[2]
-            break;
-          default:
-            return []
-        }
-        if (typeof (hex) === "string" && hex.charAt(0) === '#') {
-          hex = parseInt(hex.substr(1), 16)
-        }
-        else {
-          return []
-        }
-        var r = (hex >> 16) >> 2 //6 bit color
-        var g = (hex & 0xFF00 >> 8) >> 2
-        var b = (hex & 0xFF) >> 2
-        return [0, 32, 41, 2, 16, 11, id, r, g, b]
+    noteToXY(note)
+    {
+      if(note >= 36 && note <= 99) // grid
+      {
+        var keymap_lut = [[0,7],[1,7],[2,7],[3,7],[0,6],[1,6],[2,6],[3,6],[0,5],[1,5],[2,5],[3,5],[0,4],[1,4],[2,4],[3,4],[0,3],[1,3],[2,3],[3,3],[0,2],[1,2],[2,2],[3,2],[0,1],[1,1],[2,1],[3,1],[0,0],[1,0],[2,0],[3,0],[4,7],[5,7],[6,7],[7,7],[4,6],[5,6],[6,6],[7,6],[4,5],[5,5],[6,5],[7,5],[4,4],[5,4],[6,4],[7,4],[4,3],[5,3],[6,3],[7,3],[4,2],[5,2],[6,2],[7,2],[4,1],[5,1],[6,1],[7,1],[4,0],[5,0],[6,0],[7,0]]
+        return keymap_lut[note - 36]
       }
+      else if(note >= 100 && note <= 107)
+      {
+        return this.mcTable[note - 100]
+      }
+      else if(note >= 116 && note < 123)
+      {
+        return this.mcTable[8 - (note - 116) + 8] //8- as reverse the direction
+      }
+      else if(note >= 108 && note < 115)
+      {
+        return this.mcTable[(note - 108) + 16]
+      }
+      else if(note >= 28 && note < 35)
+      {
+        return this.mcTable[(note - 28) + 24]
+      }
+      else if(note == 27)
+      {
+        return this.lKey
+      }
+    },
+
+    hexSysexGen: function () {
+      if (arguments.length != 2 && arguments.length != 3)
+        return [] //Error
+      switch (arguments.length) {
+        case 2: //ID
+          var id = arguments[0]
+          var hex = arguments[1]
+          break;
+        case 3: //XY
+          var x = arguments[0] + 1
+          var y = arguments[1] + 1
+          var id = x * 10 + y
+          var hex = arguments[2]
+          break;
+        default:
+          return []
+      }
+      if (typeof (hex) === "string" && hex.charAt(0) === '#') {
+        hex = parseInt(hex.substr(1), 16)
+      }
+      else {
+        return []
+      }
+      var r = (hex >> 16) >> 2 //6 bit color
+      var g = (hex & 0xFF00 >> 8) >> 2
+      var b = (hex & 0xFF) >> 2
+      return [0, 32, 41, 2, 16, 11, id, r, g, b]
+    }
   },
   "Launchpad MK2":
   {
@@ -244,38 +279,50 @@ const deviceConfigs = {
 
     mcTable: [
       [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0],
-      [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 6], [8, 7], [8, 8],
       null, null, null, null, null, null, null, null,
-      null, null, null, null, null, null, null, null,],
+      null, null, null, null, null, null, null, null,
+      [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 6], [8, 7], [8, 8],],
 
-      hexSysexGen: function () {
-        if (arguments.length != 2 && arguments.length != 3)
-          return [] //Error
-        switch (arguments.length) {
-          case 2: //ID
-            var id = arguments[0]
-            var hex = arguments[1]
-            break;
-          case 3: //XY
-            var x = arguments[0] + 1
-            var y = arguments[1] + 1
-            var id = x * 10 + y
-            var hex = arguments[2]
-            break;
-          default:
-            return []
+      noteToXY(note)
+      {
+        if(note >= 11 && note <= 89)
+        {
+          return [Math.floor(note / 10), note % 10]
         }
-        if (typeof (hex) === "string" && hex.charAt(0) === '#') {
-          hex = parseInt(hex.substr(1), 16)
+        else if(note >= 104 && note <= 111)
+        {
+          return this.mcTable[note - 104 + 24]
         }
-        else {
+      },
+
+    hexSysexGen: function () {
+      if (arguments.length != 2 && arguments.length != 3)
+        return [] //Error
+      switch (arguments.length) {
+        case 2: //ID
+          var id = arguments[0]
+          var hex = arguments[1]
+          break;
+        case 3: //XY
+          var x = arguments[0] + 1
+          var y = arguments[1] + 1
+          var id = x * 10 + y
+          var hex = arguments[2]
+          break;
+        default:
           return []
-        }
-        var r = (hex >> 16) >> 2 //6 bit color
-        var g = (hex & 0xFF00 >> 8) >> 2
-        var b = (hex & 0xFF) >> 2
-        return [0, 32, 41, 2, 24, 11, id, r, g, b]
       }
+      if (typeof (hex) === "string" && hex.charAt(0) === '#') {
+        hex = parseInt(hex.substr(1), 16)
+      }
+      else {
+        return []
+      }
+      var r = (hex >> 16) >> 2 //6 bit color
+      var g = (hex & 0xFF00 >> 8) >> 2
+      var b = (hex & 0xFF) >> 2
+      return [0, 32, 41, 2, 24, 11, id, r, g, b]
+    }
   },
   "Launchpad X":
   {
@@ -317,11 +364,32 @@ const deviceConfigs = {
 
     mcTable: [
       [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0],
-      [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 6], [8, 7], [8, 8],
       null, null, null, null, null, null, null, null,
-      null, null, null, null, null, null, null, null,],
+      null, null, null, null, null, null, null, null,
+      [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 6], [8, 7], [8, 8],],
 
     lKey: [0, 9],
+
+    noteToXY(note)
+    {
+      if(note >= 36 && note <= 99) // grid
+      {
+        var keymap_lut = [[0,7],[1,7],[2,7],[3,7],[0,6],[1,6],[2,6],[3,6],[0,5],[1,5],[2,5],[3,5],[0,4],[1,4],[2,4],[3,4],[0,3],[1,3],[2,3],[3,3],[0,2],[1,2],[2,2],[3,2],[0,1],[1,1],[2,1],[3,1],[0,0],[1,0],[2,0],[3,0],[4,7],[5,7],[6,7],[7,7],[4,6],[5,6],[6,6],[7,6],[4,5],[5,5],[6,5],[7,5],[4,4],[5,4],[6,4],[7,4],[4,3],[5,3],[6,3],[7,3],[4,2],[5,2],[6,2],[7,2],[4,1],[5,1],[6,1],[7,1],[4,0],[5,0],[6,0],[7,0]]
+        return keymap_lut[note - 36]
+      }
+      else if(note >= 100 && note <= 107)
+      {
+        return this.mcTable[note - 100]
+      }
+      else if(note >= 28 && note < 35)
+      {
+        return this.mcTable[(note - 28) + 8]
+      }
+      else if(note == 27)
+      {
+        return this.lKey
+      }
+    },
 
     hexSysexGen: function () {
       if (arguments.length != 2 && arguments.length != 3)
@@ -396,32 +464,32 @@ const deviceConfigs = {
       [8, 9], [7, 9], [6, 9], [5, 9], [4, 9], [3, 9], [2, 9], [1, 9],
       [0, 8], [0, 7], [0, 6], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1]],
 
-    hexSysexGen: function () {
-      return
-      if (arguments.length != 2 && arguments.length != 3)
-        return //Error
-      switch (arguments.length) {
-        case 2: //MC
-          var mc = arguments[0]
-          if (this.mcTable[mc] == null)
-            return
-          var x, y = this.mcTable[mc]
-          var hex = arguments[1]
-          break;
-        case 3: //XY
-          var x = arguments[0] + 1
-          var y = arguments[1] + 1
-          var hex = arguments[2]
-          break;
-        default:
-          return
-      }
-      var xy = x * 10 + y
-      var r = (hex >> 16) >> 1 //7 bit color
-      var g = (hex & 0xFF00 >> 8) >> 1
-      var b = (hex & 0xFF) >> 1
-      return [240, 0, 32, 41, 2, 12, 22, 3, 3, xy, r, g, b, 247]
-    }
+    // hexSysexGen: function () {
+    //   return
+    //   if (arguments.length != 2 && arguments.length != 3)
+    //     return //Error
+    //   switch (arguments.length) {
+    //     case 2: //MC
+    //       var mc = arguments[0]
+    //       if (this.mcTable[mc] == null)
+    //         return
+    //       var x, y = this.mcTable[mc]
+    //       var hex = arguments[1]
+    //       break;
+    //     case 3: //XY
+    //       var x = arguments[0] + 1
+    //       var y = arguments[1] + 1
+    //       var hex = arguments[2]
+    //       break;
+    //     default:
+    //       return
+    //   }
+    //   var xy = x * 10 + y
+    //   var r = (hex >> 16) >> 1 //7 bit color
+    //   var g = (hex & 0xFF00 >> 8) >> 1
+    //   var b = (hex & 0xFF) >> 1
+    //   return [240, 0, 32, 41, 2, 12, 22, 3, 3, xy, r, g, b, 247]
+    // }
   },
   "Matrix":
   {
@@ -465,6 +533,19 @@ const deviceConfigs = {
       null, null, null, null, null, null, null, null,
       null, null, null, null, null, null, null, null,
       null, null, null, null, null, null, null, null,],
+
+    noteToXY(note)
+    {
+      if(note > 35 && note < 100) // grid
+      {
+        var keymap_lut = [[0,7],[1,7],[2,7],[3,7],[0,6],[1,6],[2,6],[3,6],[0,5],[1,5],[2,5],[3,5],[0,4],[1,4],[2,4],[3,4],[0,3],[1,3],[2,3],[3,3],[0,2],[1,2],[2,2],[3,2],[0,1],[1,1],[2,1],[3,1],[0,0],[1,0],[2,0],[3,0],[4,7],[5,7],[6,7],[7,7],[4,6],[5,6],[6,6],[7,6],[4,5],[5,5],[6,5],[7,5],[4,4],[5,4],[6,4],[7,4],[4,3],[5,3],[6,3],[7,3],[4,2],[5,2],[6,2],[7,2],[4,1],[5,1],[6,1],[7,1],[4,0],[5,0],[6,0],[7,0]]
+        return keymap_lut[note - 36]
+      }
+      else if(note > 99 && note < 108)
+      {
+        return this.chainKey[note - 100]
+      }
+    },
 
     hexSysexGen: function () {
       if (arguments.length != 3)

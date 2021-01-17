@@ -59,16 +59,24 @@ class Canvas extends Component {
     if (newInput !== undefined) newInput.addListener("midimessage", "all", this.midiInputHandler.bind(this));
   }
 
-  midiInputHandler = (midiMessage) => {
-    // console.log(midiMessage);
-    let [x, y] = this.indexOf2dArray(midiMessage.data[1], this.props.inputConfig.keymap);
-    // console.log([x, y]);
-    if (x !== NaN && y !== NaN) {
+  midiInputHandler = (midiEvent) => {
+    var [event, note, velocity] = midiEvent.data
+    var [x, y] = [undefined, undefined]
+    if(this.props.inputConfig.noteToXY !== undefined)
+    {
+      [x, y] = this.props.inputConfig.noteToXY(note)
+    }
+    else
+    {
+      [x, y] = this.indexOf2dArray(note, this.props.inputConfig.keymap); 
+    }
+    console.log([x, y]);
+    if (x !== undefined && y !== undefined) {
       // let [canvas_x, canvas_y] = this.arrayCalculation([x, y], this.props.inputConfig.canvas_origin, "-");
-      switch (midiMessage.data[0] >> 4) {
+      switch (event >> 4) {
         case 9: //Note On
         case 11: //Control Change
-          if (midiMessage.data[2] != 0) {
+          if (velocity != 0) {
             //Fall back to Note Off
             this.keyOn(x, y, this.props.inputConfig);
             break;
@@ -322,14 +330,18 @@ class Canvas extends Component {
   };
 
   indexOf2dArray(id, matrix) {
+    console.log("Hello")
+    console.time("2d array search")
     for (var y = 0, len = matrix.length; y < len; y++) {
       for (var x = 0, len2 = matrix[y].length; x < len2; x++) {
         if (matrix[y][x] === id) {
+          console.timeLog("2d array search")
+          console.timeEnd("2d array search")
           return [x, y];
         }
       }
     }
-    return [NaN, NaN];
+    return [undefined, undefined];
   }
 
   render() {
