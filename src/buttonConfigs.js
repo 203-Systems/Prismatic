@@ -60,6 +60,12 @@ const buttonConfigs = {
     class: "LEDButtonRectangle",
     overlayClass: "LEDButtonRectangleOverlay"
   },
+  //Midi Fighter 64
+  "⦿":
+  {
+    class: "LEDButtonCircleLarge",
+    overlayClass: "LEDButtonCircleLargeOverlay"
+  },
 }
 
 export default buttonConfigs;

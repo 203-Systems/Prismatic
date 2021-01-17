@@ -128,8 +128,11 @@ class Canvas extends Component {
   };
 
   checkChain = (x, y, config) => {
-    for (var i = 0; i < Math.min(config.chainKey.length, this.props.projectFile.info.chain); i++) {
-      if (config.chainKey[i][0] === x && config.chainKey[i][1] === y) this.chainChange(i);
+    if(config.chainKey !== undefined)
+    {
+      for (var i = 0; i < Math.min(config.chainKey.length, this.props.projectFile.info.chain); i++) {
+        if (config.chainKey[i][0] === x && config.chainKey[i][1] === y) this.chainChange(i);
+      }
     }
   };
 
@@ -203,7 +206,7 @@ class Canvas extends Component {
       if (this.props.LayoutConfig == undefined) return;
       [canvas_x, canvas_y] = this.props.layoutConfig.lKey;
     } else if (x === "mc") {
-      if (this.props.layoutConfig.mcTable[y] == null) return;
+      if (this.props.layoutConfig.mcTable === undefined || this.props.layoutConfig.mcTable[y] == null) return;
       [canvas_x, canvas_y] = this.props.layoutConfig.mcTable[y];
     } else {
       [canvas_x, canvas_y] = this.arrayCalculation([x, y], this.props.layoutConfig.canvas_origin, "+");
@@ -229,7 +232,7 @@ class Canvas extends Component {
         if (this.props.outputConfig.lKey == undefined) return;
         [output_x, output_y] = this.props.outputConfig.lKey;
       } else if (x === "mc") {
-        if (this.props.outputConfig.mcTable[y] == null) return;
+        if (this.props.outputConfig.mcTable === undefined || this.props.outputConfig.mcTable[y] == null) return
         [output_x, output_y] = this.props.outputConfig.mcTable[y];
       } else {
         [output_x, output_y] = this.arrayCalculation([x, y], this.props.outputConfig.canvas_origin, "+");
@@ -330,13 +333,9 @@ class Canvas extends Component {
   };
 
   indexOf2dArray(id, matrix) {
-    console.log("Hello")
-    console.time("2d array search")
     for (var y = 0, len = matrix.length; y < len; y++) {
       for (var x = 0, len2 = matrix[y].length; x < len2; x++) {
         if (matrix[y][x] === id) {
-          console.timeLog("2d array search")
-          console.timeEnd("2d array search")
           return [x, y];
         }
       }

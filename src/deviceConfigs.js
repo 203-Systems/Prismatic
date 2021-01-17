@@ -528,11 +528,11 @@ const deviceConfigs = {
 
     chainKey: [[0, 8], [1, 8], [2, 8], [3, 8], [4, 8], [5, 8], [6, 8], [7, 8]],
 
-    mcTable: [
-      null, null, null, null, null, null, null, null,
-      null, null, null, null, null, null, null, null,
-      null, null, null, null, null, null, null, null,
-      null, null, null, null, null, null, null, null,],
+    // mcTable: [
+    //   null, null, null, null, null, null, null, null,
+    //   null, null, null, null, null, null, null, null,
+    //   null, null, null, null, null, null, null, null,
+    //   null, null, null, null, null, null, null, null,],
 
     noteToXY(note)
     {
@@ -544,6 +544,73 @@ const deviceConfigs = {
       else if(note > 99 && note < 108)
       {
         return this.chainKey[note - 100]
+      }
+    },
+
+    hexSysexGen: function () {
+      if (arguments.length != 3)
+        return [] //Error
+      switch (arguments.length) {
+        // case 2: //MC
+        //   var mc = arguments[0]
+        //   if(this.mcTable[mc] == null)
+        //     return
+        //   var x,y = this.mcTable[mc]
+        //   var hex = arguments[1]
+        case 3: //XY
+          var x = arguments[0]
+          var y = arguments[1]
+          var hex = arguments[2]
+          break;
+        default:
+          return;
+      }
+      var r = (hex >> 16) >> 1 //7 bit color
+      var g = (hex & 0xFF00 >> 8) >> 1
+      var b = (hex & 0xFF) >> 1
+      return [240, 0, 2, 3, 1, 0, 18, 32, 0, 3, r, g, b, 247]
+    }
+  },
+  "Midi Fighter 64":
+  {
+    channel: 1,
+    midiNameRegex: "^Midi Fighter 64",
+
+    layout: [
+      ["⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿"],
+      ["⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿"],
+      ["⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿"],
+      ["⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿"],
+      ["⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿"],
+      ["⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿"],
+      ["⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿"],
+      ["⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿", "⦿"]],
+
+    keymap: [
+      [64, 65, 66, 67, 96, 97, 98, 99],
+      [60, 61, 62, 63, 92, 93, 94, 95],
+      [56, 57, 58, 59, 88, 89, 90, 91],
+      [52, 53, 54, 55, 84, 85, 86, 87],
+      [48, 49, 50, 51, 80, 81, 82, 83],
+      [44, 45, 46, 47, 76, 77, 78, 79],
+      [40, 41, 42, 43, 72, 73, 74, 75],
+      [36, 37, 38, 39, 68, 69, 70, 71]],
+
+    width: 8,
+    height: 8,
+
+    //UI related
+    padding: 20,
+    radius: 50,
+
+    canvas_origin: [0, 0],
+
+    noteToXY(note)
+    {
+      if(note > 35 && note < 100) // grid
+      {
+        var keymap_lut = [[0,7],[1,7],[2,7],[3,7],[0,6],[1,6],[2,6],[3,6],[0,5],[1,5],[2,5],[3,5],[0,4],[1,4],[2,4],[3,4],[0,3],[1,3],[2,3],[3,3],[0,2],[1,2],[2,2],[3,2],[0,1],[1,1],[2,1],[3,1],[0,0],[1,0],[2,0],[3,0],[4,7],[5,7],[6,7],[7,7],[4,6],[5,6],[6,6],[7,6],[4,5],[5,5],[6,5],[7,5],[4,4],[5,4],[6,4],[7,4],[4,3],[5,3],[6,3],[7,3],[4,2],[5,2],[6,2],[7,2],[4,1],[5,1],[6,1],[7,1],[4,0],[5,0],[6,0],[7,0]]
+        return keymap_lut[note - 36]
       }
     },
 

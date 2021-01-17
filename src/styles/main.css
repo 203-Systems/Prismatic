@@ -105,3 +105,25 @@
   position: absolute;
   pointer-events: none;
 }
+
+.LEDButtonCircleLarge{
+  height:86px;
+  width:86px;
+  margin: 3px;
+  border: 2px solid black;
+  border-radius: 42px;
+  outline: 0 !important;
+  touch-action: manipulation;
+}
+
+.LEDButtonCircleLargeOverlay{
+  background-color: var(--dark-gray);
+  height:64px;
+  width:64px;
+  margin: 14px;
+  border-radius: 35px;
+  outline: 0 !important;
+  touch-action: manipulation;
+  position: absolute;
+  pointer-events: none;
+}
