@@ -82,3 +82,23 @@
   touch-action: manipulation;
   position: absolute;
 }
+
+.LEDButtonRectangle{
+  height:40px;
+  width:80px;
+  margin: 8px;
+  border: 2px solid black;
+  border-radius: 5px;
+  outline: 0 !important;
+  touch-action: manipulation;
+}
+
+.LEDButtonRectangleOverlay{
+  background-color: var(--dark-gray);
+  height:26px;
+  width:66px;
+  margin: 15px;
+  outline: 0 !important;
+  touch-action: manipulation;
+  position: absolute;
+}
