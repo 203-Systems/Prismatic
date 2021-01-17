@@ -118,9 +118,9 @@
 
 .LEDButtonCircleLargeOverlay{
   background-color: var(--dark-gray);
-  height:64px;
-  width:64px;
-  margin: 14px;
+  height:66px;
+  width:66px;
+  margin: 13px;
   border-radius: 35px;
   outline: 0 !important;
   touch-action: manipulation;

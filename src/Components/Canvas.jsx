@@ -60,11 +60,14 @@ class Canvas extends Component {
   }
 
   midiInputHandler = (midiEvent) => {
+    console.log(midiEvent.data)
     var [event, note, velocity] = midiEvent.data
     var [x, y] = [undefined, undefined]
     if(this.props.inputConfig.noteToXY !== undefined)
-    {
-      [x, y] = this.props.inputConfig.noteToXY(note)
+    { 
+      var xy = this.props.inputConfig.noteToXY(note)
+      if(xy == undefined) return
+      [x, y] = xy
     }
     else
     {
