@@ -26,9 +26,12 @@ class Button extends Component {
     shouldUpdate = (nextProps) => this.props.color !== nextProps.color
 
     render = () => (
-        (this.isTouchDevice()) ? 
+        <div style={{position: 'relative', display: 'grid'}}>
+        {(this.isTouchDevice()) ? 
         (<button className={this.props.class} style={{backgroundColor: this.props.color}} onTouchStart={this.on} onTouchEnd={this.off} onTouchCancel={this.off}/>) : 
-        (<button className={this.props.class} style={{backgroundColor: this.props.color}} onMouseDown={this.on} onMouseUp={this.off} onMouseLeave={this.off}/>)
+        (<button className={this.props.class} style={{backgroundColor: this.props.color}} onMouseDown={this.on} onMouseUp={this.off} onMouseLeave={this.off}/>)}
+        <div className={this.props.overlayClass}/>
+        </div>
     )
 
     isTouchDevice() {

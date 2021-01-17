@@ -45,23 +45,40 @@
 .LEDButtonSquare{
   height:80px;
   width:80px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  margin-left: 8px;
-  margin-right: 8px;
+  margin: 8px;
   border: 2px solid black;
   border-radius: 5px;
   outline: 0 !important;
   touch-action: manipulation;
 }
 
+.LEDButtonSquareOverlay{
+  background-color: var(--dark-gray);
+  height:66px;
+  width:66px;
+  margin: 15px;
+  outline: 0 !important;
+  touch-action: manipulation;
+  position: absolute;
+}
+
 .LEDButtonCircle75{
   height:66px;
   width:66px;
-  padding: 7px;
   margin: 15px;
   border: 2px solid black;
-  border-radius: 60px;
+  border-radius: 33px;
   outline: 0 !important;  
   touch-action: manipulation;
+}
+
+.LEDButtonCircle75Overlay{
+  background-color: var(--dark-gray);
+  height:52px;
+  width:52px;
+  margin: 22px;
+  border-radius: 26px;
+  outline: 0 !important;
+  touch-action: manipulation;
+  position: absolute;
 }
