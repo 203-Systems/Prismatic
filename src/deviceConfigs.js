@@ -327,7 +327,7 @@ const deviceConfigs = {
   "Launchpad X":
   {
     channel: 1,
-    midiNameRegex: "LPX MIDI",
+    midiNameRegex: "^Launchpad X|LPX MIDI",
 
     initializationSysex:[
       [0, 32, 41, 2, 12, 14, 1], //Enter Programmer Mode
