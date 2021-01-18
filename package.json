@@ -10,6 +10,7 @@
     "axios": "^0.21.1",
     "howler": "^2.2.1",
     "jszip": "^3.5.0",
+    "preval.macro": "^5.0.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-scripts": "^4.0.1",

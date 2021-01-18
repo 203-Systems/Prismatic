@@ -7,6 +7,7 @@ import deviceConfigs from "../deviceConfigs";
 import Select from "react-select";
 import AutoplayControl from "./AutoplayControl";
 import WebMidi from "webmidi";
+import preval from 'preval.macro'
 
 class App extends Component {
   constructor(props) {
@@ -15,6 +16,7 @@ class App extends Component {
 
   componentDidMount()
   {
+    console.log("%c203 | Prismatic \nBuild " + preval`module.exports = new Date().toLocaleString();`, "color: cyan;font-size:24px;")
     this.loadUserConfigPerfences()
     setTimeout((this.initlization).bind(this), 0) //Hacky way to get initlization done after first render
   }
