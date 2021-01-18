@@ -242,7 +242,7 @@ const deviceConfigs = {
   "Launchpad MK2":
   {
     channel: 1,
-    midiNameRegex: "^Launchpad MK2",
+    midiNameRegex: "Launchpad MK2",
 
     layout: [
       ["⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "⬤", "　"],
@@ -287,7 +287,7 @@ const deviceConfigs = {
       {
         if(note >= 11 && note <= 89)
         {
-          return [Math.floor(note / 10), note % 10]
+          return [(note % 10) - 1, 9 - Math.floor(note / 10)]
         }
         else if(note >= 104 && note <= 111)
         {
@@ -327,7 +327,7 @@ const deviceConfigs = {
   "Launchpad X":
   {
     channel: 1,
-    midiNameRegex: "^Launchpad X|LPX MIDI",
+    midiNameRegex: "Launchpad X|LPX MIDI",
 
     initializationSysex:[
       [0, 32, 41, 2, 12, 14, 1], //Enter Programmer Mode
@@ -411,7 +411,7 @@ const deviceConfigs = {
   "Launchpad Pro MK3":
   {
     channel: 1,
-    midiNameRegex: "^Launchpad Pro MK3",
+    midiNameRegex: "Launchpad Pro MK3",
 
     initializationSysex:[
       [0, 32, 41, 2, 12, 14, 0, 17, 0], //Enter Programmer Mode
