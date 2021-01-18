@@ -127,3 +127,10 @@
   position: absolute;
   pointer-events: none;
 }
+
+.LEDButtonFull{
+  height:96px;
+  width:96px;
+  outline: 0 !important;
+  touch-action: manipulation;
+}

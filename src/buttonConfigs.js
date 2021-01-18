@@ -66,6 +66,11 @@ const buttonConfigs = {
     class: "LEDButtonCircleLarge",
     overlayClass: "LEDButtonCircleLargeOverlay"
   },
+  //Debug or Theme Base
+  "⌗":
+  {
+    class: "LEDButtonFull"
+  },
 }
 
 export default buttonConfigs;

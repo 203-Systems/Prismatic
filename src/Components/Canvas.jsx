@@ -206,7 +206,7 @@ class Canvas extends Component {
   setColorCanvas(x, y, color) {
     var [canvas_x, canvas_y] = [undefined, undefined];
     if (x === "l") {
-      if (this.props.LayoutConfig == undefined) return;
+      if (this.props.layoutConfig.lKey == undefined) return;
       [canvas_x, canvas_y] = this.props.layoutConfig.lKey;
     } else if (x === "mc") {
       if (this.props.layoutConfig.mcTable === undefined || this.props.layoutConfig.mcTable[y] == null) return;
