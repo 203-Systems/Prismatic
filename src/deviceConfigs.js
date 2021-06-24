@@ -190,19 +190,19 @@ const deviceConfigs = {
       }
       else if(note >= 100 && note <= 107)
       {
-        return this.mcTable[note - 100]
+        return this.mcTable[note - 100 + 8] //note - 100 is the raw index, +8 is the offset
       }
-      else if(note >= 116 && note < 123)
+      else if(note >= 116 && note <= 123)
       {
-        return this.mcTable[8 - (note - 116) + 8] //8- as reverse the direction
+        return this.mcTable[7 - (note - 116) + 16] //7 - as reverse the direction
       }
-      else if(note >= 108 && note < 115)
+      else if(note >= 108 && note <= 115)
       {
-        return this.mcTable[(note - 108) + 16]
+        return this.mcTable[7 - (note - 108) + 24]
       }
-      else if(note >= 28 && note < 35)
+      else if(note >= 28 && note <= 35)
       {
-        return this.mcTable[(note - 28) + 24]
+        return this.mcTable[note - 28]
       }
       else if(note == 27)
       {
