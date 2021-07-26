@@ -109,6 +109,8 @@ class ProjectFile {
       // Load KeyLED
       for (var [name, text] of Object.entries(keyLEDFiles)) {
         let fileInfo = name.split("/").pop().split(" ");
+        try
+        {
         // if (fileInfo.length === 5) {
         //   this.keyLED[parseInt(fileInfo[0]) - 1][parseInt(fileInfo[2]) - 1][parseInt(fileInfo[1]) - 1][fileInfo[4].charCodeAt(0) - 97] = new KeyLED(text, parseInt(fileInfo[3]), this.canvas)
         //   // console.log(name)
@@ -124,20 +126,32 @@ class ProjectFile {
         // else {
         //   console.warn("Unknown keyLED file name: " + name);
         // }
+        }
+        catch
+        {
+          console.warn("Unable to parse file name - " + name.split("/").pop())
+        }
       }
 
       //Load KeySound
       for (var line of keySoundFile) {
         line = line.trim()
+        try
+        {
+          if (line == "") //For empty lines
+          continue;
 
-        if (line == "") //For empty lines
-        continue;
+          let command = line.split(" ");
 
-        let command = line.split(" ");
-
-        // console.log(command);
-        let [chain, x, y, filename] = [parseInt(command[0]) - 1, parseInt(command[2]) - 1, parseInt(command[1]) - 1, command[3].toLowerCase()]
-        this.keySound[chain][x][y].push([this.soundFiles[filename], command.slice(4)]);
+          // console.log(command);
+          let [chain, x, y, filename] = [parseInt(command[0]) - 1, parseInt(command[2]) - 1, parseInt(command[1]) - 1, command[3].toLowerCase()]
+          console.log([chain, x, y, filename])
+          this.keySound[chain][x][y].push([this.soundFiles[filename], command.slice(4)]);
+        }
+        catch
+        {
+          console.warn("Unable to parse line - " + line)
+        }
       }
 
       //Load AutoPlay
