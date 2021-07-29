@@ -208,8 +208,6 @@ class Canvas extends Component {
     if (x === "l") {
       if (this.props.layoutConfig.lKey == undefined) return;
       [canvas_x, canvas_y] = this.props.layoutConfig.lKey;
-      console.log("L Key")
-      console.log(this.props.layoutConfig.lKey)
     } else if (x === "mc") {
       if (this.props.layoutConfig.mcTable === undefined || this.props.layoutConfig.mcTable[y] == null) return;
       [canvas_x, canvas_y] = this.props.layoutConfig.mcTable[y];
