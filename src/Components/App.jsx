@@ -187,92 +187,92 @@ class App extends Component {
       <React.Fragment>
         <div className="main">
           <div className="sidebar">
-            <text>203 | Prismatic (Tech Preview Demo)</text>
-            <div className="sidebarItem" />
-            <text className="sidebarItem">
-              {this.state.statusMessage}
-            </text>
-            <ProjectFileReader
-              loadProjectFile={this.loadProjectFile}
-            ></ProjectFileReader>
-            <div className="sidebarItem" />
-            <text>UI Layout</text>
-            <Select
-              className="sidebarItem"
-              options={this.prepSelectConfig(deviceConfigs, "layout")}
-              autosize={true}
-              value={
-                this.state.layoutConfigName !== undefined
-                  ? {
-                      label: this.state.layoutConfigName,
-                      value: this.state.layoutConfig,
-                    }
-                  : { label: "Layout Config", value: undefined }
-              }
-              onChange={this.setLayoutConfig.bind(this)}
-            />
-            <text>Midi Input Device</text>
-            <Select
-              className="sidebarItem"
-              options={this.prepSelectConfig(this.state.midiInput)}
-              autosize={true}
-              value={
-                this.state.inputDevice !== undefined
-                  ? {
-                      label: this.state.inputDevice.name,
-                      value: this.state.inputDevice,
-                    }
-                  : { label: "Input Device", value: undefined }
-              }
-              onChange={this.setInputDevice.bind(this)}
-            />
-            <text>Midi Input Device Config</text>
-            <Select
-              className="sidebarItem"
-              options={this.prepSelectConfig(deviceConfigs, "keymap")}
-              autosize={true}
-              value={
-                this.state.inputConfigName !== undefined
-                  ? {
-                      label: this.state.inputConfigName,
-                      value: this.state.inputConfig,
-                    }
-                  : { label: "Input Device Config", value: undefined }
-              }
-              onChange={this.setInputConfig.bind(this)}
-            />
-            <text>Midi Output Device</text>
-            <Select
-              className="sidebarItem"
-              options={this.prepSelectConfig(this.state.midiOutput)}
-              autosize={true}
-              value={
-                this.state.outputDevice !== undefined
-                  ? {
-                      label: this.state.outputDevice.name,
-                      value: this.state.outputDevice,
-                    }
-                  : { label: "Output Device", value: undefined }
-              }
-              onChange={this.setOutputDevice.bind(this)}
-            />
-            <text>Midi Output Device Config</text>
-            <Select
-              className="sidebarItem"
-              options={this.prepSelectConfig(deviceConfigs, "keymap")}
-              autosize={true}
-              value={
-                this.state.outputConfigName !== undefined
-                  ? {
-                      label: this.state.outputConfigName,
-                      value: this.state.outputConfig,
-                    }
-                  : { label: "Output Device Config", value: undefined }
-              }
-              onChange={this.setOutputConfig.bind(this)}
-            />
-            <div />
-            <AutoplayControl project={this.state.projectFile} canvas={this.canvas} layoutConfig={this.state.layoutConfig}/>
+            <div className="subSidebar">
+              <p className="prisTitle">Prismatic</p>
+              <div className="sidebarItem" />
+              <ProjectFileReader
+                loadProjectFile={this.loadProjectFile}
+              ></ProjectFileReader>
+              <div className="sidebarItem" />
+              <text>UI Layout</text>
+              <Select
+                className="sidebarItem"
+                options={this.prepSelectConfig(deviceConfigs, "layout")}
+                autosize={true}
+                value={
+                  this.state.layoutConfigName !== undefined
+                    ? {
+                        label: this.state.layoutConfigName,
+                        value: this.state.layoutConfig,
+                      }
+                    : { label: "Layout Config", value: undefined }
+                }
+                onChange={this.setLayoutConfig.bind(this)}
+              />
+              <text>Midi Input Device</text>
+              <Select
+                className="sidebarItem"
+                options={this.prepSelectConfig(this.state.midiInput)}
+                autosize={true}
+                value={
+                  this.state.inputDevice !== undefined
+                    ? {
+                        label: this.state.inputDevice.name,
+                        value: this.state.inputDevice,
+                      }
+                    : { label: "Input Device", value: undefined }
+                }
+                onChange={this.setInputDevice.bind(this)}
+              />
+              <text>Midi Input Device Config</text>
+              <Select
+                className="sidebarItem"
+                options={this.prepSelectConfig(deviceConfigs, "keymap")}
+                autosize={true}
+                value={
+                  this.state.inputConfigName !== undefined
+                    ? {
+                        label: this.state.inputConfigName,
+                        value: this.state.inputConfig,
+                      }
+                    : { label: "Input Device Config", value: undefined }
+                }
+                onChange={this.setInputConfig.bind(this)}
+              />
+              <text>Midi Output Device</text>
+              <Select
+                className="sidebarItem"
+                options={this.prepSelectConfig(this.state.midiOutput)}
+                autosize={true}
+                value={
+                  this.state.outputDevice !== undefined
+                    ? {
+                        label: this.state.outputDevice.name,
+                        value: this.state.outputDevice,
+                      }
+                    : { label: "Output Device", value: undefined }
+                }
+                onChange={this.setOutputDevice.bind(this)}
+              />
+              <text>Midi Output Device Config</text>
+              <Select
+                className="sidebarItem"
+                options={this.prepSelectConfig(deviceConfigs, "keymap")}
+                autosize={true}
+                value={
+                  this.state.outputConfigName !== undefined
+                    ? {
+                        label: this.state.outputConfigName,
+                        value: this.state.outputConfig,
+                      }
+                    : { label: "Output Device Config", value: undefined }
+                }
+                onChange={this.setOutputConfig.bind(this)}
+              />
+              <div />
+              <AutoplayControl project={this.state.projectFile} canvas={this.canvas} layoutConfig={this.state.layoutConfig}/>
+              <div className="logo203" onClick={() => window.open("https://github.com/203electronics/prismatic")}/>
+            </div>
           </div>
             <Canvas
               ref={this.canvas}
