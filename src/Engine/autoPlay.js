@@ -3,10 +3,13 @@ class AutoPlay {
   status = "STOPPED"
   progress = 0
   total = 0
-  led = true;
   currentChain = 0
   canvas = undefined;
   lastEventTime = undefined;
+
+  led = true;
+  highlight = false;
+  highlightColor = "#00FFFF"
 
   constructor(text, canvas) {
     this.autoplay = text;
@@ -18,7 +21,11 @@ class AutoPlay {
     // console.time("Autoplay")
     if (this.progress === 0) {
       this.canvas.initlalizeCanvas();
-      // this.currentChain = parseInt(0);
+      this.canvas.autoplay = this;
+    }
+    else
+    {
+      this.syncChain();
     }
     this.status = "PLAYING"
     this.lastEventTime = Date.now()
@@ -46,41 +53,28 @@ class AutoPlay {
       switch (command[0]) {
         case 'o':
         case 'on':
-          if(this.led)
+          this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true, true, this.led);
+          if(this.highlight)
           {
-            this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
-          }
-          else
-          {
-            this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true, true, false);
-            this.canvas.setColor(parseInt(command[2]) - 1, parseInt(command[1]) - 1, 127)
+            this.canvas.setHighlight(parseInt(command[2]) - 1, parseInt(command[1]) - 1, this.highlightColor)
           }
           break;
         case 'f':
         case 'off':
-          if(this.led)
+          this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
+          if(this.highlight)
           {
-            this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
-          }
-          else
-          {
-            this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
-            this.canvas.setColor(parseInt(command[2]) - 1, parseInt(command[1]) - 1, 0)
+            this.canvas.setHighlight(parseInt(command[2]) - 1, parseInt(command[1]) - 1)
           }
           break;
         case 't':
         case 'touch':
-            if(this.led)
-            {
-              this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
+              this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true, true, this.led);
               this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
-            }
-            else
+            if(this.highlight)
             {
-              this.canvas.keyOn(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true, true, false);
-              this.canvas.keyOff(parseInt(command[2]) - 1, parseInt(command[1]) - 1, undefined, true);
-              this.canvas.setColor(parseInt(command[2]) - 1, parseInt(command[1]) - 1, 3)
-              setTimeout(() => {this.canvas.setColor(parseInt(command[2]) - 1, parseInt(command[1]) - 1, 0)}, 200)
+              this.canvas.setHighlight(parseInt(command[2]) - 1, parseInt(command[1]) - 1, this.highlightColor)
+              setTimeout(() => {this.canvas.setHighlight(parseInt(command[2]) - 1, parseInt(command[1]) - 1)}, 200)
             }
             break;
         case 'd':
@@ -94,12 +88,16 @@ class AutoPlay {
         case 'chain':
           this.canvas.chainChange(parseInt(command[1]) - 1);
           this.currentChain = parseInt(command[1]) - 1;
+          if(this.highlight)
+            {
+              this.canvas.setHighlight("chain", parseInt(command[1]) - 1, this.highlightColor)
+              setTimeout(() => {this.canvas.setHighlight("chain", parseInt(command[1]) - 1)}, 200)
+            }
           break;
         default:
       }
     }
-    this.status = "STOPPED"
-    this.progress = 0
+    this.stop();
   }
 
   pause() {
@@ -109,6 +107,44 @@ class AutoPlay {
   stop() {
     this.status = "STOPPED"
     this.progress = 0
+    this.canvas.autoplay = null;
+  }
+
+  backward()
+  {
+    if(this.status == "PAUSED")
+    {
+      
+    }
+  }
+
+  forward()
+  {
+    if(this.status == "PAUSED")
+    {
+
+    }
+  }
+
+  seek(index)
+  {
+
+  }
+
+  syncChain()
+  {
+    for(var progress = this.progress; progress >= 0; progress--)
+    {
+      let command = this.autoplay[this.progress].split(" ");
+      if(command == "c" || command == "chain")
+      {
+        this.canvas.chainChange(parseInt(command[1]) - 1);
+        this.currentChain = parseInt(command[1]) - 1;
+        return;
+      }
+    }
+    this.canvas.chainChange(0);
+    this.currentChain = 0;
   }
 
   wait(ms) {

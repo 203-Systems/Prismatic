@@ -14,11 +14,13 @@ class Canvas extends Component {
 
   state = {
     colormap: new Array(this.props.layoutConfig.width).fill(null).map(() => new Array(this.props.layoutConfig.height).fill(palette[0])),
+    highlightmap: new Array(this.props.layoutConfig.width).fill(null).map(() => new Array(this.props.layoutConfig.height).fill(null)),
   };
 
   keypressHistory = new Array(this.props.layoutConfig.width).fill(null).map(() => new Array(this.props.layoutConfig.height).fill(0));
   currentChain = 0;
-  // overlay = "#808080";
+  currentKeyPress = [];
+  autoplay = null;
 
   // shouldUpdate = (nextProps) => !Object.is(this.props.layoutConfig, nextProps.layoutConfig);
 
@@ -92,6 +94,15 @@ class Canvas extends Component {
   };
 
   keyOn = (x, y, config = this.props.layoutConfig, reverseOffset = false, sound = true, led = true) => {
+    const currentKeyPressIndex = this.currentKeyPress.indexOf([x, y]);
+    if (currentKeyPressIndex == -1) {
+      this.currentKeyPress.push([x, y]) // 2nd parameter means remove one item only
+      if(this.autoplay != null && this.autoplay.state == "PAUSED")
+      {
+        
+      }
+    }
+
     let soundLoop = 1;
     let [canvas_x, canvas_y] = [x, y]; //canvas_XY means the grid scope XY (Square), Raw XY will be the source XY (Including the chain keys)
     if (!reverseOffset) {
@@ -140,6 +151,11 @@ class Canvas extends Component {
   };
 
   keyOff = (x, y, config = this.props.layoutConfig, reverseOffset = false, sound = true, led = true) => {
+    const currentKeyPressIndex = this.currentKeyPress.indexOf([x, y]);
+    if (currentKeyPressIndex > -1) {
+      this.currentKeyPress.splice(currentKeyPressIndex, 1); // 2nd parameter means remove one item only
+    }
+
     let [canvas_x, canvas_y] = [x, y]; //canvas_XY means the grid scope XY (Square), Raw XY will be the source XY (Including the chain keys)
     if (!reverseOffset) {
       [canvas_x, canvas_y] = this.arrayCalculation([x, y], config.canvas_origin, "-");
@@ -203,7 +219,12 @@ class Canvas extends Component {
     this.setColorOutput(x, y, color);
   };
 
-  setColorCanvas(x, y, color) {
+  setHighlight = (x, y, color) => {
+    // console.log(`Set Color ${x} ${y} ${color}`)
+    this.setHighlightCanvas(x, y, color);
+  };
+
+  getCanvasPosition(x, y) {
     var [canvas_x, canvas_y] = [undefined, undefined];
     if (x === "l") {
       if (this.props.layoutConfig.lKey == undefined) return;
@@ -211,10 +232,19 @@ class Canvas extends Component {
     } else if (x === "mc") {
       if (this.props.layoutConfig.mcTable === undefined || this.props.layoutConfig.mcTable[y] == null) return;
       [canvas_x, canvas_y] = this.props.layoutConfig.mcTable[y];
+    } else if (x === "chain") {
+        if (this.props.layoutConfig.chainKey === undefined || this.props.layoutConfig.chainKey[y] == null) return;
+        [canvas_x, canvas_y] = this.props.layoutConfig.chainKey[y];
     } else {
       [canvas_x, canvas_y] = this.arrayCalculation([x, y], this.props.layoutConfig.canvas_origin, "+");
     }
 
+    return [canvas_x, canvas_y];
+  };
+
+  setColorCanvas(x, y, color) {
+    var [canvas_x, canvas_y] = this.getCanvasPosition(x, y);
+   
     try {
       if (/^#[0-9A-F]{6}$/i.test(color)) {
         //Check if it is a Hex String
@@ -228,18 +258,45 @@ class Canvas extends Component {
     }
   }
 
+  setHighlightCanvas(x, y, color = null) {
+    var [canvas_x, canvas_y] = this.getCanvasPosition(x, y);
+
+    try {
+      if (/^#[0-9A-F]{6}$/i.test(color)) {
+        //Check if it is a Hex String
+        this.state.highlightmap[canvas_x][canvas_y] = color;
+      } else {
+        this.state.highlightmap[canvas_x][canvas_y] = palette[color];
+      }
+    } catch (e) {
+      console.error(e);
+      console.error([x, y, color, canvas_x, canvas_y]);
+    }
+  }
+
+  getDevicePosition(x, y)
+  {
+    var [output_x, output_y] = [undefined, undefined];
+    if (x === "l") {
+      if (this.props.outputConfig.lKey == undefined) return;
+      [output_x, output_y] = this.props.outputConfig.lKey;
+    } else if (x === "mc") {
+      if (this.props.outputConfig.mcTable === undefined || this.props.outputConfig.mcTable[y] == null) return
+      [output_x, output_y] = this.props.outputConfig.mcTable[y];
+    } else if (x === "chain") {
+      if (this.props.layoutConfig.chainKey === undefined || this.props.layoutConfig.chainKey[y] == null) return;
+      [output_x, output_y]= this.props.layoutConfig.chainKey[y];
+    } else {
+      [output_x, output_y] = this.arrayCalculation([x, y], this.props.outputConfig.canvas_origin, "+");
+    }
+
+    return [output_x, output_y];
+  }
+
   setColorOutput(x, y, color) {
     if (this.props.outputDevice !== undefined && this.props.outputConfig !== undefined) {
-      var [output_x, output_y] = [undefined, undefined];
-      if (x === "l") {
-        if (this.props.outputConfig.lKey == undefined) return;
-        [output_x, output_y] = this.props.outputConfig.lKey;
-      } else if (x === "mc") {
-        if (this.props.outputConfig.mcTable === undefined || this.props.outputConfig.mcTable[y] == null) return
-        [output_x, output_y] = this.props.outputConfig.mcTable[y];
-      } else {
-        [output_x, output_y] = this.arrayCalculation([x, y], this.props.outputConfig.canvas_origin, "+");
-      }
+      var [output_x, output_y] = this.getDevicePosition(x, y);
+      
       try {
         if (/^#[0-9A-F]{6}$/i.test(color)) {
           //Check if it is a Hex String
@@ -361,7 +418,7 @@ class Canvas extends Component {
               {this.props.layoutConfig.layout[y].map((value, x) => {
                 if(Object.keys(buttonConfigs).includes(value))
                   {
-                    return <Button x={x} y={y} class={buttonConfigs[value].class} overlayClass={buttonConfigs[value].overlayClass} color={this.state.colormap[x][y]} on={this.keyOn} off={this.keyOff} />;
+                    return <Button x={x} y={y} class={buttonConfigs[value].class} overlayClass={buttonConfigs[value].overlayClass} color={this.state.colormap[x][y]} highlight={this.state.highlightmap[x][y]} on={this.keyOn} off={this.keyOff} />;
                   }
                   else
                   {
