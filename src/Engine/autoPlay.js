@@ -22,6 +22,7 @@ class AutoPlay {
     if (this.progress === 0) {
       this.canvas.initlalizeCanvas();
       this.canvas.autoplay = this;
+      this.currentChain = 0;
     }
     else
     {
@@ -33,11 +34,11 @@ class AutoPlay {
       // console.timeEnd("Autoplay");
       // console.time("Autoplay")
 
-      if (this.status === "STOPPED" || this.status === "PAUSED") {
+      if (this.status != "PLAYING") {
         return;
       }
 
-      console.log(this.autoplay[this.progress])
+      // console.log(this.autoplay[this.progress])
       let command = this.autoplay[this.progress].split(" ");
 
       if(callback !== undefined)

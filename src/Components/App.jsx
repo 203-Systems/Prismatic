@@ -71,13 +71,19 @@ class App extends Component {
   };
 
   loadProjectFile = (projectPack) => {
+    this.canvas.current.initlalizeCanvas();
+    if(this.state.projectFile != null && this.state.projectFile.autoplay != null)
+    {
+      console.log("Clean existing project");
+      this.state.projectFile.autoplay.stop();
+    }
     if(projectPack == null)
       return
     this.setState({statusMessage: "Loading Unipack"});
     new ProjectFile(projectPack, this.canvas)
       .then((projectFile) => {
         this.setState({ projectFile: projectFile });
-        console.log(projectFile);
+        // console.log(projectFile);
         this.setState({statusMessage: `Current Project: ${this.state.projectFile.info["title"]} by ${this.state.projectFile.info["producerName"]}`});
       })
       .catch((message) => {
