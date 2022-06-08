@@ -5,6 +5,7 @@ class ProjectFileReader extends Component {
     return (
       <React.Fragment>
         <input type="file" id="projectFilePicker" name="projectFile" accept=".zip" onChange={this.onFileChange}/>
+        <label for="projectFilePicker" class="fileSelect">Select File</label>
       </React.Fragment>
     );
   }

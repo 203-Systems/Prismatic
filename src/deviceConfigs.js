@@ -239,6 +239,47 @@ const deviceConfigs = {
       return [0, 32, 41, 2, 16, 11, id, r, g, b]
     }
   },
+  "Launchpad Mini":
+  {
+    channel: 1,
+    midiNameRegex: "Launchpad Mini",
+
+    keymap: [
+      [91, 92, 93, 94, 95, 96, 97, 9, null],
+      [81, 82, 83, 84, 85, 86, 87, 88, 89],
+      [71, 72, 73, 74, 75, 76, 77, 78, 79],
+      [61, 62, 63, 64, 65, 66, 67, 68, 69],
+      [51, 52, 53, 54, 55, 56, 57, 58, 59],
+      [41, 42, 43, 44, 45, 46, 47, 48, 49],
+      [31, 32, 33, 34, 35, 36, 37, 38, 39],
+      [21, 22, 23, 24, 25, 26, 27, 28, 29],
+      [11, 12, 13, 14, 15, 16, 17, 18, 19]],
+
+    width: 9,
+    height: 9,
+
+    canvas_origin: [0, 1],
+
+    chainKey: [[8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 6], [8, 7], [8, 8]],
+
+    mcTable: [
+      [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0],
+      [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 6], [8, 7], [8, 8],
+      null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null,],
+
+    noteToXY(note)
+    {
+    if(note >= 11 && note <= 89)
+    {
+        return [(note % 10) - 1, 9 - Math.floor(note / 10)]
+    }
+    else if(note >= 104 && note <= 111)
+    {
+        return this.mcTable[note - 104 + 24]
+    }
+    },
+  },
   "Launchpad MK2":
   {
     channel: 1,

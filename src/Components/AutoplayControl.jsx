@@ -13,7 +13,7 @@ class AutoplayControl extends Component {
   render() {
     var playButton = (
       <button
-        style={{ width: "50px", marginRight: "10px" }}
+        className="AutoPlayBTN"
         onClick={this.playAutoplay}
       >
         Play
@@ -21,7 +21,7 @@ class AutoplayControl extends Component {
     );
     var pauseButton = (
       <button
-        style={{ width: "50px", marginRight: "10px" }}
+        className="AutoPlayBTN"
         onClick={this.pauseAutoplay}
       >
         Pause
@@ -29,7 +29,7 @@ class AutoplayControl extends Component {
     );
     var stopButton = (
       <button
-        style={{ width: "50px", marginRight: "10px" }}
+        className="AutoPlayBTN"
         onClick={this.stopAutoplay}
       >
         Stop
@@ -64,7 +64,7 @@ class AutoplayControl extends Component {
         break;
     }
     return (
-      <div>
+      <div className="containerCheckbox">
         <text>{"Autoplay" + statusText}</text>
         <div />
         <input type="checkbox" checked={this.props.project.autoplay.led} onChange={() => {this.props.project.autoplay.led = !this.props.project.autoplay.led}}/>LED
