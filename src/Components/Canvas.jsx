@@ -62,7 +62,7 @@ class Canvas extends Component {
   }
 
   midiInputHandler = (midiEvent) => {
-    console.log(midiEvent.data)
+    // console.log(midiEvent.data)
     var [event, note, velocity] = midiEvent.data
     var [x, y] = [undefined, undefined]
     if(this.props.inputConfig.noteToXY !== undefined)
@@ -75,7 +75,7 @@ class Canvas extends Component {
     {
       [x, y] = this.indexOf2dArray(note, this.props.inputConfig.keymap); 
     }
-    console.log([x, y]);
+    // console.log([x, y]);
     if (x !== undefined && y !== undefined) {
       // let [canvas_x, canvas_y] = this.arrayCalculation([x, y], this.props.inputConfig.canvas_origin, "-");
       switch (event >> 4) {
@@ -110,7 +110,7 @@ class Canvas extends Component {
     } else {
       [x, y] = this.arrayCalculation([x, y], config.canvas_origin, "+");
     }
-    console.log("Note On - " + x.toString() + " " + y.toString());
+    // console.log("Note On - " + x.toString() + " " + y.toString());
     // console.log([x, y, canvas_x, canvas_y])
 
     if (this.props.projectFile !== undefined) {
@@ -162,7 +162,7 @@ class Canvas extends Component {
     } else {
       [x, y] = this.arrayCalculation([x, y], config.canvas_origin, "+");
     }
-    console.log("Note Off - " + x.toString() + " " + y.toString());
+    // console.log("Note Off - " + x.toString() + " " + y.toString());
 
     if (this.props.projectFile !== undefined) {
       if (canvas_x >= 0 && canvas_x < 8 && canvas_y >= 0 && canvas_y < 8) {
@@ -295,7 +295,12 @@ class Canvas extends Component {
 
   setColorOutput(x, y, color) {
     if (this.props.outputDevice !== undefined && this.props.outputConfig !== undefined) {
-      var [output_x, output_y] = this.getDevicePosition(x, y);
+      var output_xy = this.getDevicePosition(x, y);
+      if(output_xy === undefined)
+        return
+
+      var [output_x, output_y] = output_xy;
+
       
       try {
         if (/^#[0-9A-F]{6}$/i.test(color)) {

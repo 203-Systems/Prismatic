@@ -65,7 +65,7 @@ class App extends Component {
     fetch("https://cors-anywhere.herokuapp.com/" + url).then
     ((r => 
       {var file = r.blob();
-        console.log(file);
+        // console.log(file);
         this.loadProjectFile(file);
       }).bind(this));
   };
@@ -106,8 +106,8 @@ class App extends Component {
   };
 
   onMidiStateChange(e) {
-    console.log(e);
-    console.log(e.port.name, e.port.type, e.port.state);
+    // console.log(e);
+    // console.log(e.port.name, e.port.type, e.port.state);
     if (e.port.state === "disconnected") {
       if (e.port.type === "input") {
         if (
@@ -134,18 +134,18 @@ class App extends Component {
   
   updateMidiList() {
     var midiInput = {};
-    console.log("Input");
+    // console.log("Input");
     for (var input of WebMidi.inputs) {
-      console.log(input.name);
+      // console.log(input.name);
       midiInput[input.name] = input
     }
     this.setState({ midiInput: midiInput });
 
     var midiOutput = {};
-    console.log();
-    console.log("Output");
+    // console.log();
+    // console.log("Output");
     for (var output of WebMidi.outputs) {
-      console.log(output.name);
+      // console.log(output.name);
       midiOutput[output.name] = output
     }
     this.setState({ midiOutput: midiOutput });
@@ -164,11 +164,11 @@ class App extends Component {
       for (var key in deviceConfigs) {
         if (deviceConfigs[key].midiNameRegex !== undefined && deviceName.match(deviceConfigs[key].midiNameRegex) !== null) {
           var config = deviceConfigs[key];
-          console.log(
-            `${
-              mode ? "Output" : "input"
-            } config has been auto assigned to ${key}`
-          );
+          // console.log(
+          //   `${
+          //     mode ? "Output" : "input"
+          //   } config has been auto assigned to ${key}`
+          // );
           switch (mode) {
             case "Input":
               this.setInputConfig({label: key, value: config})
