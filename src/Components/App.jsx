@@ -16,7 +16,7 @@ class App extends Component {
 
   componentDidMount()
   {
-    console.log("%c203 | Prismatic \nBuild " + preval`module.exports = new Date().toLocaleString();`, "color: cyan;font-size:24px;")
+    console.log("%c203 | Prismatic \nBuild " + preval`module.exports = new Date().toLocaleString("en-US");`, "color: cyan;font-size:24px;")
     this.loadUserConfigPerfences()
     setTimeout((this.initlization).bind(this), 0) //Hacky way to get initlization done after first render
   }
